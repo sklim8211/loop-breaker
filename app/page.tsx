@@ -795,6 +795,9 @@ export default function Page() {
                         <p className="text-sm text-slate-600">이렇게 전해집니다</p>
 
                         <div className="space-y-3">
+                          <p className="text-sm text-slate-500">
+                            나도 써보는데 괜찮아서 공유합니다
+                          </p>
                           <p className="text-lg leading-relaxed text-slate-900 max-w-[300px] mx-auto break-keep">
                             하고 나서 후회하는 행동들을
                             <br />
