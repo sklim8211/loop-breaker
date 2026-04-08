@@ -14,11 +14,7 @@ const behaviors = [
       "손은 쉬고 싶은데, 손가락만 일하고 있네요",
       "지금 필요한 건 정보가 아니라, 멈춤일지도요",
     ],
-    responsePool: [
-      "지금 내려놓고 있어도 괜찮아요",
-      "손이 가기 전에 한번 멈춰볼까요",
-      "지금 안 봐도 아무 일 안 생겨요",
-    ],
+    actionText: "보고 있던 거, 잠깐 내려놓아볼까요",
     displayText: "끝없이 넘기고 있을 때",
   },
   {
@@ -30,10 +26,7 @@ const behaviors = [
       "잠깐이면 될 걸, 계속 미루고 있네요",
       "생각은 많은데, 시작은 없네요",
     ],
-    responsePool: [
-      "가장 쉬운 것부터 해봐요",
-      "지금 바로 할 수 있는 것부터 해봐요",
-    ],
+    actionText: "미루던 거, 10초만 해볼까요",
     displayText: "시작하려다 멈춘 그때",
   },
   {
@@ -45,11 +38,7 @@ const behaviors = [
       "지금은 배보다 습관이 먹고 있는 걸지도요",
       "이미 충분한데, 계속 먹고 있네요",
     ],
-    responsePool: [
-      "여기서 숟가락 잠깐 내려놔요",
-      "지금 멈추면 충분합니다",
-      "더 안 먹어도 이미 충분해요",
-    ],
+    actionText: "먹고 있던 거, 여기서 한 번 멈춰볼까요",
     displayText: "배부른데 손이 갈 때",
   },
   {
@@ -61,11 +50,7 @@ const behaviors = [
       "그냥 하고 있는 건지, 하고 싶은 건지",
       "멈출 타이밍을 지나고 있는 걸지도요",
     ],
-    responsePool: [
-      "지금 하던 거 잠깐 멈춰요",
-      "그만해도 아무 문제 없어요",
-      "여기서 멈추는 선택도 있어요",
-    ],
+    actionText: "지금 하고 있던 거, 잠깐 멈춰볼까요",
     displayText: "왜 하는지 모르고 계속할 때",
   },
 ] as const;
@@ -76,17 +61,13 @@ const timeOptions = [
   { key: "night", label: "밤" },
 ] as const;
 
-const continuePhrases = [
-  "지금 선택도 괜찮아요",
-  "그것도 선택이니까요",
-  "괜찮아요, 다음에 다시 보면 돼요",
-  "오늘은 여기까지도 충분해요",
-] as const;
-
 const reportPhrases = [
-  "그 순간들이 쌓이고 있어요",
-  "생각해본 순간들이 남고 있어요",
-  "작은 멈춤들이 이어지고 있어요",
+  "그냥 지나가지 않으셨네요",
+  "한 번 돌아보셨네요",
+  "잠깐 멈춰보셨네요",
+  "흘려보내지 않으셨네요",
+  "그대로 두지 않으셨네요",
+  "멈춰서 한 번 생각해보셨네요",
 ] as const;
 
 const STORAGE_KEYS = {
@@ -125,7 +106,7 @@ type EventItem = {
 
 const SHARE_TITLE = "우린 멈춤을 알려드립니다";
 const SHARE_TEXT =
-  "나도 써보는데 괜찮아서 공유합니다\n\n하고 나서 후회하는 행동들을 잠깐 생각하게 알려주는 서비스입니다.\n멈추는 것만으로도 달라집니다.";
+  "하고 나서 후회하는 행동들을 잠깐 생각하게 알려주는 서비스입니다.\n멈추는 것만으로도 달라집니다.";
 
 function createUserId() {
   return `usr_${Math.random().toString(36).slice(2, 10)}${Date.now()
@@ -184,8 +165,6 @@ export default function Page() {
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [interventionLine, setInterventionLine] = useState("");
-  const [responseLine, setResponseLine] = useState("");
-  const [continueLine, setContinueLine] = useState("");
   const [responseMode, setResponseMode] = useState<ActionType | null>(null);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [sharePreviewOpen, setSharePreviewOpen] = useState(false);
@@ -251,20 +230,6 @@ export default function Page() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.events, JSON.stringify(events));
   }, [events]);
-
-  useEffect(() => {
-    if (step !== "response" || responseMode !== "continue") return;
-
-    const timer = window.setTimeout(() => {
-      setStep("home");
-      setResponseMode(null);
-      setContinueLine("");
-      setSharePreviewOpen(false);
-      setShareMessage("");
-    }, 5000);
-
-    return () => window.clearTimeout(timer);
-  }, [step, responseMode]);
 
   const weeklyStopCount = useMemo(() => {
     if (!userId) return 0;
@@ -361,15 +326,6 @@ export default function Page() {
     ]);
     setSharePreviewOpen(false);
     setShareMessage("");
-
-    if (action === "stop") {
-      setResponseLine(pickRandom(behavior.responsePool));
-      setContinueLine("");
-    } else {
-      setContinueLine(pickRandom(continuePhrases));
-      setResponseLine("");
-    }
-
     setStep("response");
   };
 
@@ -654,14 +610,11 @@ export default function Page() {
 
                     {weeklyStopCount > 0 && (
                       <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-6 py-6 text-center shadow-sm">
-                        <p className="text-2xl font-bold text-slate-900">
-                          이번 주, {weeklyStopCount}번 멈췄어요
-                        </p>
-                        <p className="mt-3 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
+                        <BodyText>
+                          이번 주, {weeklyStopCount}번이나 멈추려고 했네요
+                        </BodyText>
+                        <p className="mt-2 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
                           {pickRandom(reportPhrases)}
-                        </p>
-                        <p className="mt-2 text-base text-slate-900 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
-                          변화는 그렇게 시작됩니다
                         </p>
                       </div>
                     )}
@@ -774,7 +727,7 @@ export default function Page() {
                     <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-6 shadow-sm">
                       <BodyText>{interventionLine}</BodyText>
                       <h2 className="text-3xl font-bold leading-tight text-slate-900">
-                        여기서 한번 멈춰볼까요
+                        지금 여기서 한 번만 멈춰볼까요?
                       </h2>
                     </div>
 
@@ -812,30 +765,28 @@ export default function Page() {
                       <>
                         <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-6 shadow-sm">
                           <h2 className="text-3xl font-bold leading-tight text-slate-900">
-                            {responseMode === "stop" ? responseLine : continueLine}
+                            {responseMode === "stop"
+                              ? behavior.actionText
+                              : "알겠습니다. 잠시 후 다시 볼게요"}
                           </h2>
                         </div>
 
-                        {responseMode === "stop" ? (
-                          <div className="space-y-3">
-                            <button
-                              onClick={openSharePreview}
-                              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 shadow-sm transition hover:bg-slate-100"
-                            >
-                              <Share2 className="h-4 w-4" />
-                              꼭 권하고 싶은 분께 공유해 주세요
-                            </button>
+                        <div className="space-y-3">
+                          <button
+                            onClick={openSharePreview}
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 shadow-sm transition hover:bg-slate-100"
+                          >
+                            <Share2 className="h-4 w-4" />
+                            꼭 권하고 싶은 분께 공유해 주세요
+                          </button>
 
-                            <button
-                              className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
-                              onClick={() => setStep("home")}
-                            >
-                              확인
-                            </button>
-                          </div>
-                        ) : (
-                          <p className="text-sm text-slate-500">잠시 후 자연스럽게 돌아갑니다</p>
-                        )}
+                          <button
+                            className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
+                            onClick={() => setStep("home")}
+                          >
+                            확인
+                          </button>
+                        </div>
                       </>
                     )}
 
