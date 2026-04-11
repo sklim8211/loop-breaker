@@ -630,12 +630,7 @@ if (action === "stop") {
         </button>
       </div>
 
-      <button
-        onClick={() => setStep("intervention")}
-        className="px-4 py-2 rounded-xl bg-gray-100 text-slate-700"
-      >
-        멈춤 테스트 진입
-      </button>
+      
 
       <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-8 shadow-sm">
         <p className="text-2xl font-bold text-slate-900">{behavior.displayText}</p>
