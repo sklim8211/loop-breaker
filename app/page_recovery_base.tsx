@@ -5,12 +5,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Bell, Clock3, Settings, Share2 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
-const continuePhrases = [
-  "지금 선택도 괜찮아요",
-  "그것도 선택이니까요",
-  "괜찮아요, 다음에 다시 보면 돼요",
-  "오늘은 여기까지도 충분해요",
-] as const;
 const behaviors = [
   {
     key: "smartphone",
@@ -21,12 +15,7 @@ const behaviors = [
       "손은 쉬고 싶은데, 손가락만 일하고 있네요",
       "지금 필요한 건 정보가 아니라, 멈춤일지도요",
     ],
-    actionText: "지금 내려놓고 있어도 괜찮아요",
-    responsePool: [
-     "지금 내려놓고 있어도 괜찮아요",
-     "손이 가기 전에 한번 멈춰볼까요",
-     "지금 안 봐도 아무 일 안 생겨요",
-    ],
+    actionText: "보고 있던 거, 잠깐 내려놓아볼까요",
     displayText: "끝없이 넘기고 있을 때",
   },
   {
@@ -38,11 +27,7 @@ const behaviors = [
       "잠깐이면 될 걸, 계속 미루고 있네요",
       "생각은 많은데, 시작은 없네요",
     ],
-    actionText: "가장 쉬운 것부터 해봐요",
-    responsePool: [
-    "가장 쉬운 것부터 해봐요",
-    "지금 바로 할 수 있는 것부터 해봐요",
-    ],
+    actionText: "미루던 거, 10초만 해볼까요",
     displayText: "시작하려다 멈춘 그때",
   },
   {
@@ -54,12 +39,7 @@ const behaviors = [
       "지금은 배보다 습관이 먹고 있는 걸지도요",
       "이미 충분한데, 계속 먹고 있네요",
     ],
-    actionText: "더 안 먹어도 이미 충분해요",
-    responsePool: [
-     "여기서 숟가락 잠깐 내려놔요",
-     "지금 멈추면 충분합니다",
-     "더 안 먹어도 이미 충분해요",
-    ],
+    actionText: "먹고 있던 거, 여기서 한 번 멈춰볼까요",
     displayText: "배부른데 손이 갈 때",
   },
   {
@@ -71,12 +51,7 @@ const behaviors = [
       "그냥 하고 있는 건지, 하고 싶은 건지",
       "멈출 타이밍을 지나고 있는 걸지도요",
     ],
-    actionText: "그만해도 아무 문제 없어요",
-    responsePool: [
-    "지금 하던 거 잠깐 멈춰요",
-    "그만해도 아무 문제 없어요",
-    "여기서 멈추는 선택도 있어요",
-    ],
+    actionText: "지금 하고 있던 거, 잠깐 멈춰볼까요",
     displayText: "왜 하는지 모르고 계속할 때",
   },
 ] as const;
@@ -188,8 +163,6 @@ export default function Page() {
 
   const [events, setEvents] = useState<EventItem[]>([]);
   const [interventionLine, setInterventionLine] = useState("");
-  const [responseLine, setResponseLine] = useState("");
-  const [continueLine, setContinueLine] = useState("");
   const [responseMode, setResponseMode] = useState<ActionType | null>(null);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [sharePreviewOpen, setSharePreviewOpen] = useState(false);
@@ -331,41 +304,45 @@ alert(JSON.stringify({ data, error }));
   const handleDecision = async (action: ActionType) => {
 const ensuredUserId = ensureUserId();
 
- 
-    const timestamp = new Date().toISOString();
-const behavior = behaviors.find((b) => b.key === selectedBehavior);
-if (!behavior) return;
+  const { data, error } = await supabase
+    .from("pause_logs")
+    .insert([
+      {
+        user_id: ensuredUserId,
+        behavior_type: selectedBehavior,
+        action_type: action === "stop" ? "pause" : "continue",
+        created_at: new Date().toISOString(),
+      },
+    ])
+    .select();
 
-setResponseMode(action);
+  alert(JSON.stringify({ data, error }));
 
-if (action === "stop") {
-  const responseSource = Array.isArray((behavior as any).responsePool)
-    ? (behavior as any).responsePool
-    : [];
+const userId = localStorage.getItem("user_id");
 
-  const fallbackResponse =
-    (behavior as any).actionText ||
-    (behavior as any).displayText ||
-    (behavior as any).label ||
-    "";
-
-  const randomResponse =
-    responseSource.length > 0
-      ? responseSource[Math.floor(Math.random() * responseSource.length)]
-      : fallbackResponse;
-
-  setResponseLine(randomResponse);
-  setContinueLine("");
-} else {
-  setResponseMode("continue");
-
-  const randomContinue =
-    continuePhrases[
-      Math.floor(Math.random() * continuePhrases.length)
-    ];
-  setContinueLine(randomContinue);
-  setResponseLine("");
+if (!userId) {
+  alert("user_id 없음");
+  return;
 }
+
+const { data: logData, error: logError } = await supabase
+  .from("pause_logs")
+  .insert([
+    {
+      user_id: userId,
+      behavior_type: selectedBehavior,
+      action_type: action === "stop" ? "pause" : "continue",
+      created_at: new Date().toISOString(),
+    },
+  ])
+  .select();
+
+alert(JSON.stringify({ logData, logError }));
+
+   
+    const timestamp = new Date().toISOString();
+
+    setResponseMode(action);
     setEvents((prev) => [
       ...prev,
       { userId: ensuredUserId, action, at: timestamp },
@@ -787,7 +764,9 @@ if (action === "stop") {
                       <>
                         <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-6 shadow-sm">
                           <h2 className="text-3xl font-bold leading-tight text-slate-900">
-                            {responseMode === "stop" ? responseLine : continueLine}
+                            {responseMode === "stop"
+                              ? behavior.actionText
+                              : "알겠습니다. 잠시 후 다시 볼게요"}
                           </h2>
                         </div>
 

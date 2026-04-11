@@ -1,16 +1,11 @@
+
+
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell, Clock3, Settings, Share2 } from "lucide-react";
-import { supabase } from "../lib/supabase";
 
-const continuePhrases = [
-  "지금 선택도 괜찮아요",
-  "그것도 선택이니까요",
-  "괜찮아요, 다음에 다시 보면 돼요",
-  "오늘은 여기까지도 충분해요",
-] as const;
 const behaviors = [
   {
     key: "smartphone",
@@ -21,11 +16,10 @@ const behaviors = [
       "손은 쉬고 싶은데, 손가락만 일하고 있네요",
       "지금 필요한 건 정보가 아니라, 멈춤일지도요",
     ],
-    actionText: "지금 내려놓고 있어도 괜찮아요",
     responsePool: [
-     "지금 내려놓고 있어도 괜찮아요",
-     "손이 가기 전에 한번 멈춰볼까요",
-     "지금 안 봐도 아무 일 안 생겨요",
+      "지금 내려놓고 있어도 괜찮아요",
+      "손이 가기 전에 한번 멈춰볼까요",
+      "지금 안 봐도 아무 일 안 생겨요",
     ],
     displayText: "끝없이 넘기고 있을 때",
   },
@@ -38,10 +32,9 @@ const behaviors = [
       "잠깐이면 될 걸, 계속 미루고 있네요",
       "생각은 많은데, 시작은 없네요",
     ],
-    actionText: "가장 쉬운 것부터 해봐요",
     responsePool: [
-    "가장 쉬운 것부터 해봐요",
-    "지금 바로 할 수 있는 것부터 해봐요",
+      "가장 쉬운 것부터 해봐요",
+      "지금 바로 할 수 있는 것부터 해봐요",
     ],
     displayText: "시작하려다 멈춘 그때",
   },
@@ -54,11 +47,10 @@ const behaviors = [
       "지금은 배보다 습관이 먹고 있는 걸지도요",
       "이미 충분한데, 계속 먹고 있네요",
     ],
-    actionText: "더 안 먹어도 이미 충분해요",
     responsePool: [
-     "여기서 숟가락 잠깐 내려놔요",
-     "지금 멈추면 충분합니다",
-     "더 안 먹어도 이미 충분해요",
+      "여기서 숟가락 잠깐 내려놔요",
+      "지금 멈추면 충분합니다",
+      "더 안 먹어도 이미 충분해요",
     ],
     displayText: "배부른데 손이 갈 때",
   },
@@ -71,11 +63,10 @@ const behaviors = [
       "그냥 하고 있는 건지, 하고 싶은 건지",
       "멈출 타이밍을 지나고 있는 걸지도요",
     ],
-    actionText: "그만해도 아무 문제 없어요",
     responsePool: [
-    "지금 하던 거 잠깐 멈춰요",
-    "그만해도 아무 문제 없어요",
-    "여기서 멈추는 선택도 있어요",
+      "지금 하던 거 잠깐 멈춰요",
+      "그만해도 아무 문제 없어요",
+      "여기서 멈추는 선택도 있어요",
     ],
     displayText: "왜 하는지 모르고 계속할 때",
   },
@@ -87,14 +78,23 @@ const timeOptions = [
   { key: "night", label: "밤" },
 ] as const;
 
-const weeklyReportLines = {
-  body: "그 순간들이 쌓이고 있어요",
-  caption: "변화는 그렇게 시작됩니다",
-} as const;
+const continuePhrases = [
+  "지금 선택도 괜찮아요",
+  "그것도 선택이니까요",
+  "괜찮아요, 다음에 다시 보면 돼요",
+  "오늘은 여기까지도 충분해요",
+] as const;
+
+const reportPhrases = [
+  "그 순간들이 쌓이고 있어요",
+  "생각해본 순간들이 남고 있어요",
+  "작은 멈춤들이 이어지고 있어요",
+] as const;
 
 const STORAGE_KEYS = {
   settings: "loop-breaker-settings",
   events: "loop-breaker-events",
+  pendingSmsLead: "loop-breaker-pending-sms-lead",
 } as const;
 
 type Step =
@@ -108,7 +108,7 @@ type Step =
   | "response";
 
 type ActionType = "stop" | "continue";
-type AlertMethod = "sms";
+type AlertMethod = "app" | "sms";
 
 type SavedSettings = {
   userId: string | null;
@@ -116,7 +116,6 @@ type SavedSettings = {
   selectedTime: string | null;
   alertMethod: AlertMethod;
   phoneNumber: string;
-  smsConsent: boolean;
   notificationsEnabled: boolean;
 };
 
@@ -128,7 +127,7 @@ type EventItem = {
 
 const SHARE_TITLE = "우린 멈춤을 알려드립니다";
 const SHARE_TEXT =
-  "하고 나서 후회하는 행동들을 잠깐 생각하게 알려주는 서비스입니다.\n멈추는 것만으로도 달라집니다.";
+  "나도 써보는데 괜찮아서 공유합니다\n\n하고 나서 후회하는 행동들을 잠깐 생각하게 알려주는 서비스입니다.\n멈추는 것만으로도 달라집니다.";
 
 function createUserId() {
   return `usr_${Math.random().toString(36).slice(2, 10)}${Date.now()
@@ -181,9 +180,8 @@ export default function Page() {
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedBehavior, setSelectedBehavior] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [alertMethod, setAlertMethod] = useState<AlertMethod>("sms");
+  const [alertMethod, setAlertMethod] = useState<AlertMethod>("app");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [smsConsent, setSmsConsent] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -213,17 +211,11 @@ export default function Page() {
         setUserId(parsed.userId ?? null);
         setSelectedBehavior(parsed.selectedBehavior ?? null);
         setSelectedTime(parsed.selectedTime ?? null);
-        setAlertMethod(parsed.alertMethod ?? "sms");
+        setAlertMethod(parsed.alertMethod ?? "app");
         setPhoneNumber(parsed.phoneNumber ?? "");
-        setSmsConsent(Boolean(parsed.smsConsent));
         setNotificationsEnabled(Boolean(parsed.notificationsEnabled));
 
-        if (
-          parsed.selectedBehavior &&
-          parsed.selectedTime &&
-          parsed.phoneNumber &&
-          parsed.smsConsent
-        ) {
+        if (parsed.selectedBehavior && parsed.selectedTime) {
           setStep("home");
         }
       }
@@ -235,6 +227,7 @@ export default function Page() {
     } catch {
       localStorage.removeItem(STORAGE_KEYS.settings);
       localStorage.removeItem(STORAGE_KEYS.events);
+      localStorage.removeItem(STORAGE_KEYS.pendingSmsLead);
     }
   }, []);
 
@@ -245,7 +238,6 @@ export default function Page() {
       selectedTime,
       alertMethod,
       phoneNumber,
-      smsConsent,
       notificationsEnabled,
     };
     localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(payload));
@@ -255,13 +247,26 @@ export default function Page() {
     selectedTime,
     alertMethod,
     phoneNumber,
-    smsConsent,
     notificationsEnabled,
   ]);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.events, JSON.stringify(events));
   }, [events]);
+
+  useEffect(() => {
+    if (step !== "response" || responseMode !== "continue") return;
+
+    const timer = window.setTimeout(() => {
+      setStep("home");
+      setResponseMode(null);
+      setContinueLine("");
+      setSharePreviewOpen(false);
+      setShareMessage("");
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [step, responseMode]);
 
   const weeklyStopCount = useMemo(() => {
     if (!userId) return 0;
@@ -281,44 +286,48 @@ export default function Page() {
     return ensured;
   };
 
-  const completeSetup = async () => {
-    const cleanedPhone = normalizePhoneNumber(phoneNumber);
-
-    if (!selectedBehavior || !selectedTime) return;
-    if (cleanedPhone.length < 10 || !smsConsent) return;
+  const requestAppNotifications = async () => {
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      setNotificationsEnabled(false);
+      return false;
+    }
 
     try {
-      const { data, error } = await supabase
-        .from("users")
-  .insert([
-    {
-      phone_number: cleanedPhone,
-      behavior_type: selectedBehavior,
-      notification_time: selectedTime,
-      sms_consent: smsConsent,
-    },
-  ])
-  .select();
-localStorage.setItem("user_id", data[0].id);
-const userId = data?.[0]?.id;
-
-alert("users 저장 시도함");
-alert(JSON.stringify({ data, error }));
-
-
-      if (error) throw error;
-
-      if (data?.id) {
-        setUserId(data.id);
-      }
-
-      setPhoneNumber(cleanedPhone);
+      const permission = await Notification.requestPermission();
+      const granted = permission === "granted";
+      setNotificationsEnabled(granted);
+      return granted;
+    } catch {
       setNotificationsEnabled(false);
-      setStep("home");
-    } catch (error) {
-      console.error("사용자 저장 실패", error);
-      alert("저장 중 문제가 생겼습니다. 다시 시도해주세요.");
+      return false;
     }
+  };
+
+  const savePendingSmsLead = (ensuredUserId: string) => {
+    if (alertMethod !== "sms") return;
+
+    const payload = {
+      userId: ensuredUserId,
+      phoneNumber,
+      selectedBehavior,
+      selectedTime,
+      createdAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(STORAGE_KEYS.pendingSmsLead, JSON.stringify(payload));
+  };
+
+  const completeSetup = async () => {
+    const ensuredUserId = ensureUserId();
+
+    if (alertMethod === "app") {
+      await requestAppNotifications();
+    } else {
+      setNotificationsEnabled(false);
+      savePendingSmsLead(ensuredUserId);
+    }
+
+    setStep("home");
   };
 
   const openIntervention = () => {
@@ -328,64 +337,41 @@ alert(JSON.stringify({ data, error }));
     setStep("intervention");
   };
 
-  const handleDecision = async (action: ActionType) => {
-const ensuredUserId = ensureUserId();
+  const sendBrowserNotification = () => {
+    if (typeof window === "undefined") return;
+    if (!("Notification" in window)) return;
+    if (Notification.permission !== "granted") return;
 
- 
-    const timestamp = new Date().toISOString();
-const behavior = behaviors.find((b) => b.key === selectedBehavior);
-if (!behavior) return;
+    const notice = new Notification("우린 멈춤을 알려드립니다", {
+      body: pickRandom(behavior.interventionPool),
+      tag: "loop-breaker-notice",
+    });
 
-setResponseMode(action);
+    notice.onclick = () => {
+      window.focus();
+      openIntervention();
+      notice.close();
+    };
+  };
 
-if (action === "stop") {
-  const responseSource = Array.isArray((behavior as any).responsePool)
-    ? (behavior as any).responsePool
-    : [];
-
-  const fallbackResponse =
-    (behavior as any).actionText ||
-    (behavior as any).displayText ||
-    (behavior as any).label ||
-    "";
-
-  const randomResponse =
-    responseSource.length > 0
-      ? responseSource[Math.floor(Math.random() * responseSource.length)]
-      : fallbackResponse;
-
-  setResponseLine(randomResponse);
-  setContinueLine("");
-} else {
-  setResponseMode("continue");
-
-  const randomContinue =
-    continuePhrases[
-      Math.floor(Math.random() * continuePhrases.length)
-    ];
-  setContinueLine(randomContinue);
-  setResponseLine("");
-}
+  const handleDecision = (action: ActionType) => {
+    const ensuredUserId = ensureUserId();
+    setResponseMode(action);
     setEvents((prev) => [
       ...prev,
-      { userId: ensuredUserId, action, at: timestamp },
+      { userId: ensuredUserId, action, at: new Date().toISOString() },
     ]);
-
-    try {
-      await supabase.from("pause_logs").insert([
-        {
-          user_id: ensuredUserId,
-          behavior_type: selectedBehavior ?? behavior.key,
-          action_type: action === "stop" ? "pause" : "continue",
-          created_at: timestamp,
-        },
-      ]);
-    } catch (error) {
-      console.error("멈춤 기록 저장 실패", error);
-    }
-
     setSharePreviewOpen(false);
     setShareMessage("");
+
+    if (action === "stop") {
+      setResponseLine(pickRandom(behavior.responsePool));
+      setContinueLine("");
+    } else {
+      setContinueLine(pickRandom(continuePhrases));
+      setResponseLine("");
+    }
+
     setStep("response");
   };
 
@@ -446,12 +432,12 @@ if (action === "stop") {
   const resetAll = () => {
     localStorage.removeItem(STORAGE_KEYS.settings);
     localStorage.removeItem(STORAGE_KEYS.events);
+    localStorage.removeItem(STORAGE_KEYS.pendingSmsLead);
     setUserId(null);
     setSelectedBehavior(null);
     setSelectedTime(null);
-    setAlertMethod("sms");
+    setAlertMethod("app");
     setPhoneNumber("");
-    setSmsConsent(false);
     setNotificationsEnabled(false);
     setEvents([]);
     setInterventionLine("");
@@ -580,43 +566,61 @@ if (action === "stop") {
                     </div>
 
                     <div className="space-y-2">
-                      <h2 className="text-2xl font-bold text-slate-900">
-                        알림 받을 번호를 입력해 주세요
-                      </h2>
-                      <SubText>하루 한 번, 정한 시간에 문자로 알려드릴게요</SubText>
+                      <h2 className="text-2xl font-bold text-slate-900">좋습니다</h2>
+                      <SubText>정해주신 시간에 잠깐 알려드릴게요</SubText>
                     </div>
 
                     <div className="space-y-3 text-left">
-                      <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4">
-                        <label className="block text-base text-slate-900">전화번호</label>
-                        <input
-                          value={phoneNumber}
-                          onChange={(e) =>
-                            setPhoneNumber(normalizePhoneNumber(e.target.value))
-                          }
-                          inputMode="numeric"
-                          placeholder="숫자만 입력해주세요"
-                          className="mt-2 h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 outline-none placeholder:text-slate-400"
-                        />
-                      </div>
+                      <div className="text-base text-slate-900">어떻게 알려드릴까요?</div>
 
-                      <label className="flex items-start gap-3 rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4">
-                        <input
-                          type="checkbox"
-                          checked={smsConsent}
-                          onChange={(e) => setSmsConsent(e.target.checked)}
-                          className="mt-1 h-4 w-4 rounded border-slate-300 text-slate-900"
-                        />
-                        <span className="text-sm leading-relaxed text-slate-700">
-                          문자 알림 수신에 동의합니다
-                        </span>
-                      </label>
+                      <button
+                        onClick={() => setAlertMethod("app")}
+                        className={`w-full rounded-[1.35rem] border px-4 py-3 text-left transition ${
+                          alertMethod === "app"
+                            ? "border-slate-400 bg-slate-100"
+                            : "border-slate-200 bg-slate-50 hover:bg-slate-100"
+                        }`}
+                      >
+                        앱 알림으로 받기
+                      </button>
+
+                      <button
+                        onClick={() => setAlertMethod("sms")}
+                        className={`w-full rounded-[1.35rem] border px-4 py-3 text-left transition ${
+                          alertMethod === "sms"
+                            ? "border-slate-400 bg-slate-100"
+                            : "border-slate-200 bg-slate-50 hover:bg-slate-100"
+                        }`}
+                      >
+                        문자로도 받아보기
+                      </button>
+
+                      {alertMethod === "sms" && (
+                        <div className="space-y-2 rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4">
+                          <label className="block text-base text-slate-900">전화번호</label>
+                          <input
+                            value={phoneNumber}
+                            onChange={(e) =>
+                              setPhoneNumber(normalizePhoneNumber(e.target.value))
+                            }
+                            inputMode="numeric"
+                            placeholder="숫자만 입력해주세요"
+                            className="mt-1 h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 outline-none placeholder:text-slate-400"
+                          />
+                          <p className="text-base text-slate-700 text-center">
+                            알림에 필요한 정보만 받을게요
+                          </p>
+                          <p className="text-sm text-slate-600 text-center">
+                            지금은 수동으로 문자를 보내며 테스트합니다
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     <button
                       className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={completeSetup}
-                      disabled={phoneNumber.length < 10 || !smsConsent}
+                      disabled={alertMethod === "sms" && phoneNumber.length < 10}
                     >
                       시작하기
                     </button>
@@ -624,43 +628,48 @@ if (action === "stop") {
                 </Screen>
               )}
 
-{step === "home" && (
-  <Screen key="home">
-    <div className="space-y-6 py-8 text-center">
-      <div className="flex items-center justify-end gap-3">
-        <button
-          onClick={() => setStep("settings")}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 shadow-sm transition hover:bg-slate-100"
-        >
-          <Settings className="h-4 w-4" />
-          설정
-        </button>
-      </div>
+              {step === "home" && (
+                <Screen key="home">
+                  <div className="space-y-6 py-8 text-center">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="text-left text-sm text-slate-700">
+                        {userId ? `사용자 ID · ${userId}` : ""}
+                      </div>
+                      <button
+                        onClick={() => setStep("settings")}
+                        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 shadow-sm transition hover:bg-slate-100"
+                      >
+                        <Settings className="h-4 w-4" />
+                        설정
+                      </button>
+                    </div>
 
-      <button
-        onClick={() => setStep("intervention")}
-        className="px-4 py-2 rounded-xl bg-gray-100 text-slate-700"
-      >
-        멈춤 테스트 진입
-      </button>
+                    <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-8 shadow-sm">
+                      <p className="text-2xl font-bold text-slate-900">
+                        {behavior.displayText}
+                      </p>
+                      <SubText>알림으로 찾아뵐게요</SubText>
+                      <SubText>
+                        {selectedTime} · {alertMethod === "app" ? "앱 알림" : "문자 알림"}
+                      </SubText>
+                    </div>
 
-      <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-8 shadow-sm">
-        <p className="text-2xl font-bold text-slate-900">{behavior.displayText}</p>
-        <SubText>알림으로 찾아뵐게요</SubText>
-        <SubText>{selectedTime} · 문자 알림</SubText>
-      </div>
-
-     {weeklyStopCount > 0 && (
-  <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-6 py-6 text-center shadow-sm">
-    <BodyText>이번 주, {weeklyStopCount}번 멈췄어요</BodyText>
-    <p className="mt-2 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
-      그 순간들이 쌓이고 있어요
-    </p>
-  </div>
-)}
-    </div>
-  </Screen>
-)}
+                    {weeklyStopCount > 0 && (
+                      <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-6 py-6 text-center shadow-sm">
+                        <p className="text-2xl font-bold text-slate-900">
+                          이번 주, {weeklyStopCount}번 멈췄어요
+                        </p>
+                        <p className="mt-3 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
+                          {pickRandom(reportPhrases)}
+                        </p>
+                        <p className="mt-2 text-base text-slate-900 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
+                          변화는 그렇게 시작됩니다
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </Screen>
+              )}
 
               {step === "settings" && (
                 <Screen key="settings">
@@ -672,8 +681,12 @@ if (action === "stop") {
                     <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-base text-slate-900 shadow-sm">
                       <div>행동 · {behavior.label}</div>
                       <div className="mt-1">시간 · {selectedTime}</div>
-                      <div className="mt-1">알림 · 문자 알림</div>
-                      {phoneNumber && <div className="mt-1">전화번호 · {phoneNumber}</div>}
+                      <div className="mt-1">
+                        알림 · {alertMethod === "app" ? "앱 알림" : "문자 알림"}
+                      </div>
+                      {alertMethod === "sms" && phoneNumber && (
+                        <div className="mt-1">전화번호 · {phoneNumber}</div>
+                      )}
                     </div>
 
                     <div className="space-y-3">
@@ -693,8 +706,22 @@ if (action === "stop") {
                         className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
                         onClick={() => setStep("alerts")}
                       >
-                        전화번호 / 알림 정보 바꾸기
+                        알림 방식 바꾸기
                       </button>
+                      <button
+                        className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
+                        onClick={openIntervention}
+                      >
+                        개입 화면 테스트
+                      </button>
+                      {alertMethod === "app" && (
+                        <button
+                          className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
+                          onClick={sendBrowserNotification}
+                        >
+                          앱 알림 테스트
+                        </button>
+                      )}
                     </div>
 
                     <div className="border-t border-slate-200 pt-4 space-y-4">
@@ -749,7 +776,7 @@ if (action === "stop") {
                     <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-6 shadow-sm">
                       <BodyText>{interventionLine}</BodyText>
                       <h2 className="text-3xl font-bold leading-tight text-slate-900">
-                        지금 여기서 한 번만 멈춰볼까요?
+                        여기서 한번 멈춰볼까요
                       </h2>
                     </div>
 
@@ -791,22 +818,26 @@ if (action === "stop") {
                           </h2>
                         </div>
 
-                        <div className="space-y-3">
-                          <button
-                            onClick={openSharePreview}
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 shadow-sm transition hover:bg-slate-100"
-                          >
-                            <Share2 className="h-4 w-4" />
-                            꼭 권하고 싶은 분께 공유해 주세요
-                          </button>
+                        {responseMode === "stop" ? (
+                          <div className="space-y-3">
+                            <button
+                              onClick={openSharePreview}
+                              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 shadow-sm transition hover:bg-slate-100"
+                            >
+                              <Share2 className="h-4 w-4" />
+                              꼭 권하고 싶은 분께 공유해 주세요
+                            </button>
 
-                          <button
-                            className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
-                            onClick={() => setStep("home")}
-                          >
-                            확인
-                          </button>
-                        </div>
+                            <button
+                              className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
+                              onClick={() => setStep("home")}
+                            >
+                              확인
+                            </button>
+                          </div>
+                        ) : (
+                          <p className="text-sm text-slate-500">잠시 후 자연스럽게 돌아갑니다</p>
+                        )}
                       </>
                     )}
 
