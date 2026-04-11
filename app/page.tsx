@@ -289,7 +289,7 @@ export default function Page() {
 
     try {
       const { data, error } = await supabase
-        .from("users")
+  .from("users")
   .insert([
     {
       phone_number: cleanedPhone,
@@ -298,19 +298,12 @@ export default function Page() {
       sms_consent: smsConsent,
     },
   ])
-  .select();
-localStorage.setItem("user_id", data[0].id);
-const userId = data?.[0]?.id;
+  .select()
+  .single();
 
-alert("users 저장 시도함");
-alert(JSON.stringify({ data, error }));
-
-
-      if (error) throw error;
-
-      if (data?.id) {
-        setUserId(data.id);
-      }
+if (error || !data) throw error ?? new Error("사용자 저장 실패");
+localStorage.setItem("user_id", data.id);
+setUserId(data.id);
 
       setPhoneNumber(cleanedPhone);
       setNotificationsEnabled(false);
