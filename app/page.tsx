@@ -203,6 +203,13 @@ export default function Page() {
     setHasMounted(true);
   }, []);
 
+ useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("auto") === "1") {
+    setStep("intervention");
+  }
+ }, []);
+
   useEffect(() => {
     try {
       const savedSettings = localStorage.getItem(STORAGE_KEYS.settings);

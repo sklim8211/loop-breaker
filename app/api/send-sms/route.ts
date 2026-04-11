@@ -120,10 +120,10 @@ export async function GET(req: Request) {
       continue;
     }
 
-    const messages = [
-      "지금 딱 그 순간이에요 🙂\n한 번만 멈춰봐요\nhttps://loop-breaker-w9eo.vercel.app/",
-      "지금이에요 🙂\n한 번만 멈춰볼까요\nhttps://loop-breaker-w9eo.vercel.app/",
-    ];
+   const messages = [
+  "지금 딱 그 순간이에요 🙂\n한 번만 멈춰봐요\nhttps://loop-breaker-e1gt.vercel.app/?auto=1",
+  "지금이에요 🙂\n한 번만 멈춰볼까요\nhttps://loop-breaker-e1gt.vercel.app/?auto=1",
+];
 
     const text = messages[Math.floor(Math.random() * messages.length)];
 
