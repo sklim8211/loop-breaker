@@ -2,10 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+
 
 function getSignature(apiSecret: string, date: string, salt: string) {
   return crypto
@@ -24,7 +21,7 @@ export async function POST(req: Request) {
 
     if (!apiKey || !apiSecret || !from) {
       return NextResponse.json(
-        { error: "SOLAPI 환경변수가 설정되지 않았습니다." },
+        { error: "Missing Solapi environment variables" },
         { status: 500 }
       );
     }
@@ -66,18 +63,30 @@ export async function POST(req: Request) {
   }
 }
 
+
 export async function GET(req: Request) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    return NextResponse.json(
+      { error: "Missing Supabase environment variables" },
+      { status: 500 }
+    );
+  }
+
+  const supabase = createClient(supabaseUrl, serviceRoleKey);
   const { searchParams } = new URL(req.url);
 
   const slot = searchParams.get("slot");
   const secret = searchParams.get("secret");
 
   if (secret !== process.env.CRON_SECRET) {
-    return Response.json({ error: "unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
   if (!slot || !["오전", "오후", "밤"].includes(slot)) {
-    return Response.json({ error: "invalid slot" }, { status: 400 });
+    return NextResponse.json({ error: "invalid slot" }, { status: 400 });
   }
 
   const { data: users, error } = await supabase
