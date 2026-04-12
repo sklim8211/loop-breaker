@@ -358,16 +358,19 @@ useEffect(() => {
     try {
       const { data, error } = await supabase
   .from("users")
-  .insert([
+  .upsert(
     {
       phone_number: cleanedPhone,
       behavior_type: selectedBehavior,
       custom_behavior:
-      selectedBehavior === "other" ? customBehavior.trim() : null,
+        selectedBehavior === "other" ? customBehavior.trim() : null,
       notification_time: selectedTime,
       sms_consent: smsConsent,
     },
-  ])
+    {
+      onConflict: "phone_number",
+    }
+  )
   .select()
   .single();
 
