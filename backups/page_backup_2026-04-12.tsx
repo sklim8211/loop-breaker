@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell, Clock3, Settings, Share2 } from "lucide-react";
 import { supabase } from "../lib/supabase";
@@ -77,7 +77,7 @@ const behaviors = [
     "그만해도 아무 문제 없어요",
     "여기서 멈추는 선택도 있어요",
     ],
-    displayText: "직접 입력한 행동",
+    displayText: "왜 하는지 모르고 계속할 때",
   },
 ] as const;
 
@@ -117,7 +117,6 @@ type SavedSettings = {
   selectedTime: string | null;
   alertMethod: AlertMethod;
   phoneNumber: string;
-  customBehavior: string;
   smsConsent: boolean;
   notificationsEnabled: boolean;
 };
@@ -182,8 +181,6 @@ export default function Page() {
 
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedBehavior, setSelectedBehavior] = useState<string | null>(null);
-  const [customBehavior, setCustomBehavior] = useState("");
-  const [showCustomBehaviorInput, setShowCustomBehaviorInput] = useState(false);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [alertMethod, setAlertMethod] = useState<AlertMethod>("sms");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -198,110 +195,59 @@ export default function Page() {
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [sharePreviewOpen, setSharePreviewOpen] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
-  const autoHandledRef = useRef(false);
 
   const behavior = useMemo(() => {
-   return behaviors.find((item) => item.key === selectedBehavior) ?? behaviors[0];
+    return behaviors.find((item) => item.key === selectedBehavior) ?? behaviors[0];
   }, [selectedBehavior]);
-  const effectiveBehaviorLabel =
-  selectedBehavior === "other" && customBehavior.trim()
-    ? customBehavior.trim()
-    : behavior.label;
-
-const effectiveDisplayText =
-  selectedBehavior === "other" && customBehavior.trim()
-    ? customBehavior.trim()
-    : behavior.displayText;
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-useEffect(() => {
-  const run = async () => {
-    if (typeof window === "undefined") return;
-    if (autoHandledRef.current) return;
+ useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
 
-    const params = new URLSearchParams(window.location.search);
-    const isAuto = params.get("auto") === "1";
-    const uid = params.get("uid");
-
-    if (!isAuto || !uid) return;
-
-    autoHandledRef.current = true;
-
-    const { data, error } = await supabase
-      .from("users")
-      .select("id, behavior_type, custom_behavior, notification_time, phone_number, sms_consent")
-      .eq("id", uid)
-      .single();
-
-    if (error || !data) {
-      console.error("자동 진입 사용자 조회 실패", error);
-      setStep("intro");
-      return;
-    }
-
-    setUserId(data.id);
-    setSelectedBehavior(data.behavior_type ?? null);
-    setCustomBehavior(data.custom_behavior ?? "");
-    setSelectedTime(data.notification_time ?? null);
-    setPhoneNumber(data.phone_number ?? "");
-    setSmsConsent(Boolean(data.sms_consent));
-
-   
-    setSharePreviewOpen(false);
-    setShareMessage("");
+  if (params.get("auto") === "1") {
     setStep("intervention");
-  };
-
-  run();
-}, []);
-
-  const currentBehavior =
-    behaviors.find((item) => item.key === selectedBehavior) ?? behaviors[0];
-
- 
-useEffect(() => {
-  try {
-    if (typeof window === "undefined") return;
-
-    const params = new URLSearchParams(window.location.search);
-    const isAuto = params.get("auto") === "1";
-
-    const savedSettings = localStorage.getItem(STORAGE_KEYS.settings);
-    const savedEvents = localStorage.getItem(STORAGE_KEYS.events);
-
-    if (savedSettings && !isAuto) {
-      const parsed = JSON.parse(savedSettings) as SavedSettings;
-      setUserId(parsed.userId ?? null);
-      setSelectedBehavior(parsed.selectedBehavior ?? null);
-      setSelectedTime(parsed.selectedTime ?? null);
-      setAlertMethod(parsed.alertMethod ?? "sms");
-      setPhoneNumber(parsed.phoneNumber ?? "");
-      setCustomBehavior(parsed.customBehavior ?? "");
-      setSmsConsent(Boolean(parsed.smsConsent));
-      setNotificationsEnabled(Boolean(parsed.notificationsEnabled));
-
-      if (
-        parsed.selectedBehavior &&
-        parsed.selectedTime &&
-        parsed.phoneNumber &&
-        parsed.smsConsent
-      ) {
-        setStep("home");
-      }
-    }
-
-    if (savedEvents) {
-      const parsedEvents = JSON.parse(savedEvents) as EventItem[];
-      setEvents(Array.isArray(parsedEvents) ? parsedEvents : []);
-    }
-  } catch {
-    localStorage.removeItem(STORAGE_KEYS.settings);
-    localStorage.removeItem(STORAGE_KEYS.events);
+  } else {
+    setStep("intro");
   }
 }, []);
+
+  useEffect(() => {
+    try {
+      const savedSettings = localStorage.getItem(STORAGE_KEYS.settings);
+      const savedEvents = localStorage.getItem(STORAGE_KEYS.events);
+
+      if (savedSettings) {
+        const parsed = JSON.parse(savedSettings) as SavedSettings;
+        setUserId(parsed.userId ?? null);
+        setSelectedBehavior(parsed.selectedBehavior ?? null);
+        setSelectedTime(parsed.selectedTime ?? null);
+        setAlertMethod(parsed.alertMethod ?? "sms");
+        setPhoneNumber(parsed.phoneNumber ?? "");
+        setSmsConsent(Boolean(parsed.smsConsent));
+        setNotificationsEnabled(Boolean(parsed.notificationsEnabled));
+
+        if (
+          parsed.selectedBehavior &&
+          parsed.selectedTime &&
+          parsed.phoneNumber &&
+          parsed.smsConsent
+        ) {
+          setStep("home");
+        }
+      }
+
+      if (savedEvents) {
+        const parsedEvents = JSON.parse(savedEvents) as EventItem[];
+        setEvents(Array.isArray(parsedEvents) ? parsedEvents : []);
+      }
+    } catch {
+      localStorage.removeItem(STORAGE_KEYS.settings);
+      localStorage.removeItem(STORAGE_KEYS.events);
+    }
+  }, []);
 
   useEffect(() => {
     const payload: SavedSettings = {
@@ -310,7 +256,6 @@ useEffect(() => {
       selectedTime,
       alertMethod,
       phoneNumber,
-      customBehavior,
       smsConsent,
       notificationsEnabled,
     };
@@ -321,7 +266,6 @@ useEffect(() => {
     selectedTime,
     alertMethod,
     phoneNumber,
-    customBehavior,
     smsConsent,
     notificationsEnabled,
   ]);
@@ -353,7 +297,6 @@ useEffect(() => {
 
     if (!selectedBehavior || !selectedTime) return;
     if (cleanedPhone.length < 10 || !smsConsent) return;
-    if (selectedBehavior === "other" && !customBehavior.trim()) return;
 
     try {
       const { data, error } = await supabase
@@ -362,8 +305,6 @@ useEffect(() => {
     {
       phone_number: cleanedPhone,
       behavior_type: selectedBehavior,
-      custom_behavior:
-      selectedBehavior === "other" ? customBehavior.trim() : null,
       notification_time: selectedTime,
       sms_consent: smsConsent,
     },
@@ -385,27 +326,20 @@ setUserId(data.id);
   };
 
   const openIntervention = () => {
-  if (selectedBehavior === "other" && customBehavior.trim()) {
-    setInterventionLine(`지금 ${customBehavior.trim()} 하고 있네요`);
-  } else {
     setInterventionLine(pickRandom(behavior.interventionPool));
-  }
-
-  setSharePreviewOpen(false);
-  setShareMessage("");
-  setStep("intervention");
-};
+    setSharePreviewOpen(false);
+    setShareMessage("");
+    setStep("intervention");
+  };
 
   const handleDecision = async (action: ActionType) => {
-    const ensuredUserId = ensureUserId();
-    const timestamp = new Date().toISOString();
-    const behavior =
-  behaviors.find((b) => b.key === selectedBehavior) ?? behaviors[0];
+const ensuredUserId = ensureUserId();
 
-  if (!selectedBehavior) {
-  setStep("intro");
-  return;
- }
+ 
+    const timestamp = new Date().toISOString();
+const behavior = behaviors.find((b) => b.key === selectedBehavior);
+if (!behavior) return;
+
 setResponseMode(action);
 
 if (action === "stop") {
@@ -414,12 +348,10 @@ if (action === "stop") {
     : [];
 
   const fallbackResponse =
-  selectedBehavior === "other" && customBehavior.trim()
-    ? "지금 멈춘 것만으로도 충분합니다"
-    : (behavior as any).actionText ||
-      (behavior as any).displayText ||
-      (behavior as any).label ||
-      "";
+    (behavior as any).actionText ||
+    (behavior as any).displayText ||
+    (behavior as any).label ||
+    "";
 
   const randomResponse =
     responseSource.length > 0
@@ -526,6 +458,7 @@ if (action === "stop") {
     setSmsConsent(false);
     setNotificationsEnabled(false);
     setEvents([]);
+    setInterventionLine("");
     setResponseMode(null);
     setResetConfirmOpen(false);
     setSharePreviewOpen(false);
@@ -649,10 +582,8 @@ if (action === "stop") {
                     <div>
                       <div className="mb-2 text-sm text-slate-600">1 / 3</div>
                       <h2 className="text-2xl font-bold text-slate-900">
-                      요즘 하고 나면 후회되는
-                      <br />
-                      멈추고 싶은 행동이 있나요?
-                    </h2>
+                        요즘 가장 자주 반복되는 행동은?
+                      </h2>
                     </div>
 
                     <div className="space-y-3">
@@ -660,17 +591,9 @@ if (action === "stop") {
                         <button
                           key={item.key}
                           onClick={() => {
-                          if (item.key === "other") {
-                           setSelectedBehavior("other");
-                           setShowCustomBehaviorInput(true);
-                           return;
-                          }
-
-                           setSelectedBehavior(item.key);
-                           setCustomBehavior("");
-                           setShowCustomBehaviorInput(false);
-                           setStep("time");
-                          }}          
+                            setSelectedBehavior(item.key);
+                            setStep("time");
+                          }}
                           className="w-full rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-slate-900 shadow-sm transition hover:bg-slate-100"
                         >
                           <span className="text-base font-semibold text-slate-900">
@@ -678,47 +601,6 @@ if (action === "stop") {
                           </span>
                         </button>
                       ))}
-{showCustomBehaviorInput && (
-  <div className="space-y-3 rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left shadow-sm">
-    <label className="block text-base font-semibold text-slate-900">
-      어떤 행동을 멈추고 싶으신가요?
-    </label>
-
-    <input
-      value={customBehavior}
-      onChange={(e) => setCustomBehavior(e.target.value)}
-      placeholder="예: 유튜브 쇼츠 계속 보기"
-      className="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 outline-none placeholder:text-slate-400"
-    />
-
-    <div className="flex gap-2">
-      <button
-        type="button"
-        onClick={() => {
-          setShowCustomBehaviorInput(false);
-          setCustomBehavior("");
-          setSelectedBehavior(null);
-        }}
-        className="h-11 flex-1 rounded-2xl bg-slate-200 text-slate-900 hover:bg-slate-300"
-      >
-        취소
-      </button>
-
-      <button
-        type="button"
-        disabled={!customBehavior.trim()}
-        onClick={() => {
-          if (!customBehavior.trim()) return;
-          setStep("time");
-        }}
-        className="h-11 flex-1 rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        다음
-      </button>
-    </div>
-  </div>
-)}
-
                     </div>
                   </div>
                 </Screen>
@@ -827,7 +709,7 @@ if (action === "stop") {
       
 
       <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-8 shadow-sm">
-        <p className="text-2xl font-bold text-slate-900">{effectiveDisplayText}</p>
+        <p className="text-2xl font-bold text-slate-900">{behavior.displayText}</p>
         <SubText>알림으로 찾아뵐게요</SubText>
         <SubText>{selectedTime} · 문자 알림</SubText>
       </div>
@@ -852,7 +734,7 @@ if (action === "stop") {
                     </div>
 
                     <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-base text-slate-900 shadow-sm">
-                      <div>행동 · {effectiveBehaviorLabel}</div>
+                      <div>행동 · {behavior.label}</div>
                       <div className="mt-1">시간 · {selectedTime}</div>
                       <div className="mt-1">알림 · 문자 알림</div>
                       {phoneNumber && <div className="mt-1">전화번호 · {phoneNumber}</div>}

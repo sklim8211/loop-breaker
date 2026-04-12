@@ -120,22 +120,11 @@ export async function GET(req: Request) {
       continue;
     }
 
-   const customBehavior =
-  typeof user.custom_behavior === "string" ? user.custom_behavior.trim() : "";
+   const messages = [
+  "지금 딱 그 순간이에요 🙂\n한 번만 멈춰봐요\nhttps://loop-breaker-e1gt.vercel.app/?auto=1",
+  "지금이에요 🙂\n한 번만 멈춰볼까요\nhttps://loop-breaker-e1gt.vercel.app/?auto=1",
+];
 
-const baseUrl = "https://loop-breaker-e1gt.vercel.app";
-const autoLink = `${baseUrl}/?auto=1&uid=${user.id}`;
-
-const messages =
-  user.behavior_type === "other" && customBehavior
-    ? [
-        `지금 ${customBehavior} 할 순간이에요 🙂\n한 번만 멈춰볼까요\n${autoLink}`,
-        `지금 ${customBehavior} 하고 있을 순간이에요 🙂\n잠깐 멈춰볼까요\n${autoLink}`,
-      ]
-    : [
-        `지금 딱 그 순간이에요 🙂\n한 번만 멈춰봐요\n${autoLink}`,
-        `지금이에요 🙂\n한 번만 멈춰볼까요\n${autoLink}`,
-      ];
     const text = messages[Math.floor(Math.random() * messages.length)];
 
     const date = new Date().toISOString();
