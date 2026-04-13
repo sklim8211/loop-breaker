@@ -8,7 +8,7 @@ function getSignature(apiSecret: string, date: string, salt: string) {
     .update(date + salt)
     .digest("hex");
 }
-
+ 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const secret = searchParams.get("secret");
