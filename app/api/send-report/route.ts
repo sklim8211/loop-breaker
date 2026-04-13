@@ -63,10 +63,41 @@ export async function GET(req: Request) {
     const stopCount =
       logs?.filter((x) => x.action_type === "pause").length ?? 0;
 
-    const text =
-      stopCount === 0
-        ? `이번 주에는 아직 멈춤이 없었어요\n다음 한 번의 멈춤이 시작입니다\nhttps://loop-breaker-e1gt.vercel.app`
-        : `이번 주, 당신은 ${stopCount}번 멈췄어요\n그 순간들이 쌓이고 있습니다\nhttps://loop-breaker-e1gt.vercel.app`;
+    let text = "";
+
+if (stopCount === 0) {
+  text = `이번 주에는 아직 멈춤이 없었어요
+다음 한 번이 시작이 될 수 있습니다
+https://loop-breaker-e1gt.vercel.app`;
+} else if (stopCount === 1) {
+  text = `이번 주, 1번 멈췄어요
+그 한 번이면 충분합니다
+https://loop-breaker-e1gt.vercel.app`;
+} else if (stopCount === 2) {
+  text = `이번 주, 2번 멈췄어요
+이미 시작되었습니다
+https://loop-breaker-e1gt.vercel.app`;
+} else if (stopCount <= 5) {
+  const options = [
+    `이번 주, ${stopCount}번 멈췄어요
+그 순간들이 쌓이고 있습니다
+https://loop-breaker-e1gt.vercel.app`,
+    `이번 주, ${stopCount}번 멈췄어요
+흐름이 조금씩 달라지고 있습니다
+https://loop-breaker-e1gt.vercel.app`,
+  ];
+  text = options[Math.floor(Math.random() * options.length)];
+} else {
+  const options = [
+    `이번 주, ${stopCount}번 멈췄어요
+멈추는 순간들이 이어지고 있습니다
+https://loop-breaker-e1gt.vercel.app`,
+    `이번 주, ${stopCount}번 멈췄어요
+이제 멈춤이 자연스러워지고 있습니다
+https://loop-breaker-e1gt.vercel.app`,
+  ];
+  text = options[Math.floor(Math.random() * options.length)];
+}
 
     // 문자 발송
     const date = new Date().toISOString();
