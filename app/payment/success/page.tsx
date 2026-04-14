@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function PaymentSuccess() {
+function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const userId = searchParams.get("uid");
@@ -44,5 +44,13 @@ export default function PaymentSuccess() {
         <p className="text-base text-slate-600">내일부터 다시 찾아뵐게요.<br />멈추는 순간, 계속 함께할게요.</p>
       </div>
     </div>
+  );
+}
+
+export default function PaymentSuccess() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">불러오는 중…</div>}>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }
