@@ -5,6 +5,33 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Bell, Clock3, Settings, Share2 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
+const faqItems = [
+  {
+    q: "알림은 하루 몇 번 오나요?",
+    a: "하루 한 번, 정하신 시간대에 문자로 드려요.",
+  },
+  {
+    q: "번호는 어디에 쓰이나요?",
+    a: "알림 문자 발송에만 사용돼요. 다른 용도로는 쓰지 않아요.",
+  },
+  {
+    q: "알림을 바꾸거나 멈추고 싶어요",
+    a: "설정에서 행동, 시간, 전화번호를 언제든 바꾸실 수 있어요.",
+  },
+  {
+    q: "무료 기간이 뭔가요?",
+    a: "처음 2주는 무료로 받아보실 수 있어요. 이후에는 월 2,900원으로 이어가실 수 있어요.",
+  },
+  {
+    q: "유료는 얼마예요?",
+    a: "월 2,900원이에요. 커피 한 잔보다 조금 싸요.",
+  },
+  {
+    q: "행동을 바꾸면 어떻게 되나요?",
+    a: "'처음부터 다시 시작'을 누르면 지금까지의 기록이 모두 사라져요. 새로운 행동으로 처음부터 시작하게 돼요. 신중하게 선택해 주세요.",
+  },
+] as const;
+
 const continuePhrases = [
   "지금 선택도 괜찮아요",
   "그것도 선택이니까요",
@@ -199,7 +226,9 @@ export default function Page() {
   const [sharePreviewOpen, setSharePreviewOpen] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const autoHandledRef = useRef(false);
-
+  const [faqOpen, setFaqOpen] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  
   const behavior = useMemo(() => {
    return behaviors.find((item) => item.key === selectedBehavior) ?? behaviors[0];
   }, [selectedBehavior]);
@@ -847,87 +876,132 @@ if (action === "stop") {
   </Screen>
 )}
 
-              {step === "settings" && (
-                <Screen key="settings">
-                  <div className="space-y-5 py-2">
-                    <div>
-                      <h2 className="text-2xl font-bold text-slate-900">설정</h2>
+             {step === "settings" && (
+  <Screen key="settings">
+    <div className="space-y-5 py-2">
+      <div>
+        <h2 className="text-2xl font-bold text-slate-900">설정</h2>
+      </div>
+
+      <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-base text-slate-900 shadow-sm">
+        <div>행동 · {effectiveBehaviorLabel}</div>
+        <div className="mt-1">시간 · {selectedTime}</div>
+        <div className="mt-1">알림 · 문자 알림</div>
+        {phoneNumber && <div className="mt-1">전화번호 · {phoneNumber}</div>}
+      </div>
+
+      <div className="space-y-3">
+        <button
+          className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
+          onClick={() => setStep("behavior")}
+        >
+          행동 바꾸기
+        </button>
+        <button
+          className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
+          onClick={() => setStep("time")}
+        >
+          시간 바꾸기
+        </button>
+        <button
+          className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
+          onClick={() => setStep("alerts")}
+        >
+          전화번호 / 알림 정보 바꾸기
+        </button>
+      </div>
+
+      <div className="border-t border-slate-200 pt-4 space-y-4">
+
+        {/* FAQ */}
+        <div>
+          <button
+            onClick={() => setFaqOpen((prev) => !prev)}
+            className="flex w-full items-center justify-between text-sm text-slate-600 hover:text-slate-900 transition"
+          >
+            <span>자주 묻는 것들</span>
+            <span className={`text-xs transition-transform duration-200 ${faqOpen ? "rotate-180" : ""}`}>
+              ▼
+            </span>
+          </button>
+
+          {faqOpen && (
+            <div className="mt-3 space-y-2">
+              {faqItems.map((item, i) => (
+                <div
+                  key={i}
+                  className="rounded-[1.1rem] border border-slate-200 bg-slate-50 overflow-hidden"
+                >
+                  <button
+                    onClick={() =>
+                      setOpenFaqIndex((prev) => (prev === i ? null : i))
+                    }
+                    className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-semibold text-slate-900"
+                  >
+                    <span>{item.q}</span>
+                    <span
+                      className={`ml-2 flex-shrink-0 text-slate-400 transition-transform duration-200 ${
+                        openFaqIndex === i ? "rotate-45" : ""
+                      }`}
+                    >
+                      +
+                    </span>
+                  </button>
+                  {openFaqIndex === i && (
+                    <div className="border-t border-slate-200 px-4 py-3 text-sm text-slate-600 leading-relaxed">
+                      {item.a}
                     </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-                    <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-base text-slate-900 shadow-sm">
-                      <div>행동 · {effectiveBehaviorLabel}</div>
-                      <div className="mt-1">시간 · {selectedTime}</div>
-                      <div className="mt-1">알림 · 문자 알림</div>
-                      {phoneNumber && <div className="mt-1">전화번호 · {phoneNumber}</div>}
-                    </div>
+        <button
+          onClick={() => setStep("home")}
+          className="w-full text-left text-sm text-slate-700 transition hover:text-slate-900"
+        >
+          ← 돌아가기
+        </button>
 
-                    <div className="space-y-3">
-                      <button
-                        className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
-                        onClick={() => setStep("behavior")}
-                      >
-                        행동 바꾸기
-                      </button>
-                      <button
-                        className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
-                        onClick={() => setStep("time")}
-                      >
-                        시간 바꾸기
-                      </button>
-                      <button
-                        className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
-                        onClick={() => setStep("alerts")}
-                      >
-                        전화번호 / 알림 정보 바꾸기
-                      </button>
-                    </div>
+        <button
+          className="h-12 w-full rounded-2xl border border-red-200 bg-transparent text-red-500 hover:bg-red-50"
+          onClick={() => setResetConfirmOpen(true)}
+        >
+          처음부터 다시 시작
+        </button>
+      </div>
 
-                    <div className="border-t border-slate-200 pt-4 space-y-4">
-                      <button
-                        onClick={() => setStep("home")}
-                        className="w-full text-left text-sm text-slate-700 transition hover:text-slate-900"
-                      >
-                        ← 돌아가기
-                      </button>
-
-                      <button
-                        className="h-12 w-full rounded-2xl border border-red-200 bg-transparent text-red-500 hover:bg-red-50"
-                        onClick={() => setResetConfirmOpen(true)}
-                      >
-                        처음부터 다시 시작
-                      </button>
-                    </div>
-
-                    {resetConfirmOpen && (
-                      <div className="rounded-[1.5rem] border border-red-200 bg-red-50 p-4 shadow-sm">
-                        <div className="space-y-2">
-                          <h3 className="text-lg font-semibold text-slate-900">
-                            처음부터 다시 시작할까요?
-                          </h3>
-                          <p className="text-base text-slate-700">
-                            지금까지 설정한 내용이 사라집니다.
-                          </p>
-                        </div>
-                        <div className="mt-4 grid grid-cols-2 gap-3">
-                          <button
-                            className="h-11 w-full rounded-2xl bg-slate-200 text-slate-900 hover:bg-slate-300"
-                            onClick={() => setResetConfirmOpen(false)}
-                          >
-                            취소
-                          </button>
-                          <button
-                            className="h-11 w-full rounded-2xl bg-red-500 text-white hover:bg-red-400"
-                            onClick={resetAll}
-                          >
-                            다시 시작
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </Screen>
-              )}
-
+      {resetConfirmOpen && (
+        <div className="rounded-[1.5rem] border border-red-200 bg-red-50 p-4 shadow-sm">
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold text-slate-900">
+              처음부터 다시 시작할까요?
+            </h3>
+            <p className="text-base text-slate-700">
+              지금까지 설정한 내용이 사라집니다.
+            </p>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <button
+              className="h-11 w-full rounded-2xl bg-slate-200 text-slate-900 hover:bg-slate-300"
+              onClick={() => setResetConfirmOpen(false)}
+            >
+              취소
+            </button>
+            <button
+              className="h-11 w-full rounded-2xl bg-red-500 text-white hover:bg-red-400"
+              onClick={resetAll}
+            >
+              다시 시작
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  </Screen>
+)}
               {step === "intervention" && (
                 <Screen key="intervention">
                   <div className="space-y-6 py-8 text-center">

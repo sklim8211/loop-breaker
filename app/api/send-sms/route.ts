@@ -1,11 +1,6 @@
-
-
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-
-
-
 
 function getSignature(apiSecret: string, date: string, salt: string) {
   return crypto
@@ -13,12 +8,13 @@ function getSignature(apiSecret: string, date: string, salt: string) {
     .update(date + salt)
     .digest("hex");
 }
+
 function isSundayNightReportTime(slot: string) {
   const now = new Date();
   const koreaNow = new Date(
     now.toLocaleString("en-US", { timeZone: "Asia/Seoul" })
   );
-  const day = koreaNow.getDay(); // 0 = Sunday
+  const day = koreaNow.getDay();
   return slot === "밤" && day === 0;
 }
 
@@ -62,40 +58,42 @@ async function sendWeeklyReports(supabase: any) {
     const stopCount =
       logs?.filter((x: any) => x.action_type === "pause").length ?? 0;
 
+    const autoLink = `https://loop-breaker-e1gt.vercel.app/?auto=1&uid=${user.id}`;
+
     let text = "";
 
     if (stopCount === 0) {
       text = `이번 주에는 아직 멈춤이 없었어요
 다음 한 번이 시작이 될 수 있습니다
-https://loop-breaker-e1gt.vercel.app`;
+${autoLink}`;
     } else if (stopCount <= 2) {
       const options = [
         `이번 주, ${stopCount}번 멈췄어요
 그 한 번이면 충분합니다
-https://loop-breaker-e1gt.vercel.app`,
+${autoLink}`,
         `이번 주, ${stopCount}번 멈췄어요
 이미 시작되었습니다
-https://loop-breaker-e1gt.vercel.app`,
+${autoLink}`,
       ];
       text = options[Math.floor(Math.random() * options.length)];
     } else if (stopCount <= 5) {
       const options = [
         `이번 주, ${stopCount}번 멈췄어요
 그 순간들이 쌓이고 있습니다
-https://loop-breaker-e1gt.vercel.app`,
+${autoLink}`,
         `이번 주, ${stopCount}번 멈췄어요
 흐름이 조금씩 달라지고 있습니다
-https://loop-breaker-e1gt.vercel.app`,
+${autoLink}`,
       ];
       text = options[Math.floor(Math.random() * options.length)];
     } else {
       const options = [
         `이번 주, ${stopCount}번 멈췄어요
 멈추는 순간들이 이어지고 있습니다
-https://loop-breaker-e1gt.vercel.app`,
+${autoLink}`,
         `이번 주, ${stopCount}번 멈췄어요
 이제 멈춤이 자연스러워지고 있습니다
-https://loop-breaker-e1gt.vercel.app`,
+${autoLink}`,
       ];
       text = options[Math.floor(Math.random() * options.length)];
     }
@@ -135,6 +133,7 @@ https://loop-breaker-e1gt.vercel.app`,
     skippedCount,
   });
 }
+
 export async function POST(req: Request) {
   try {
     const { to, text } = await req.json();
@@ -177,7 +176,6 @@ export async function POST(req: Request) {
     });
 
     const data = await response.json();
-
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
     return NextResponse.json(
@@ -187,23 +185,19 @@ export async function POST(req: Request) {
   }
 }
 
-
 export async function GET(req: Request) {
-console.log("🔥 GET FUNCTION STARTED");
   const { searchParams } = new URL(req.url);
   const slot = searchParams.get("slot");
   const secret = searchParams.get("secret");
-
 
   if (secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-
   if (!slot || !["오전", "오후", "밤"].includes(slot)) {
     return NextResponse.json({ error: "invalid slot" }, { status: 400 });
   }
- 
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -217,10 +211,9 @@ console.log("🔥 GET FUNCTION STARTED");
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
   if (isSundayNightReportTime(slot)) {
-  return await sendWeeklyReports(supabase);
-}
-  
- 
+    return await sendWeeklyReports(supabase);
+  }
+
   const { data: users, error } = await supabase
     .from("users")
     .select("*")
@@ -252,22 +245,31 @@ console.log("🔥 GET FUNCTION STARTED");
       continue;
     }
 
-   const customBehavior =
-  typeof user.custom_behavior === "string" ? user.custom_behavior.trim() : "";
+    const customBehavior =
+      typeof user.custom_behavior === "string" ? user.custom_behavior.trim() : "";
 
-const baseUrl = "https://loop-breaker-e1gt.vercel.app";
-const autoLink = `${baseUrl}/?auto=1&uid=${user.id}`;
+    const baseUrl = "https://loop-breaker-e1gt.vercel.app";
+    const autoLink = `${baseUrl}/?auto=1&uid=${user.id}`;
 
-const messages =
-  user.behavior_type === "other" && customBehavior
-    ? [
-        `지금 ${customBehavior} 할 순간이에요 🙂\n한 번만 멈춰볼까요\n${autoLink}`,
-        `지금 ${customBehavior} 하고 있을 순간이에요 🙂\n잠깐 멈춰볼까요\n${autoLink}`,
-      ]
-    : [
-        `지금 딱 그 순간이에요 🙂\n한 번만 멈춰봐요\n${autoLink}`,
-        `지금이에요 🙂\n한 번만 멈춰볼까요\n${autoLink}`,
-      ];
+    const messages =
+      user.behavior_type === "other" && customBehavior
+        ? [
+            `지금 ${customBehavior} 할 순간이에요 🙂
+한 번만 멈춰볼까요
+${autoLink}`,
+            `지금 ${customBehavior} 하고 있을 순간이에요 🙂
+잠깐 멈춰볼까요
+${autoLink}`,
+          ]
+        : [
+            `지금 딱 그 순간이에요 🙂
+한 번만 멈춰봐요
+${autoLink}`,
+            `지금이에요 🙂
+한 번만 멈춰볼까요
+${autoLink}`,
+          ];
+
     const text = messages[Math.floor(Math.random() * messages.length)];
 
     const date = new Date().toISOString();
