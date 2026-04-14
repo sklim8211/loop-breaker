@@ -272,6 +272,30 @@ useEffect(() => {
       setStep("intro");
       return;
     }
+
+    setUserId(data.id);
+    setSelectedBehavior(data.behavior_type ?? null);
+    setCustomBehavior(data.custom_behavior ?? "");
+    setSelectedTime(data.notification_time ?? null);
+    setPhoneNumber(data.phone_number ?? "");
+    setSmsConsent(Boolean(data.sms_consent));
+
+   
+    setSharePreviewOpen(false);
+    setShareMessage("");
+    const behaviorData = behaviors.find((b) => b.key === data.behavior_type);
+    if (data.behavior_type === "other" && data.custom_behavior?.trim()) {
+      setInterventionLine(`지금 ${data.custom_behavior.trim()} 하고 있네요`);
+    } else if (behaviorData) {
+      setInterventionLine(pickRandom(behaviorData.interventionPool));
+    }
+
+    setStep("intervention");
+  };
+
+  run();
+}, []);
+
 useEffect(() => {
   if (!userId) return;
   const fetchUserStats = async () => {
@@ -290,24 +314,7 @@ useEffect(() => {
     setTotalStopCount(total);
   };
   fetchUserStats();
-  }, [userId]);
-
-    setUserId(data.id);
-    setSelectedBehavior(data.behavior_type ?? null);
-    setCustomBehavior(data.custom_behavior ?? "");
-    setSelectedTime(data.notification_time ?? null);
-    setPhoneNumber(data.phone_number ?? "");
-    setSmsConsent(Boolean(data.sms_consent));
-
-   
-    setSharePreviewOpen(false);
-    setShareMessage("");
-    setStep("intervention");
-  };
-
-  run();
-}, []);
-
+}, [userId]);
   const currentBehavior =
     behaviors.find((item) => item.key === selectedBehavior) ?? behaviors[0];
 
@@ -438,16 +445,15 @@ setUserId(data.id);
   };
 
   const openIntervention = () => {
-  if (selectedBehavior === "other" && customBehavior.trim()) {
-    setInterventionLine(`지금 ${customBehavior.trim()} 하고 있네요`);
-  } else {
-    setInterventionLine(pickRandom(behavior.interventionPool));
-  }
-
-  setSharePreviewOpen(false);
-  setShareMessage("");
-  setStep("intervention");
-};
+    if (selectedBehavior === "other" && customBehavior.trim()) {
+      setInterventionLine(`지금 ${customBehavior.trim()} 하고 있네요`);
+    } else {
+      setInterventionLine(pickRandom(behavior.interventionPool));
+    }
+    setSharePreviewOpen(false);
+    setShareMessage("");
+    setStep("intervention");
+  };
 
   const handleDecision = async (action: ActionType) => {
     const ensuredUserId = ensureUserId();
@@ -588,7 +594,7 @@ if (action === "stop") {
 
   if (!hasMounted) {
     return (
-      <div className="min-h-screen w-full bg-gradient-to-b from-slate-100 to-white text-slate-900 flex items-center justify-center p-4 md:p-6">
+      <div className={`min-h-screen w-full text-slate-900 flex items-center justify-content p-4 md:p-6 transition-colors duration-500 ${step === "intervention" ? "bg-gradient-to-b from-red-50 to-white" : "bg-gradient-to-b from-slate-100 to-white"}`}>
         <div className="w-full max-w-md rounded-[2rem] border border-slate-200 bg-white shadow-xl p-8 text-center text-slate-600">
           불러오는 중…
         </div>
@@ -1040,41 +1046,40 @@ if (action === "stop") {
 )}
               {step === "intervention" && (
                 <Screen key="intervention">
-                  <div className="space-y-6 py-8 text-center">
-                    <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-6 shadow-sm">
-                      <BodyText>{interventionLine}</BodyText>
+                  <div className="space-y-8 py-8 text-center">
+                    <div className="space-y-5 px-2 py-4">
+                      <p className="text-base text-slate-500 leading-relaxed">{interventionLine}</p>
                       <h2 className="text-3xl font-bold leading-tight text-slate-900">
-                        지금 여기서 한 번만 멈춰볼까요?
+                        지금 여기서<br />한 번만<br />멈춰볼까요?
                       </h2>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 pt-2">
-                      <motion.div whileTap={{ scale: 0.97 }}>
-                        <button
-                          className="h-16 w-full rounded-2xl bg-slate-200 text-base text-slate-900 shadow-sm hover:bg-slate-300"
-                          onClick={() => handleDecision("continue")}
-                        >
-                          계속하기
-                        </button>
-                      </motion.div>
-
+                    <div className="flex flex-col gap-3 pt-2">
                       <motion.div
                         animate={{ scale: [1, 1.03, 1] }}
                         transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
                         whileTap={{ scale: 0.97 }}
                       >
                         <button
-                          className="h-16 w-full rounded-2xl bg-red-500 text-base font-bold text-white shadow-sm hover:bg-red-400"
+                          className="h-20 w-full rounded-2xl bg-red-500 text-xl font-bold text-white shadow-sm hover:bg-red-400"
                           onClick={() => handleDecision("stop")}
                         >
                           멈춤
+                        </button>
+                      </motion.div>
+
+                      <motion.div whileTap={{ scale: 0.97 }}>
+                        <button
+                          className="h-11 w-full rounded-2xl border border-slate-200 bg-transparent text-sm text-slate-500 hover:bg-slate-50"
+                          onClick={() => handleDecision("continue")}
+                        >
+                          계속하기
                         </button>
                       </motion.div>
                     </div>
                   </div>
                 </Screen>
               )}
-
               {step === "response" && (
                 <Screen key="response">
                   <div className="space-y-6 py-10 text-center">
