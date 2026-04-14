@@ -604,18 +604,22 @@ if (action === "stop") {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-slate-100 to-white text-slate-900 flex items-center justify-center p-4 md:p-6">
-      <div className="w-full max-w-md">
-        <div className="rounded-[2rem] border border-slate-200 bg-white shadow-xl">
+        <div className="w-full max-w-md">
+        <div className={`rounded-[2rem] border shadow-xl ${
+          step === "intro" || step === "intro2"
+           ? "bg-[#e8eeea] border-[#d8e8dc]"
+           : "bg-white border-slate-200"
+         }`}>
           <div className="p-7 md:p-8">
             <div className="mb-6 flex items-center justify-between text-sm text-slate-600">
               <span className="font-medium tracking-[0.18em]">LOOP BREAKER</span>
-              <span>{step === "settings" ? "설정" : "MVP"}</span>
+              <span>{step === "settings" ? "설정" : ""}</span>
             </div>
 
             <AnimatePresence mode="wait">
               {step === "intro" && (
   <Screen key="intro">
-    <div className="space-y-7 py-10 text-center" style={{background: "#f0ece8", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
+    <div className="space-y-7 py-10 text-center" style={{background: "#e8eeea", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
       <div className="space-y-6">
         <p style={{fontSize: "11px", color: "#a09890", letterSpacing: "0.1em"}}>
           하고 나서 후회하는 행동들
@@ -660,7 +664,7 @@ if (action === "stop") {
                 
 {step === "intro2" && (
   <Screen key="intro2">
-    <div className="space-y-7 py-10 text-center" style={{background: "#f0ece8", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
+   <div className="space-y-7 py-10 text-center" style={{background: "#e8eeea", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
       <div className="space-y-7">
         <div>
           <p style={{fontSize: "20px", fontWeight: "700", letterSpacing: "0.22em", color: "#1c1917", margin: "0 0 8px"}}>
@@ -689,7 +693,7 @@ if (action === "stop") {
       </div>
 
       <button
-        style={{width: "100%", height: "56px", background: "#1c1917", color: "#f0ece8", border: "none", borderRadius: "1rem", fontSize: "15px", fontWeight: "500", cursor: "pointer"}}
+        style={{width: "100%", height: "56px", background: "#1a2a1e", color: "#e8eeea", border: "none", borderRadius: "1rem", fontSize: "15px", fontWeight: "500", cursor: "pointer"}}
         onClick={() => setStep("behavior")}
       >
         시작하기
@@ -1093,7 +1097,7 @@ if (action === "stop") {
                             className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 shadow-sm transition hover:bg-slate-100"
                           >
                             <Share2 className="h-4 w-4" />
-                            꼭 권하고 싶은 분께 공유해 주세요
+                            이 경험, 필요한 분께 전해주세요
                           </button>
 
                           <button
@@ -1107,58 +1111,55 @@ if (action === "stop") {
                     )}
 
                     {sharePreviewOpen && (
-                      <div className="space-y-6 text-center py-2">
-                        <p className="text-sm text-slate-600">이렇게 전해집니다</p>
+  <div className="space-y-6 text-center py-2">
+    <p className="text-sm text-slate-600">이렇게 전해집니다</p>
 
-                        <div className="space-y-3">
-                          <p className="text-sm text-slate-500">
-                            나도 써보는데 괜찮아서 공유합니다
-                          </p>
-                          <p className="text-lg leading-relaxed text-slate-900 max-w-[300px] mx-auto break-keep">
-                            하고 나서 후회하는 행동들을
-                            <br />
-                            잠깐 생각하게 알려주는 서비스입니다.
-                            <br />
-                            멈추는 것만으로도 달라집니다.
-                          </p>
+    <div className="space-y-3">
+      <p className="text-lg leading-relaxed text-slate-900 max-w-[300px] mx-auto break-keep">
+        하고 나서 후회하는 행동,<br />
+        멈추고 싶은데 계속 하게 되는 순간들.<br />
+        <br />
+        그 순간에 한 번만 멈추게 해주는 서비스예요.<br />
+        멈추는 것만으로도 달라집니다.
+      </p>
 
-                          <p className="text-sm text-slate-500 break-all">
-                            {typeof window !== "undefined" ? window.location.origin : ""}
-                          </p>
-                        </div>
+      <p className="text-sm text-slate-500 break-all">
+        {typeof window !== "undefined" ? window.location.origin : ""}
+      </p>
+    </div>
 
-                        {shareMessage && (
-                          <p className="text-sm text-slate-600">{shareMessage}</p>
-                        )}
+    {shareMessage && (
+      <p className="text-sm text-slate-600">{shareMessage}</p>
+    )}
 
-                        <div className="space-y-2">
-                          <button
-                            className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
-                            onClick={sendShareNow}
-                          >
-                            보내기
-                          </button>
+    <div className="space-y-2">
+      <button
+        className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
+        onClick={sendShareNow}
+      >
+        보내기
+      </button>
 
-                          <div className="flex gap-2">
-                            <button
-                              className="h-11 flex-1 rounded-2xl bg-slate-100 text-sm text-slate-700 hover:bg-slate-200"
-                              onClick={copyShareText}
-                            >
-                              복사
-                            </button>
-                            <button
-                              className="h-11 flex-1 rounded-2xl border border-slate-200 bg-white text-sm text-slate-600 hover:bg-slate-50"
-                              onClick={() => {
-                                setSharePreviewOpen(false);
-                                setShareMessage("");
-                              }}
-                            >
-                              닫기
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+      <div className="flex gap-2">
+        <button
+          className="h-11 flex-1 rounded-2xl bg-slate-100 text-sm text-slate-700 hover:bg-slate-200"
+          onClick={copyShareText}
+        >
+          복사
+        </button>
+        <button
+          className="h-11 flex-1 rounded-2xl border border-slate-200 bg-white text-sm text-slate-600 hover:bg-slate-50"
+          onClick={() => {
+            setSharePreviewOpen(false);
+            setShareMessage("");
+          }}
+       >
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+)}
                   </div>
                 </Screen>
               )}
