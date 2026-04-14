@@ -18,6 +18,86 @@ function isSundayNightReportTime(slot: string) {
   return slot === "밤" && day === 0;
 }
 
+async function sendTrialEndingNotifications(supabase: any) {
+  const apiKey = process.env.SOLAPI_API_KEY!;
+  const apiSecret = process.env.SOLAPI_API_SECRET!;
+  const sender = process.env.SOLAPI_SENDER!;
+
+  const now = new Date();
+  const d1Date = new Date(now);
+  d1Date.setDate(now.getDate() - 13);
+  const d0Date = new Date(now);
+  d0Date.setDate(now.getDate() - 14);
+
+  const { data: users } = await supabase
+    .from("users")
+    .select("id, phone_number, trial_started_at, created_at")
+    .eq("is_paid", false)
+    .eq("sms_consent", true);
+
+  for (const user of users ?? []) {
+    const trialStart = user.trial_started_at
+      ? new Date(user.trial_started_at)
+      : new Date(user.created_at);
+
+    const daysSinceTrial = Math.floor(
+      (now.getTime() - trialStart.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    const paymentLink = `https://loop-breaker-e1gt.vercel.app/payment?uid=${user.id}`;
+
+    let text = "";
+
+    if (daysSinceTrial === 13) {
+      text = `루프브레이커입니다.
+
+2주간 함께했어요.
+내일이면 무료 기간이 끝납니다.
+
+계속 받고 싶으시면
+아래 링크에서 이어가실 수 있어요.
+
+${paymentLink}
+
+안 하셔도 괜찮아요.
+멈추려 했던 순간들은 이미 당신 안에 있으니까요.`;
+    } else if (daysSinceTrial === 14) {
+      text = `루프브레이커입니다.
+
+오늘부터 알림이 멈춥니다.
+
+계속 이어가고 싶으시다면
+월 2,900원으로 받아보실 수 있어요.
+
+${paymentLink}
+
+짧은 멈춤이 변화를 만든다는 걸
+이미 아시잖아요.`;
+    }
+
+    if (!text) continue;
+
+    const date = new Date().toISOString();
+    const salt = Math.random().toString(36).slice(2);
+    const signature = getSignature(apiSecret, date, salt);
+
+    await fetch("https://api.solapi.com/messages/v4/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`,
+      },
+      body: JSON.stringify({
+        message: {
+          to: user.phone_number,
+          from: sender,
+          text,
+        },
+      }),
+    });
+  }
+}
+
 async function sendWeeklyReports(supabase: any) {
   const apiKey = process.env.SOLAPI_API_KEY!;
   const apiSecret = process.env.SOLAPI_API_SECRET!;
@@ -209,6 +289,8 @@ export async function GET(req: Request) {
   }
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
+
+  await sendTrialEndingNotifications(supabase);
 
   if (isSundayNightReportTime(slot)) {
     return await sendWeeklyReports(supabase);

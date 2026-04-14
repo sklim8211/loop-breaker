@@ -263,7 +263,7 @@ useEffect(() => {
 
     const { data, error } = await supabase
       .from("users")
-      .select("id, behavior_type, custom_behavior, notification_time, phone_number, sms_consent")
+      .select("id, behavior_type, custom_behavior, notification_time, phone_number, sms_consent, is_paid, trial_started_at, created_at")
       .eq("id", uid)
       .single();
 
@@ -283,6 +283,20 @@ useEffect(() => {
    
     setSharePreviewOpen(false);
     setShareMessage("");
+
+    // 2주 무료 기간 체크
+    const trialStart = data.trial_started_at
+      ? new Date(data.trial_started_at)
+      : new Date(data.created_at);
+    const daysSinceTrial = Math.floor(
+      (Date.now() - trialStart.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    if (!data.is_paid && daysSinceTrial >= 14) {
+      window.location.href = `/payment?uid=${data.id}`;
+      return;
+    }
+
     const behaviorData = behaviors.find((b) => b.key === data.behavior_type);
     if (data.behavior_type === "other" && data.custom_behavior?.trim()) {
       setInterventionLine(`지금 ${data.custom_behavior.trim()} 하고 있네요`);
