@@ -1,9 +1,1 @@
-{
-  "crons": [
-    
-    {
-      "path": "/api/send-sms?slot=%EB%B0%A4&secret=mysecret123",
-      "schedule": "0 11 * * *"
-    }
-  ]
-}
+{}
