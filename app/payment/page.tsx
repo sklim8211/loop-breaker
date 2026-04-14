@@ -15,7 +15,7 @@ function PaymentContent() {
     script.src = "https://js.tosspayments.com/v1/payment-widget";
     script.onload = async () => {
       const clientKey = process.env.NEXT_PUBLIC_TOSSPAYMENTS_CLIENT_KEY!;
-      const paymentWidget = (window as any).PaymentWidget(clientKey, userId);
+      const paymentWidget = (window as any).PaymentWidget(clientKey, (window as any).PaymentWidget.ANONYMOUS);
       paymentWidgetRef.current = paymentWidget;
 
       await paymentWidget.renderPaymentMethods(

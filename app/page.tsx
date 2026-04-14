@@ -631,43 +631,44 @@ if (action === "stop") {
             </div>
 
             <AnimatePresence mode="wait">
+
               {step === "intro" && (
-  <Screen key="intro">
+               <Screen key="intro">
     <div className="space-y-7 py-10 text-center" style={{background: "#e8eeea", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
       <div className="space-y-6">
-        <p style={{fontSize: "11px", color: "#a09890", letterSpacing: "0.1em"}}>
+        <p style={{fontSize: "13px", color: "#4a6b52", letterSpacing: "0.08em"}}>
           하고 나서 후회하는 행동들
         </p>
-        <h1 style={{fontSize: "1.7rem", fontWeight: "700", color: "#1c1917", lineHeight: "1.4"}}>
+        <h1 style={{fontSize: "1.7rem", fontWeight: "700", color: "#1a2a1e", lineHeight: "1.4"}}>
           멈추고 싶었던 적<br />있으신가요?
         </h1>
 
-        <p style={{fontSize: "13px", color: "#78716c", lineHeight: "1.9"}}>
+        <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9"}}>
           행동은 의지가 약해서가 아니라<br />
-          <span style={{color: "#1c1917", fontWeight: "600"}}>생각하기 전에 자동으로</span> 시작됩니다
+          <span style={{color: "#1a2a1e", fontWeight: "600"}}>생각하기 전에 자동으로</span> 시작됩니다
         </p>
 
-        <p style={{fontSize: "14px", color: "#78716c", lineHeight: "1.9"}}>
+        <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9"}}>
           그래서 필요한 건 그 순간<br />
           <span style={{color: "#dc2626", fontWeight: "700"}}>단 한 번의 멈춤</span>입니다
         </p>
 
-        <div style={{background: "#e2ddd8", borderRadius: "1.25rem", border: "0.5px solid #d6d0cb", padding: "16px", textAlign: "left"}}>
-          <p style={{fontSize: "12px", fontWeight: "600", color: "#1c1917", margin: "0 0 6px"}}>
+        <div style={{background: "#d8e8dc", borderRadius: "1.25rem", border: "0.5px solid #c8dcc8", padding: "16px", textAlign: "left"}}>
+          <p style={{fontSize: "14px", fontWeight: "600", color: "#1a2a1e", margin: "0 0 6px"}}>
             왜 효과가 있을까요?
           </p>
-          <p style={{fontSize: "11px", color: "#78716c", lineHeight: "1.6", margin: 0}}>
+          <p style={{fontSize: "13px", color: "#2d4a35", lineHeight: "1.7", margin: 0}}>
             짧은 개입의 반복이 자기통제를<br />
             강화할 수 있다고 봅니다
           </p>
-          <p style={{fontSize: "10px", color: "#a09890", margin: "6px 0 0"}}>
+          <p style={{fontSize: "12px", color: "#4a6b52", margin: "6px 0 0"}}>
             Baumeister, Muraven 연구 기반
           </p>
         </div>
       </div>
 
       <button
-        style={{width: "100%", height: "56px", background: "#1c1917", color: "#f0ece8", border: "none", borderRadius: "1rem", fontSize: "15px", fontWeight: "500", cursor: "pointer"}}
+        style={{width: "100%", height: "56px", background: "#1a2a1e", color: "#e8eeea", border: "none", borderRadius: "1rem", fontSize: "15px", fontWeight: "500", cursor: "pointer"}}
         onClick={() => setStep("intro2")}
       >
         이 서비스 보기
@@ -678,34 +679,31 @@ if (action === "stop") {
                 
 {step === "intro2" && (
   <Screen key="intro2">
-   <div className="space-y-7 py-10 text-center" style={{background: "#e8eeea", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
+    <div className="space-y-7 py-10 text-center" style={{background: "#e8eeea", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
       <div className="space-y-7">
         <div>
-          <p style={{fontSize: "20px", fontWeight: "700", letterSpacing: "0.22em", color: "#1c1917", margin: "0 0 8px"}}>
+          <p style={{fontSize: "20px", fontWeight: "700", letterSpacing: "0.22em", color: "#1a2a1e", margin: "0 0 8px"}}>
             LOOP BREAKER
           </p>
-          <p style={{fontSize: "12px", color: "#a09890", letterSpacing: "0.06em", margin: 0}}>
+          <p style={{fontSize: "14px", color: "#4a6b52", letterSpacing: "0.06em", margin: 0}}>
             우리는 멈춤을 알려드립니다
           </p>
         </div>
-
-        <div style={{width: "28px", height: "1px", background: "#c8c2bc", margin: "0 auto"}} />
-
+        <div style={{width: "28px", height: "1px", background: "#a8c8ac", margin: "0 auto"}} />
         <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
-          <p style={{fontSize: "14px", color: "#a09890", lineHeight: "1.9", margin: 0}}>
+          <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9", margin: 0}}>
             멈추는 순간은 아주 짧습니다
           </p>
-          <p style={{fontSize: "14px", color: "#78716c", lineHeight: "1.9", margin: 0}}>
-            하지만 그 <span style={{color: "#1c1917", fontWeight: "700"}}>짧은 멈춤</span>이 쌓이면<br />
-            <span style={{color: "#1c1917", fontWeight: "700"}}>변화</span>가 시작됩니다
+          <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9", margin: 0}}>
+            하지만 그 <span style={{color: "#1a2a1e", fontWeight: "700"}}>짧은 멈춤</span>이 쌓이면<br />
+            <span style={{color: "#1a2a1e", fontWeight: "700"}}>변화</span>가 시작됩니다
           </p>
-          <p style={{fontSize: "14px", color: "#78716c", lineHeight: "1.9", margin: 0}}>
-            우리는 그 <span style={{color: "#1c1917", fontWeight: "700"}}>변화</span>를<br />
-            당신의 <span style={{color: "#1c1917", fontWeight: "700"}}>일상</span> 안에서 만들고자 합니다
+          <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9", margin: 0}}>
+            우리는 그 <span style={{color: "#1a2a1e", fontWeight: "700"}}>변화</span>를<br />
+            당신의 <span style={{color: "#1a2a1e", fontWeight: "700"}}>일상</span> 안에서 만들고자 합니다
           </p>
         </div>
       </div>
-
       <button
         style={{width: "100%", height: "56px", background: "#1a2a1e", color: "#e8eeea", border: "none", borderRadius: "1rem", fontSize: "15px", fontWeight: "500", cursor: "pointer"}}
         onClick={() => setStep("behavior")}
