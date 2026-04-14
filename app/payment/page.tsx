@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-export default function PaymentPage() {
+function PaymentContent() {
   const searchParams = useSearchParams();
   const userId = searchParams.get("uid");
   const paymentWidgetRef = useRef<any>(null);
@@ -64,5 +64,13 @@ export default function PaymentPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">불러오는 중…</div>}>
+      <PaymentContent />
+    </Suspense>
   );
 }
