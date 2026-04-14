@@ -228,7 +228,9 @@ export default function Page() {
   const autoHandledRef = useRef(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-  
+  const [totalStopCount, setTotalStopCount] = useState(0);
+  const [joinedAt, setJoinedAt] = useState<string | null>(null);
+
   const behavior = useMemo(() => {
    return behaviors.find((item) => item.key === selectedBehavior) ?? behaviors[0];
   }, [selectedBehavior]);
@@ -270,6 +272,25 @@ useEffect(() => {
       setStep("intro");
       return;
     }
+useEffect(() => {
+  if (!userId) return;
+  const fetchUserStats = async () => {
+    const { data } = await supabase
+      .from("users")
+      .select("created_at")
+      .eq("id", userId)
+      .single();
+    if (data?.created_at) setJoinedAt(data.created_at);
+
+    const { data: logs } = await supabase
+      .from("pause_logs")
+      .select("action_type")
+      .eq("user_id", userId);
+    const total = logs?.filter((x) => x.action_type === "pause").length ?? 0;
+    setTotalStopCount(total);
+  };
+  fetchUserStats();
+  }, [userId]);
 
     setUserId(data.id);
     setSelectedBehavior(data.behavior_type ?? null);
@@ -856,26 +877,41 @@ if (action === "stop") {
         </button>
       </div>
 
-      
-
       <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-8 shadow-sm">
         <p className="text-2xl font-bold text-slate-900">{effectiveDisplayText}</p>
         <SubText>알림으로 찾아뵐게요</SubText>
         <SubText>{selectedTime} · 문자 알림</SubText>
       </div>
 
-     {weeklyStopCount > 0 && (
-  <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-6 py-6 text-center shadow-sm">
-    <BodyText>이번 주, {weeklyStopCount}번 멈췄어요</BodyText>
-    <p className="mt-2 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
-      그 순간들이 쌓이고 있어요
-    </p>
-  </div>
-)}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-4 py-6 text-center shadow-sm">
+          <p className="text-3xl font-bold text-slate-900">{totalStopCount}</p>
+          <p className="mt-2 text-sm text-slate-600">총 멈춤</p>
+        </div>
+        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-4 py-6 text-center shadow-sm">
+          <p className="text-3xl font-bold text-slate-900">
+            {joinedAt
+              ? Math.floor(
+                  (Date.now() - new Date(joinedAt).getTime()) /
+                    (1000 * 60 * 60 * 24)
+                ) + 1
+              : 1}
+          </p>
+          <p className="mt-2 text-sm text-slate-600">함께한 일수</p>
+        </div>
+      </div>
+
+      {weeklyStopCount > 0 && (
+        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-6 py-6 text-center shadow-sm">
+          <BodyText>이번 주, {weeklyStopCount}번 멈췄어요</BodyText>
+          <p className="mt-2 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
+            그 순간들이 쌓이고 있어요
+          </p>
+        </div>
+      )}
     </div>
   </Screen>
 )}
-
              {step === "settings" && (
   <Screen key="settings">
     <div className="space-y-5 py-2">
