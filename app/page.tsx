@@ -841,7 +841,7 @@ if (action === "stop") {
                       <h2 className="text-2xl font-bold text-slate-900">
                         알림 받을 번호를 입력해 주세요
                       </h2>
-                      <SubText>하루 한 번, 정한 시간에 문자로 알려드릴게요</SubText>
+                      <SubText>하루 한 번, 정한 시간에(10시,14시,20시) 문자로 알려드릴게요</SubText>
                     </div>
 
                     <div className="space-y-3 text-left">
