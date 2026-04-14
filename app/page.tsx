@@ -614,86 +614,82 @@ if (action === "stop") {
 
             <AnimatePresence mode="wait">
               {step === "intro" && (
-               <Screen key="intro">
-    <div className="space-y-7 py-10 text-center">
-
-      <div className="space-y-4">
-        <h1 className="text-[1.8rem] font-semibold tracking-tight text-slate-900 leading-relaxed">
+  <Screen key="intro">
+    <div className="space-y-7 py-10 text-center" style={{background: "#f0ece8", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
+      <div className="space-y-6">
+        <p style={{fontSize: "11px", color: "#a09890", letterSpacing: "0.1em"}}>
           하고 나서 후회하는 행동들
+        </p>
+        <h1 style={{fontSize: "1.7rem", fontWeight: "700", color: "#1c1917", lineHeight: "1.4"}}>
+          멈추고 싶었던 적<br />있으신가요?
         </h1>
 
-        <BodyText>
-          멈추고 싶었는데,<br />
-          계속하게 되는 순간들이 있습니다
-        </BodyText>
+        <p style={{fontSize: "13px", color: "#78716c", lineHeight: "1.9"}}>
+          행동은 의지가 약해서가 아니라<br />
+          <span style={{color: "#1c1917", fontWeight: "600"}}>생각하기 전에 자동으로</span> 시작됩니다
+        </p>
 
-        <SubText>
-          행동은 의지가 약해서 반복되는 것이 아니라<br />
-          생각하기 전에 자동으로 시작됩니다
-        </SubText>
+        <p style={{fontSize: "14px", color: "#78716c", lineHeight: "1.9"}}>
+          그래서 필요한 건 그 순간<br />
+          <span style={{color: "#dc2626", fontWeight: "700"}}>단 한 번의 멈춤</span>입니다
+        </p>
 
-        <SubText>
-          그래서 필요한 건<br />
-          그 순간, <span className="font-semibold text-red-600">단 한 번의 멈춤입니다</span>
-        </SubText>
-
-        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-5 py-5 text-left      shadow-sm">
-          <p className="text-sm font-semibold text-slate-900">
-            왜 이 방식이 효과가 있을까요?
+        <div style={{background: "#e2ddd8", borderRadius: "1.25rem", border: "0.5px solid #d6d0cb", padding: "16px", textAlign: "left"}}>
+          <p style={{fontSize: "12px", fontWeight: "600", color: "#1c1917", margin: "0 0 6px"}}>
+            왜 효과가 있을까요?
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-slate-700 break-keep">
-            행동과학에서는 짧은 개입의 반복이<br />
-            자기통제를 강화할 수 있다고 봅니다
-           </p>
-
-           <p className="mt-1 text-xs text-blue-400">
-           Baumeister, Muraven 연구 기반
-           </p>
+          <p style={{fontSize: "11px", color: "#78716c", lineHeight: "1.6", margin: 0}}>
+            짧은 개입의 반복이 자기통제를<br />
+            강화할 수 있다고 봅니다
+          </p>
+          <p style={{fontSize: "10px", color: "#a09890", margin: "6px 0 0"}}>
+            Baumeister, Muraven 연구 기반
+          </p>
         </div>
       </div>
 
       <button
-        className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
+        style={{width: "100%", height: "56px", background: "#1c1917", color: "#f0ece8", border: "none", borderRadius: "1rem", fontSize: "15px", fontWeight: "500", cursor: "pointer"}}
         onClick={() => setStep("intro2")}
       >
         이 서비스 보기
       </button>
-
     </div>
   </Screen>
 )}
                 
 {step === "intro2" && (
   <Screen key="intro2">
-    <div className="space-y-7 py-10 text-center">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100 shadow-sm">
-        <Bell className="h-8 w-8 text-slate-700" />
-      </div>
-
-      <div className="space-y-4">
-        <h1 className="text-[1.8rem] font-semibold tracking-tight text-slate-900 leading-relaxed">
-          우리는 멈춤을 알려드립니다
-        </h1>
-
-        <BodyText>
-          멈추는 순간은 아주 짧습니다
-        </BodyText>
-
-         <SubText>
-         하지만 그 <span className="font-semibold text-blue-600">짧은 멈춤</span>이 쌓이면
-         <br />
-         <span className="font-semibold text-blue-600">변화</span>가 시작됩니다
-         </SubText>
-
-        <SubText>
-        우리는 그 <span className="font-semibold text-blue-600">변화</span>를
-        <br />
-        당신의 <span className="font-semibold text-blue-600">일상</span> 안에서 만들고자 합니다
-        </SubText>      
+    <div className="space-y-7 py-10 text-center" style={{background: "#f0ece8", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
+      <div className="space-y-7">
+        <div>
+          <p style={{fontSize: "20px", fontWeight: "700", letterSpacing: "0.22em", color: "#1c1917", margin: "0 0 8px"}}>
+            LOOP BREAKER
+          </p>
+          <p style={{fontSize: "12px", color: "#a09890", letterSpacing: "0.06em", margin: 0}}>
+            우리는 멈춤을 알려드립니다
+          </p>
         </div>
 
+        <div style={{width: "28px", height: "1px", background: "#c8c2bc", margin: "0 auto"}} />
+
+        <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
+          <p style={{fontSize: "14px", color: "#a09890", lineHeight: "1.9", margin: 0}}>
+            멈추는 순간은 아주 짧습니다
+          </p>
+          <p style={{fontSize: "14px", color: "#78716c", lineHeight: "1.9", margin: 0}}>
+            하지만 그 <span style={{color: "#1c1917", fontWeight: "700"}}>짧은 멈춤</span>이 쌓이면<br />
+            <span style={{color: "#1c1917", fontWeight: "700"}}>변화</span>가 시작됩니다
+          </p>
+          <p style={{fontSize: "14px", color: "#78716c", lineHeight: "1.9", margin: 0}}>
+            우리는 그 <span style={{color: "#1c1917", fontWeight: "700"}}>변화</span>를<br />
+            당신의 <span style={{color: "#1c1917", fontWeight: "700"}}>일상</span> 안에서 만들고자 합니다
+          </p>
+        </div>
+      </div>
+
       <button
-        className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
+        style={{width: "100%", height: "56px", background: "#1c1917", color: "#f0ece8", border: "none", borderRadius: "1rem", fontSize: "15px", fontWeight: "500", cursor: "pointer"}}
         onClick={() => setStep("behavior")}
       >
         시작하기
