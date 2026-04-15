@@ -8,7 +8,7 @@ import { supabase } from "../lib/supabase";
 const faqItems = [
   {
     q: "알림은 하루 몇 번 오나요?",
-    a: "하루 한 번, 정하신 시간대에 문자로 드려요.",
+    a: "하루 한 번 오전 10시, 오후 14시, 밤 20시 정한 시간에 알림문자 드려요.",
   },
   {
     q: "번호는 어디에 쓰이나요?",
@@ -841,7 +841,7 @@ if (action === "stop") {
                       <h2 className="text-2xl font-bold text-slate-900">
                         알림 받을 번호를 입력해 주세요
                       </h2>
-                      <SubText>하루 한 번, 정한 시간에(10시,14시,20시) 문자로 알려드릴게요</SubText>
+                      <SubText>하루 한 번, 정한 시간에 문자로 알려드릴게요</SubText>
                     </div>
 
                     <div className="space-y-3 text-left">
