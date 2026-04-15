@@ -34,6 +34,10 @@ const faqItems = [
   q: "문자가 두 번 온 것처럼 보여요",
   a: "아이폰에서는 [Web발신] 표시로 인해 문자가 두 부분으로 나눠 보일 수 있어요. 실제로는 한 번만 발송된 거예요. 불편하시면 수신거부를 하셔도 괜찮아요.",
   },
+  {
+    q: "문의나 도움이 필요해요",
+    a: "불편한 점이나 문의사항은 이메일로 연락주세요. loopbreaklab@gmail.com",
+  },
 ] as const;
 
 const continuePhrases = [
