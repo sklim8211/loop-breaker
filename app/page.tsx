@@ -330,13 +330,21 @@ useEffect(() => {
 
     const { data: logs } = await supabase
       .from("pause_logs")
-      .select("action_type")
+      .select("action_type, created_at")
       .eq("user_id", userId);
+
     const total = logs?.filter((x) => x.action_type === "pause").length ?? 0;
     setTotalStopCount(total);
+
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const weekly = logs?.filter((x) =>
+      x.action_type === "pause" && x.created_at >= weekAgo
+    ).length ?? 0;
+    setWeeklyStopCount(weekly);
   };
   fetchUserStats();
 }, [userId]);
+
   const currentBehavior =
     behaviors.find((item) => item.key === selectedBehavior) ?? behaviors[0];
 
@@ -409,17 +417,7 @@ useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.events, JSON.stringify(events));
   }, [events]);
 
-  const weeklyStopCount = useMemo(() => {
-    if (!userId) return 0;
-    return events.filter((event) => {
-      const diff = Date.now() - new Date(event.at).getTime();
-      return (
-        event.userId === userId &&
-        event.action === "stop" &&
-        diff <= 7 * 24 * 60 * 60 * 1000
-      );
-    }).length;
-  }, [events, userId]);
+  const [weeklyStopCount, setWeeklyStopCount] = useState(0);
 
   const ensureUserId = () => {
     const ensured = userId ?? createUserId();
@@ -1136,7 +1134,7 @@ if (action === "stop") {
         하고 나서 후회하는 행동,<br />
         멈추고 싶은데 계속 하게 되는 순간들.<br />
         <br />
-        그 순간에 한 번만 멈추게 해주는 서비스예요.<br />
+        그 순간에 한 번 멈추게 해주는 서비스예요.<br />
         멈추는 것만으로도 달라집니다.
       </p>
 
