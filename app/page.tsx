@@ -459,11 +459,8 @@ setUserId(data.id);
   };
 
   const openIntervention = () => {
-    if (selectedBehavior === "other" && customBehavior.trim()) {
-      setInterventionLine(`지금 ${customBehavior.trim()} 하고 있네요`);
-    } else {
-      setInterventionLine(pickRandom(behavior.interventionPool));
-    }
+    
+    setInterventionLine(pickRandom(behavior.interventionPool));
     setSharePreviewOpen(false);
     setShareMessage("");
     setStep("intervention");
@@ -758,8 +755,8 @@ if (action === "stop") {
     <input
       value={customBehavior}
       onChange={(e) => setCustomBehavior(e.target.value)}
-      placeholder="예: 유튜브 쇼츠 계속 보기"
-      className="h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 outline-none placeholder:text-slate-400"
+      placeholder="직접 입력하세요"
+     className="h-12 w-full rounded-xl border-2 border-slate-300 bg-white px-3 text-slate-900 outline-none placeholder:text-slate-500 focus:border-slate-500"
     />
 
     <div className="flex gap-2">
