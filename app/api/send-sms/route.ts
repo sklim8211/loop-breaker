@@ -48,7 +48,7 @@ async function sendTrialEndingNotifications(supabase: any) {
 
     let text = "";
 
-    if (daysSinceTrial === 13) {
+    if (daysSinceTrial === 59) {
       text = `루프브레이커입니다.
 
 2주간 함께했어요.
@@ -61,7 +61,7 @@ ${paymentLink}
 
 안 하셔도 괜찮아요.
 멈추려 했던 순간들은 이미 당신 안에 있으니까요.`;
-    } else if (daysSinceTrial === 14) {
+    } else if (daysSinceTrial === 60) {
       text = `루프브레이커입니다.
 
 오늘부터 알림이 멈춥니다.
