@@ -688,9 +688,9 @@ if (action === "stop") {
           <p style={{fontSize: "20px", fontWeight: "700", letterSpacing: "0.22em", color: "#1a2a1e", margin: "0 0 8px"}}>
             LOOP BREAKER
           </p>
-          <p style={{fontSize: "14px", color: "#4a6b52", letterSpacing: "0.06em", margin: 0}}>
-            우리는 멈춤을 알려드립니다
-          </p>
+          <p style={{fontSize: "18px", fontWeight: "700", color: "#1a2a1e", letterSpacing: "0.06em", margin: 0}}>
+  우리는 멈춤을 알려드립니다
+</p>
         </div>
         <div style={{width: "28px", height: "1px", background: "#a8c8ac", margin: "0 auto"}} />
         <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
