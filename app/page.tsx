@@ -231,6 +231,7 @@ export default function Page() {
   const [continueLine, setContinueLine] = useState("");
   const [responseMode, setResponseMode] = useState<ActionType | null>(null);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [stopConfirmOpen, setStopConfirmOpen] = useState(false);
   const [sharePreviewOpen, setSharePreviewOpen] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const autoHandledRef = useRef(false);
@@ -1036,8 +1037,8 @@ if (action === "stop") {
           ← 돌아가기
         </button>
        <button
-          className="h-12 w-full rounded-2xl border border-slate-200 bg-transparent text-        slate-600 hover:bg-slate-50"
-          onClick={stopAlerts}
+          className="h-12 w-full rounded-2xl border border-slate-200 bg-transparent text-slate-600 hover:bg-slate-50"
+          onClick={() => setStopConfirmOpen(true)}
         >
           알림 중지
         </button>
@@ -1048,7 +1049,35 @@ if (action === "stop") {
           처음부터 다시 시작
         </button>
       </div>
-
+{stopConfirmOpen && (
+  <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 shadow-sm">
+    <div className="space-y-2">
+      <h3 className="text-lg font-semibold text-slate-900">
+        알림을 중지할까요?
+      </h3>
+      <p className="text-base text-slate-700">
+        문자 알림이 더 이상 오지 않아요.
+      </p>
+    </div>
+    <div className="mt-4 grid grid-cols-2 gap-3">
+      <button
+        className="h-11 w-full rounded-2xl bg-slate-200 text-slate-900 hover:bg-slate-300"
+        onClick={() => setStopConfirmOpen(false)}
+      >
+        취소
+      </button>
+      <button
+        className="h-11 w-full rounded-2xl bg-slate-900 text-white hover:bg-slate-800"
+        onClick={() => {
+          setStopConfirmOpen(false);
+          stopAlerts();
+        }}
+      >
+        중지
+      </button>
+    </div>
+  </div>
+)}
 
       {resetConfirmOpen && (
         <div className="rounded-[1.5rem] border border-red-200 bg-red-50 p-4 shadow-sm">
