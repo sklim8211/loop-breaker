@@ -1063,7 +1063,7 @@ if (action === "stop") {
                 <Screen key="intervention">
                   <div className="space-y-8 py-8 text-center">
                     <div className="space-y-5 px-2 py-4">
-                      <p className="text-base text-slate-500 leading-relaxed">{interventionLine}</p>
+                     <p className="text-lg text-slate-700 leading-relaxed font-medium">{interventionLine}</p>
                       <h2 className="text-3xl font-bold leading-tight text-slate-900">
                         지금 여기서<br />한 번만<br />멈춰볼까요?
                       </h2>
