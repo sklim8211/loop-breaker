@@ -947,9 +947,9 @@ if (action === "stop") {
 
       {weeklyStopCount > 0 && (
         <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-6 py-6 text-center shadow-sm">
-          <BodyText>이번 주, {weeklyStopCount}번 멈췄어요</BodyText>
+         <BodyText>이번 주, {weeklyStopCount}번 멈춰 생각했어요</BodyText>
           <p className="mt-2 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
-            그 순간들이 쌓이고 있어요
+            그 순간들의 반복, 변화가 찾아와요
           </p>
         </div>
       )}

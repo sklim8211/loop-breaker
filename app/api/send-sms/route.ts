@@ -143,41 +143,40 @@ async function sendWeeklyReports(supabase: any) {
     let text = "";
 
     if (stopCount === 0) {
-      text = `이번 주에는 아직 멈춤이 없었어요
-다음 한 번이 시작이 될 수 있습니다
+      text = `이번 주에는 아직 없었어요
+괜찮아요, 다음 주가 있어요
 ${autoLink}`;
     } else if (stopCount <= 2) {
       const options = [
-        `이번 주, ${stopCount}번 멈췄어요
-그 한 번이면 충분합니다
+        `이번 주, ${stopCount}번 멈춰 생각했네요
+그 순간이 시작이에요
 ${autoLink}`,
-        `이번 주, ${stopCount}번 멈췄어요
-이미 시작되었습니다
+        `이번 주, ${stopCount}번 멈춰 생각했네요
+잠깐이었지만, 됐어요
 ${autoLink}`,
       ];
       text = options[Math.floor(Math.random() * options.length)];
     } else if (stopCount <= 5) {
       const options = [
-        `이번 주, ${stopCount}번 멈췄어요
-그 순간들이 쌓이고 있습니다
+        `이번 주, ${stopCount}번 멈춰 생각했네요
+그 순간들, 변화가 찾아와요
 ${autoLink}`,
-        `이번 주, ${stopCount}번 멈췄어요
-흐름이 조금씩 달라지고 있습니다
+        `이번 주, ${stopCount}번 멈춰 생각했네요
+흐름이 조금씩 달라지고 있어요
 ${autoLink}`,
       ];
       text = options[Math.floor(Math.random() * options.length)];
     } else {
       const options = [
-        `이번 주, ${stopCount}번 멈췄어요
-멈추는 순간들이 이어지고 있습니다
+        `이번 주, ${stopCount}번 멈춰 생각했네요
+이제 자연스러워지고 있어요
 ${autoLink}`,
-        `이번 주, ${stopCount}번 멈췄어요
-이제 멈춤이 자연스러워지고 있습니다
+        `이번 주, ${stopCount}번 멈춰 생각했네요
+그 순간들의 반복, 변화가 찾아와요
 ${autoLink}`,
       ];
       text = options[Math.floor(Math.random() * options.length)];
     }
-
     const date = new Date().toISOString();
     const salt = Math.random().toString(36).slice(2);
     const signature = getSignature(apiSecret, date, salt);
