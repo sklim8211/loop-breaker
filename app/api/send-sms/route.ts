@@ -333,12 +333,10 @@ export async function GET(req: Request) {
     const baseUrl = "https://loop-breaker-e1gt.vercel.app";
     const autoLink = `${baseUrl}/?auto=1&uid=${user.id}`;
 
-    const messages = [
-  `지금 딱 그 순간이에요 🙂
-한 번만 멈춰봐요
+ const messages = [
+  `잠깐 생각하고 갈게요 🙂
 ${autoLink}`,
-  `지금이에요 🙂
-한 번만 멈춰볼까요
+  `지금 생각하는 시간이요 🙂
 ${autoLink}`,
 ];
 
