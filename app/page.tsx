@@ -41,11 +41,20 @@ const faqItems = [
 ] as const;
 
 const continuePhrases = [
-  "지금 선택도 괜찮아요",
-  "그것도 선택이니까요",
-  "괜찮아요, 다음에 다시 보면 돼요",
-  "오늘은 여기까지도 충분해요",
+  "그래요, 괜찮아요",
+  "오늘은 그냥 넘어가요",
+  "다음에 또 오잖아요",
+  "그것도 선택이에요",
 ] as const;
+
+const responsePhrases = [
+  "오, 생각했네요",
+  "잠깐이었지만, 됐어요",
+  "그거면 충분해요",
+  "생각했으면 된 거예요",
+  "어, 생각했잖아요",
+] as const;
+
 const behaviors = [
   {
     key: "smartphone",
@@ -500,9 +509,7 @@ const stopAlerts = async () => {
 setResponseMode(action);
 
 if (action === "stop") {
-  const responseSource = Array.isArray((behavior as any).responsePool)
-    ? (behavior as any).responsePool
-    : [];
+  const responseSource = responsePhrases;
 
   const fallbackResponse =
   selectedBehavior === "other" && customBehavior.trim()
@@ -703,24 +710,25 @@ if (action === "stop") {
           <p style={{fontSize: "20px", fontWeight: "700", letterSpacing: "0.22em", color: "#1a2a1e", margin: "0 0 8px"}}>
             LOOP BREAKER
           </p>
-          <p style={{fontSize: "18px", fontWeight: "700", color: "#1a2a1e", letterSpacing: "0.06em", margin: 0}}>
-  우리는 멈춤을 알려드립니다
+          <p style={{fontSize: "16px", fontWeight: "700", color: "#1a2a1e", letterSpacing: "0.06em", margin: 0}}>
+  우리는 잠깐 멈춰 생각할 순간을 알려드립니다
 </p>
         </div>
         <div style={{width: "28px", height: "1px", background: "#a8c8ac", margin: "0 auto"}} />
         <div style={{display: "flex", flexDirection: "column", gap: "16px"}}>
-          <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9", margin: 0}}>
-            멈추는 순간은 아주 짧습니다
-          </p>
-          <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9", margin: 0}}>
-            하지만 그 <span style={{color: "#1a2a1e", fontWeight: "700"}}>짧은 멈춤</span>이 쌓이면<br />
-            <span style={{color: "#1a2a1e", fontWeight: "700"}}>변화</span>가 시작됩니다
-          </p>
-          <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9", margin: 0}}>
-            우리는 그 <span style={{color: "#1a2a1e", fontWeight: "700"}}>변화</span>를<br />
-            당신의 <span style={{color: "#1a2a1e", fontWeight: "700"}}>일상</span> 안에서 만들고자 합니다
-          </p>
-        </div>
+  <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9", margin: 0}}>
+    정한 시간에 <span style={{color: "#1a2a1e", fontWeight: "700"}}>문자 한 통</span>이 와요
+  </p>
+  <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9", margin: 0}}>
+    그 순간 잠깐 멈춰 생각하는 것<br />
+    그게 전부예요
+  </p>
+  <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9", margin: 0}}>
+    멈춰 생각하는 시간은 짧지만<br />
+    <span style={{color: "#1a2a1e", fontWeight: "700"}}>그 순간들이 쌓이면</span><br />
+    <span style={{color: "#1a2a1e", fontWeight: "700"}}>변화</span>가 시작됩니다
+  </p>
+</div>
       </div>
       <button
         style={{width: "100%", height: "56px", background: "#1a2a1e", color: "#e8eeea", border: "none", borderRadius: "1rem", fontSize: "15px", fontWeight: "500", cursor: "pointer"}}
@@ -1114,7 +1122,7 @@ if (action === "stop") {
                     <div className="space-y-5 px-2 py-4">
                      <p className="text-lg text-slate-700 leading-relaxed font-medium">{interventionLine}</p>
                       <h2 className="text-3xl font-bold leading-tight text-slate-900">
-                        지금 여기서<br />한 번만<br />멈춰볼까요?
+                        오늘 하루<br />한 번쯤<br />생각해봐요
                       </h2>
                     </div>
 
@@ -1125,20 +1133,20 @@ if (action === "stop") {
                         whileTap={{ scale: 0.97 }}
                       >
                         <button
-                          className="h-20 w-full rounded-2xl bg-red-500 text-xl font-bold text-white shadow-sm hover:bg-red-400"
-                          onClick={() => handleDecision("stop")}
-                        >
-                          멈춤
-                        </button>
+  className="h-20 w-full rounded-2xl bg-red-500 text-xl font-bold text-white shadow-sm hover:bg-red-400"
+                     onClick={() => handleDecision("stop")}
+                     >
+                     생각했어요
+                     </button>
                       </motion.div>
 
                       <motion.div whileTap={{ scale: 0.97 }}>
                         <button
-                          className="h-11 w-full rounded-2xl border border-slate-200 bg-transparent text-sm text-slate-500 hover:bg-slate-50"
-                          onClick={() => handleDecision("continue")}
-                        >
-                          계속하기
-                        </button>
+  className="h-11 w-full rounded-2xl border border-slate-200 bg-transparent text-sm text-slate-500 hover:bg-slate-50"
+                      onClick={() => handleDecision("continue")}
+                      >
+                      괜찮아요
+                      </button>
                       </motion.div>
                     </div>
                   </div>
