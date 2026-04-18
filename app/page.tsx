@@ -711,7 +711,7 @@ if (action === "stop") {
             LOOP BREAKER
           </p>
           <p style={{fontSize: "16px", fontWeight: "700", color: "#1a2a1e", letterSpacing: "0.06em", margin: 0}}>
-  우리는 잠깐 멈춰 생각할 순간을 알려드립니다
+  우리는 잠깐 멈춰 생각할 순간을 알려드려요
 </p>
         </div>
         <div style={{width: "28px", height: "1px", background: "#a8c8ac", margin: "0 auto"}} />
