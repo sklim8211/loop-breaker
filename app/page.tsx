@@ -471,6 +471,20 @@ setUserId(data.id);
     setShareMessage("");
     setStep("intervention");
   };
+const stopAlerts = async () => {
+    if (!userId) return;
+    try {
+      await supabase
+        .from("users")
+        .update({ sms_consent: false })
+        .eq("id", userId);
+      setSmsConsent(false);
+      alert("알림이 중지되었습니다.");
+    } catch (error) {
+      console.error("알림 중지 실패", error);
+      alert("처리 중 문제가 생겼습니다. 다시 시도해주세요.");
+    }
+  };
 
   const handleDecision = async (action: ActionType) => {
     const ensuredUserId = ensureUserId();
@@ -1021,7 +1035,12 @@ if (action === "stop") {
         >
           ← 돌아가기
         </button>
-
+       <button
+          className="h-12 w-full rounded-2xl border border-slate-200 bg-transparent text-        slate-600 hover:bg-slate-50"
+          onClick={stopAlerts}
+        >
+          알림 중지
+        </button>
         <button
           className="h-12 w-full rounded-2xl border border-red-200 bg-transparent text-red-500 hover:bg-red-50"
           onClick={() => setResetConfirmOpen(true)}
@@ -1029,6 +1048,7 @@ if (action === "stop") {
           처음부터 다시 시작
         </button>
       </div>
+
 
       {resetConfirmOpen && (
         <div className="rounded-[1.5rem] border border-red-200 bg-red-50 p-4 shadow-sm">
