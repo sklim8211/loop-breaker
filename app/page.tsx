@@ -1164,13 +1164,15 @@ if (action === "stop") {
                         </div>
 
                         <div className="space-y-3">
-                          <button
-                            onClick={openSharePreview}
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 shadow-sm transition hover:bg-slate-100"
-                          >
-                            <Share2 className="h-4 w-4" />
-                            이 경험, 필요한 분께 전해주세요
-                          </button>
+                          <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-center">
+  <p className="text-base font-medium text-slate-700">혹시 생각나는 분 있어요?</p>
+  <button
+    onClick={openSharePreview}
+    className="mt-2 text-sm text-slate-500 underline underline-offset-2 hover:text-slate-700"
+  >
+    탭해서 전해주세요
+  </button>
+</div>
 
                           <button
                             className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
@@ -1184,22 +1186,23 @@ if (action === "stop") {
 
                     {sharePreviewOpen && (
   <div className="space-y-6 text-center py-2">
-    <p className="text-sm text-slate-600">이렇게 전해집니다</p>
+  
+  <div className="space-y-4">
+    <p className="text-base leading-relaxed text-slate-800 max-w-[300px] mx-auto break-keep">
+      하고 나서 후회하는 행동들,<br />
+      멈추고 싶은데 계속 하게 되는 순간들.<br />
+      <br />
+      하루 한 번 문자로 알려드려요.<br />
+      그 순간 잠깐 생각하는 것, 그게 전부예요.<br />
+      그 순간들의 반복, 변화가 찾아와요.
+    </p>
 
-    <div className="space-y-3">
-      <p className="text-lg leading-relaxed text-slate-900 max-w-[300px] mx-auto break-keep">
-        하고 나서 후회하는 행동,<br />
-        멈추고 싶은데 계속 하게 되는 순간들.<br />
-        <br />
-        그 순간에 한 번 멈추게 해주는 서비스예요.<br />
-        멈추는 것만으로도 달라집니다.
-      </p>
-
-      <p className="text-sm text-slate-500 break-all">
+    <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 mx-auto max-w-[300px]">
+      <p className="text-sm font-medium text-slate-700 break-all">
         {typeof window !== "undefined" ? window.location.origin : ""}
       </p>
     </div>
-
+  </div>
     {shareMessage && (
       <p className="text-sm text-slate-600">{shareMessage}</p>
     )}
