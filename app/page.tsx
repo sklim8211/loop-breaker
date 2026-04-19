@@ -244,6 +244,10 @@ export default function Page() {
   const [sharePreviewOpen, setSharePreviewOpen] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const autoHandledRef = useRef(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
+  const [codeVerified, setCodeVerified] = useState(false);
+  const [verifyError, setVerifyError] = useState("");
   const [faqOpen, setFaqOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [totalStopCount, setTotalStopCount] = useState(0);
@@ -435,6 +439,43 @@ useEffect(() => {
     return ensured;
   };
 
+  const sendVerificationCode = async () => {
+  const cleanedPhone = normalizePhoneNumber(phoneNumber);
+  if (cleanedPhone.length < 10) return;
+  try {
+    const res = await fetch("/api/verify-phone", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: cleanedPhone, action: "send" }),
+    });
+    if (res.ok) {
+      setCodeSent(true);
+      setVerifyError("");
+    }
+  } catch (error) {
+    console.error("인증번호 발송 실패", error);
+  }
+};
+
+const verifyCode = async () => {
+  const cleanedPhone = normalizePhoneNumber(phoneNumber);
+  try {
+    const res = await fetch("/api/verify-phone", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: cleanedPhone, action: "verify", code: verificationCode }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setCodeVerified(true);
+      setVerifyError("");
+    } else {
+      setVerifyError(data.error ?? "인증번호가 올바르지 않아요.");
+    }
+  } catch (error) {
+    console.error("인증번호 확인 실패", error);
+  }
+};
   const completeSetup = async () => {
     const cleanedPhone = normalizePhoneNumber(phoneNumber);
 
@@ -857,57 +898,99 @@ if (action === "stop") {
               )}
 
               {step === "alerts" && (
-                <Screen key="alerts">
-                  <div className="space-y-6 py-9 text-center">
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100 shadow-sm">
-                      <Bell className="h-8 w-8 text-slate-700" />
-                    </div>
+  <Screen key="alerts">
+    <div className="space-y-6 py-9 text-center">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100 shadow-sm">
+        <Bell className="h-8 w-8 text-slate-700" />
+      </div>
 
-                    <div className="space-y-2">
-                      <h2 className="text-2xl font-bold text-slate-900">
-                        알림 받을 번호를 입력해 주세요
-                      </h2>
-                      <SubText>하루 한 번, 정한 시간에 문자로 알려드릴게요</SubText>
-                    </div>
+      <div className="space-y-2">
+        <h2 className="text-2xl font-bold text-slate-900">
+          알림 받을 번호를 입력해 주세요
+        </h2>
+        <SubText>하루 한 번, 정한 시간에 문자로 알려드릴게요</SubText>
+      </div>
 
-                    <div className="space-y-3 text-left">
-                      <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4">
-                        <label className="block text-base text-slate-900">전화번호</label>
-                        <input
-                          value={phoneNumber}
-                          onChange={(e) =>
-                            setPhoneNumber(normalizePhoneNumber(e.target.value))
-                          }
-                          inputMode="numeric"
-                          placeholder="숫자만 입력해주세요"
-                          className="mt-2 h-12 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 outline-none placeholder:text-slate-400"
-                        />
-                      </div>
+      <div className="space-y-3 text-left">
+        <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4">
+          <label className="block text-base text-slate-900">전화번호</label>
+          <div className="mt-2 flex gap-2">
+            <input
+              value={phoneNumber}
+              onChange={(e) => {
+                setPhoneNumber(normalizePhoneNumber(e.target.value));
+                setCodeSent(false);
+                setCodeVerified(false);
+                setVerifyError("");
+              }}
+              inputMode="numeric"
+              placeholder="숫자만 입력해주세요"
+              className="h-12 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-slate-900 outline-none placeholder:text-slate-400"
+              disabled={codeVerified}
+            />
+            <button
+              onClick={sendVerificationCode}
+              disabled={phoneNumber.length < 10 || codeVerified}
+              className="h-12 rounded-xl bg-slate-900 px-4 text-sm text-white disabled:opacity-50"
+            >
+              {codeSent ? "재발송" : "인증받기"}
+            </button>
+          </div>
+        </div>
 
-                      <label className="flex items-start gap-3 rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4">
-                        <input
-                          type="checkbox"
-                          checked={smsConsent}
-                          onChange={(e) => setSmsConsent(e.target.checked)}
-                          className="mt-1 h-4 w-4 rounded border-slate-300 text-slate-900"
-                        />
-                        <span className="text-sm leading-relaxed text-slate-700">
-                          문자 알림 수신에 동의합니다
-                        </span>
-                      </label>
-                    </div>
+        {codeSent && !codeVerified && (
+          <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4">
+            <label className="block text-base text-slate-900">인증번호</label>
+            <div className="mt-2 flex gap-2">
+              <input
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                inputMode="numeric"
+                placeholder="6자리 숫자"
+                maxLength={6}
+                className="h-12 flex-1 rounded-xl border border-slate-200 bg-white px-3 text-slate-900 outline-none placeholder:text-slate-400"
+              />
+              <button
+                onClick={verifyCode}
+                disabled={verificationCode.length !== 6}
+                className="h-12 rounded-xl bg-slate-900 px-4 text-sm text-white disabled:opacity-50"
+              >
+                확인
+              </button>
+            </div>
+            {verifyError && (
+              <p className="mt-2 text-sm text-red-500">{verifyError}</p>
+            )}
+          </div>
+        )}
 
-                    <button
-                      className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-                      onClick={completeSetup}
-                      disabled={phoneNumber.length < 10 || !smsConsent}
-                    >
-                      시작하기
-                    </button>
-                  </div>
-                </Screen>
-              )}
+        {codeVerified && (
+          <p className="text-sm text-center text-green-600">인증이 완료됐어요 ✓</p>
+        )}
 
+        <label className="flex items-start gap-3 rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4">
+          <input
+            type="checkbox"
+            checked={smsConsent}
+            onChange={(e) => setSmsConsent(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-slate-300 text-slate-900"
+          />
+          <span className="text-sm leading-relaxed text-slate-700">
+            문자 알림 수신에 동의합니다
+          </span>
+        </label>
+      </div>
+
+      <button
+        className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+        onClick={completeSetup}
+        disabled={!codeVerified || !smsConsent}
+      >
+        시작하기
+      </button>
+    </div>
+  </Screen>
+)}
 {step === "home" && (
   <Screen key="home">
     <div className="space-y-6 py-8 text-center">
