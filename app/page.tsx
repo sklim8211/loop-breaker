@@ -701,7 +701,7 @@ if (action === "stop") {
   <Screen key="intro">
     <div className="space-y-7 py-10 text-center" style={{background: "#e8eeea", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
       <div className="space-y-6">
-    <h1 style={{fontSize: "1.7rem", fontWeight: "700", color: "#1a2a1e", lineHeight: "1.4"}}>
+    <h1 style={{fontSize: "1.5rem", fontWeight: "700", color: "#1a2a1e", lineHeight: "1.4"}}>
         하고 나서 후회하는 행동들을<br />
         나도 모르게 또 하고<br />
         있던 적 없으신가요?
