@@ -697,35 +697,30 @@ if (action === "stop") {
             </div>
 
             <AnimatePresence mode="wait">
-
               {step === "intro" && (
-               <Screen key="intro">
+  <Screen key="intro">
     <div className="space-y-7 py-10 text-center" style={{background: "#e8eeea", margin: "-28px", padding: "40px 28px", borderRadius: "2rem"}}>
       <div className="space-y-6">
-        <p style={{fontSize: "13px", color: "#4a6b52", letterSpacing: "0.08em"}}>
-          하고 나서 후회하는 행동들
-        </p>
         <h1 style={{fontSize: "1.7rem", fontWeight: "700", color: "#1a2a1e", lineHeight: "1.4"}}>
-          멈추고 싶었던 적<br />있으신가요?
+          하고 나서 후회하는 행동들을<br />
+          나도 모르게 또 하고 있었던 적<br />
+          있으신가요?
         </h1>
-
         <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9"}}>
           행동은 의지가 약해서가 아니라<br />
           <span style={{color: "#1a2a1e", fontWeight: "600"}}>생각하기 전에 자동으로</span> 시작됩니다
         </p>
-
         <p style={{fontSize: "15px", color: "#2d4a35", lineHeight: "1.9"}}>
           그래서 필요한 건 그 순간<br />
-          <span style={{color: "#dc2626", fontWeight: "700"}}>단 한 번의 멈춤</span>입니다
+          <span style={{color: "#dc2626", fontWeight: "700"}}>잠깐 멈춰 생각하는 것</span>, 그게 전부예요
         </p>
-
         <div style={{background: "#d8e8dc", borderRadius: "1.25rem", border: "0.5px solid #c8dcc8", padding: "16px", textAlign: "left"}}>
-          <p style={{fontSize: "14px", fontWeight: "600", color: "#1a2a1e", margin: "0 0 6px"}}>
+          <p style={{fontSize: "15px", fontWeight: "700", color: "#1a2a1e", margin: "0 0 8px", letterSpacing: "0.03em", textDecoration: "underline", textUnderlineOffset: "4px"}}>
             왜 효과가 있을까요?
           </p>
           <p style={{fontSize: "13px", color: "#2d4a35", lineHeight: "1.7", margin: 0}}>
-            짧은 개입의 반복이 자기통제를<br />
-            강화할 수 있다고 봅니다
+            잠깐 멈춰 생각하는 순간들의 반복이<br />
+            행동을 바꾸기 시작합니다
           </p>
           <p style={{fontSize: "12px", color: "#4a6b52", margin: "6px 0 0"}}>
             Baumeister, Muraven 연구 기반
