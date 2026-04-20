@@ -1247,15 +1247,16 @@ if (action === "stop") {
                         </div>
 
                         <div className="space-y-3">
-                          <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-center">
-  <p className="text-base font-medium text-slate-700">혹시 생각나는 분 있어요?</p>
-  <button
-    onClick={openSharePreview}
-    className="mt-2 text-sm text-slate-500 underline underline-offset-2 hover:text-slate-700"
-  >
-    탭해서 전해주세요
-  </button>
-</div>
+                          <button
+  onClick={openSharePreview}
+  className="w-full rounded-[1.35rem] border border-[#c8dcc8] bg-[#e8eeea] px-4 py-4 text-center hover:bg-[#d8e8dc] transition"
+>
+  <p className="text-base font-medium text-[#1a2a1e]">혹시 생각나는 분 있어요?</p>
+  <div className="mt-2 flex items-center justify-center gap-2 text-sm text-[#2d4a35]">
+    <Share2 className="h-4 w-4" />
+    <span>탭해서 전해주세요</span>
+  </div>
+</button>
 
                           <button
                             className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
