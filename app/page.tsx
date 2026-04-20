@@ -248,6 +248,7 @@ export default function Page() {
   const [codeSent, setCodeSent] = useState(false);
   const [codeVerified, setCodeVerified] = useState(false);
   const [verifyError, setVerifyError] = useState("");
+  const [isSendingCode, setIsSendingCode] = useState(false);
   const [faqOpen, setFaqOpen] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [totalStopCount, setTotalStopCount] = useState(0);
@@ -442,6 +443,8 @@ useEffect(() => {
   const sendVerificationCode = async () => {
   const cleanedPhone = normalizePhoneNumber(phoneNumber);
   if (cleanedPhone.length < 10) return;
+  if (isSendingCode) return;
+  setIsSendingCode(true);
   try {
     const res = await fetch("/api/verify-phone", {
       method: "POST",
@@ -454,6 +457,8 @@ useEffect(() => {
     }
   } catch (error) {
     console.error("인증번호 발송 실패", error);
+  } finally {
+    setIsSendingCode(false);
   }
 };
 
@@ -925,8 +930,8 @@ if (action === "stop") {
             />
             <button
               onClick={sendVerificationCode}
-              disabled={phoneNumber.length < 10 || codeVerified}
-              className="h-12 rounded-xl bg-slate-900 px-4 text-sm text-white disabled:opacity-50"
+              disabled={phoneNumber.length < 10 || codeVerified || isSendingCode}
+              className="h-12 rounded-xl bg-slate-900 px-3 text-xs text-white disabled:opacity-50 whitespace-nowrap"
             >
               {codeSent ? "재발송" : "인증받기"}
             </button>
