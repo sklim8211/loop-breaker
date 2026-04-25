@@ -15,7 +15,8 @@ function isSundayNightReportTime(slot: string) {
     now.toLocaleString("en-US", { timeZone: "Asia/Seoul" })
   );
   const day = koreaNow.getDay();
-  return slot === "밤" && day === 0;
+
+  return slot === "20:00" && day === 0;
 }
 
 async function sendTrialEndingNotifications(supabase: any) {
@@ -268,14 +269,31 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const slot = searchParams.get("slot");
   const secret = searchParams.get("secret");
+  const allowedSlots = [
+  "08:00",
+  "10:00",
+  "12:00",
+  "14:00",
+  "16:00",
+  "18:00",
+  "20:00",
+  "22:00",
+];
+
+if (!slot || !allowedSlots.includes(slot)) {
+
+  return NextResponse.json({ error: "invalid slot" }, { status: 400 });
+
+}
+
+if (!slot || !allowedSlots.includes(slot)) {
+  return NextResponse.json({ error: "invalid slot" }, { status: 400 });
+}
 
   if (secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-
-  if (!slot || !["오전", "오후", "밤"].includes(slot)) {
-    return NextResponse.json({ error: "invalid slot" }, { status: 400 });
-  }
+ 
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

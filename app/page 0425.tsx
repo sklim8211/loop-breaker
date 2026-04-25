@@ -128,17 +128,9 @@ const behaviors = [
 ] as const;
 
 const timeOptions = [
-  { key: "10:00", label: "오전", desc: "기본 10시" },
-  { key: "14:00", label: "오후", desc: "기본 2시" },
-  { key: "20:00", label: "밤", desc: "기본 8시" },
-] as const;
-
-const customTimeOptions = [
-  { key: "08:00", label: "08시" },
-  { key: "12:00", label: "12시" },
-  { key: "16:00", label: "16시" },
-  { key: "18:00", label: "18시" },
-  { key: "22:00", label: "22시" },
+  { key: "morning", label: "오전" },
+  { key: "afternoon", label: "오후" },
+  { key: "night", label: "밤" },
 ] as const;
 
 const diagnosisCopy = {
@@ -1384,7 +1376,7 @@ if (action === "stop") {
   </Screen>
 )}
 
-  {step === "time" && (
+          {step === "time" && (
   <Screen key="time">
     <div className="space-y-5 py-3">
       <div>
@@ -1392,9 +1384,6 @@ if (action === "stop") {
         <h2 className="text-2xl font-bold text-slate-900">
           언제 가장 흔들리나요?
         </h2>
-        <p className="mt-2 text-base text-slate-700 leading-relaxed">
-          편하게 고르셔도 되고, 시간을 조금 더 맞춰도 좋아요
-        </p>
       </div>
 
       <div className="space-y-3">
@@ -1402,7 +1391,7 @@ if (action === "stop") {
           <button
             key={item.key}
             onClick={() => {
-              setSelectedTime(item.key);
+              setSelectedTime(item.label);
               setStep("diagnosis");
             }}
             className="w-full rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-slate-900 shadow-sm transition hover:bg-slate-100"
@@ -1411,38 +1400,12 @@ if (action === "stop") {
               <div className="rounded-xl border border-slate-200 bg-white p-2">
                 <Clock3 className="h-5 w-5 text-slate-700" />
               </div>
-              <div>
-                <span className="block text-base font-semibold text-slate-900">
-                  {item.label}
-                </span>
-                <span className="mt-1 block text-sm text-slate-500">
-                  {item.desc}
-                </span>
-              </div>
+              <span className="text-base font-semibold text-slate-900">
+                {item.label}
+              </span>
             </div>
           </button>
         ))}
-
-        <div className="pt-2">
-          <p className="mb-3 text-sm font-medium text-slate-600">
-            직접 시간 선택
-          </p>
-
-          <div className="grid grid-cols-2 gap-2">
-            {customTimeOptions.map((item) => (
-              <button
-                key={item.key}
-                onClick={() => {
-                  setSelectedTime(item.key);
-                  setStep("diagnosis");
-                }}
-                className="h-12 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   </Screen>
@@ -1652,13 +1615,6 @@ if (action === "stop") {
       >
         시작하기
       </button>
-    <p className="pt-2 text-center text-xs leading-relaxed text-slate-500">
-
-  번호는 알림 용도로만 사용돼요.<br />
-
-  광고 문자는 보내지 않아요.
-
-    </p>
     </div>
   </Screen>
 )}

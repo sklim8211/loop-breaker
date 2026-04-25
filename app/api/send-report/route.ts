@@ -30,6 +30,7 @@ export async function GET(req: Request) {
     .from("users")
     .select("id, phone_number, sms_consent")
     .eq("sms_consent", true);
+  
 
   const now = new Date();
   const weekAgo = new Date(now);
@@ -48,9 +49,9 @@ export async function GET(req: Request) {
       .gte("sent_at", weekAgo.toISOString())
       .limit(1);
 
-    if (alreadySent && alreadySent.length > 0) {
-      skippedCount++;
-      continue;
+     if (alreadySent && alreadySent.length > 0) {
+     skippedCount++;
+     continue;
     }
 
     // 로그 집계
@@ -60,45 +61,49 @@ export async function GET(req: Request) {
       .eq("user_id", user.id)
       .gte("created_at", weekAgo.toISOString());
 
-    const stopCount =
-      logs?.filter((x) => x.action_type === "pause").length ?? 0;
+   const stopCount =
+  logs?.filter((x) => x.action_type === "pause").length ?? 0;
 
     let text = "";
 
 if (stopCount === 0) {
-  text = `이번 주에는 아직 멈춤이 없었어요
-다음 한 번이 시작이 될 수 있습니다
+  text = `이번 주엔 아직 생각이 없었네요
+다음 주엔 한 번쯤은요
 https://loop-breaker-e1gt.vercel.app`;
+
 } else if (stopCount === 1) {
-  text = `이번 주, 1번 멈췄어요
-그 한 번이면 충분합니다
+  text = `이번 주, 1번 생각했네요
+시작은 하셨네요
 https://loop-breaker-e1gt.vercel.app`;
+
 } else if (stopCount === 2) {
-  text = `이번 주, 2번 멈췄어요
-이미 시작되었습니다
+  text = `이번 주, 2번 생각했네요
+한 번에 한 번 더 생각했네요
 https://loop-breaker-e1gt.vercel.app`;
-} else if (stopCount <= 5) {
-  const options = [
-    `이번 주, ${stopCount}번 멈췄어요
-그 순간들이 쌓이고 있습니다
-https://loop-breaker-e1gt.vercel.app`,
-    `이번 주, ${stopCount}번 멈췄어요
-흐름이 조금씩 달라지고 있습니다
-https://loop-breaker-e1gt.vercel.app`,
-  ];
-  text = options[Math.floor(Math.random() * options.length)];
+
+} else if (stopCount === 3) {
+  text = `이번 주, 3번 생각했네요
+슬슬 그냥 넘기긴 싫은 거죠
+https://loop-breaker-e1gt.vercel.app`;
+
+} else if (stopCount === 4) {
+  text = `이번 주, 4번 생각했네요
+이제 진짜 뭘 해보려는 거죠
+https://loop-breaker-e1gt.vercel.app`;
+
 } else {
   const options = [
-    `이번 주, ${stopCount}번 멈췄어요
-멈추는 순간들이 이어지고 있습니다
+    `이번 주, ${stopCount}번 생각했네요
+바꾸려는 결단이 보여요
 https://loop-breaker-e1gt.vercel.app`,
-    `이번 주, ${stopCount}번 멈췄어요
-이제 멈춤이 자연스러워지고 있습니다
+
+    `이번 주, ${stopCount}번 생각했네요
+이쯤 되면 변하고 싶은 거죠
 https://loop-breaker-e1gt.vercel.app`,
   ];
+
   text = options[Math.floor(Math.random() * options.length)];
 }
-
     // 문자 발송
     const date = new Date().toISOString();
     const salt = Math.random().toString(36).slice(2);
