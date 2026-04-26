@@ -11,13 +11,18 @@ function getSignature(apiSecret: string, date: string, salt: string) {
 
 function isSundayNightReportTime(slot: string) {
   const now = new Date();
-  const koreaNow = new Date(
-    now.toLocaleString("en-US", { timeZone: "Asia/Seoul" })
-  );
-  const day = koreaNow.getDay();
 
-  return slot === "20:00" && day === 0;
+  const koreaNow = new Date(
+    now.toLocaleString("en-US", {
+      timeZone: "Asia/Seoul",
+    })
+  );
+
+  const day = koreaNow.getDay(); // 0 = Sunday
+
+  return day === 0 && slot === "20:00";
 }
+  
 
 async function sendTrialEndingNotifications(supabase: any) {
   const apiKey = process.env.SOLAPI_API_KEY!;
@@ -141,43 +146,46 @@ async function sendWeeklyReports(supabase: any) {
 
     const autoLink = `https://loop-breaker-e1gt.vercel.app/?auto=1&uid=${user.id}`;
 
-    let text = "";
+     let text = "";
 
-    if (stopCount === 0) {
-      text = `이번 주에는 아직 없었어요
-괜찮아요, 다음 주가 있어요
+if (stopCount === 0) {
+  text = `이번 주엔 아직 생각이 없었네요
+다음 주엔 한 번쯤은요
 ${autoLink}`;
-    } else if (stopCount <= 2) {
-      const options = [
-        `이번 주, ${stopCount}번 멈춰 생각했네요
-그 순간이 시작이에요
+
+} else if (stopCount === 1) {
+  text = `이번 주, 1번 생각했네요
+시작은 하셨네요
+${autoLink}`;
+
+} else if (stopCount === 2) {
+  text = `이번 주, 2번 생각했네요
+한 번에 한 번 더 생각했네요
+${autoLink}`;
+
+} else if (stopCount === 3) {
+  text = `이번 주, 3번 생각했네요
+슬슬 그냥 넘기긴 싫은 거죠
+${autoLink}`;
+
+} else if (stopCount === 4) {
+  text = `이번 주, 4번 생각했네요
+이제 진짜 뭘 해보려는 거죠
+${autoLink}`;
+
+} else {
+  const options = [
+  `이번 주, ${stopCount}번 생각했네요
+바꾸려는 결단이 보여요
 ${autoLink}`,
-        `이번 주, ${stopCount}번 멈춰 생각했네요
-잠깐이었지만, 됐어요
+
+  `이번 주, ${stopCount}번 생각했네요
+이쯤 되면 변하고 싶은 거죠
 ${autoLink}`,
-      ];
-      text = options[Math.floor(Math.random() * options.length)];
-    } else if (stopCount <= 5) {
-      const options = [
-        `이번 주, ${stopCount}번 멈춰 생각했네요
-그 순간들, 변화가 찾아와요
-${autoLink}`,
-        `이번 주, ${stopCount}번 멈춰 생각했네요
-흐름이 조금씩 달라지고 있어요
-${autoLink}`,
-      ];
-      text = options[Math.floor(Math.random() * options.length)];
-    } else {
-      const options = [
-        `이번 주, ${stopCount}번 멈춰 생각했네요
-이제 자연스러워지고 있어요
-${autoLink}`,
-        `이번 주, ${stopCount}번 멈춰 생각했네요
-그 순간들의 반복, 변화가 찾아와요
-${autoLink}`,
-      ];
-      text = options[Math.floor(Math.random() * options.length)];
-    }
+];
+
+  text = options[Math.floor(Math.random() * options.length)];
+}
     const date = new Date().toISOString();
     const salt = Math.random().toString(36).slice(2);
     const signature = getSignature(apiSecret, date, salt);
@@ -286,9 +294,6 @@ if (!slot || !allowedSlots.includes(slot)) {
 
 }
 
-if (!slot || !allowedSlots.includes(slot)) {
-  return NextResponse.json({ error: "invalid slot" }, { status: 400 });
-}
 
   if (secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -312,7 +317,19 @@ if (!slot || !allowedSlots.includes(slot)) {
   if (isSundayNightReportTime(slot)) {
     return await sendWeeklyReports(supabase);
   }
+const now = new Date();
+const koreaNow = new Date(
+  now.toLocaleString("en-US", { timeZone: "Asia/Seoul" })
+);
+const day = koreaNow.getDay();
 
+if (day === 0) {
+  return NextResponse.json({
+    mode: "sunday_no_regular_sms",
+    message: "Sunday regular SMS is skipped",
+    slot,
+  });
+}
   const { data: users, error } = await supabase
     .from("users")
     .select("*")

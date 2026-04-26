@@ -1,3 +1,6 @@
+// 현재 운영 주간 리포트 발송은 app/api/send-sms/route.ts의 sendWeeklyReports()를 사용합니다.
+// 이 파일은 과거 테스트/백업용입니다.
+
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
