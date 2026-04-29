@@ -275,6 +275,24 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
+if (searchParams.get("debug") === "env") {
+
+    return NextResponse.json({
+
+      SOLAPI_API_KEY_length: process.env.SOLAPI_API_KEY?.length ?? 0,
+
+      SOLAPI_API_KEY_start: process.env.SOLAPI_API_KEY?.slice(0, 4) ?? null,
+
+      SOLAPI_API_KEY_end: process.env.SOLAPI_API_KEY?.slice(-4) ?? null,
+
+      SOLAPI_API_SECRET_exists: !!process.env.SOLAPI_API_SECRET,
+
+      SOLAPI_SENDER: process.env.SOLAPI_SENDER ?? null,
+
+    });
+
+  }
+
   const slot = searchParams.get("slot");
   const secret = searchParams.get("secret");
   const allowedSlots = [
