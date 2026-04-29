@@ -299,6 +299,12 @@ if (!slot || !allowedSlots.includes(slot)) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
  
+if (searchParams.get("debug") === "env") {
+  return NextResponse.json({
+    solapiApiKeyLength: process.env.SOLAPI_API_KEY?.length ?? 0,
+    solapiSender: process.env.SOLAPI_SENDER ? "exists" : "missing",
+  });
+}
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
