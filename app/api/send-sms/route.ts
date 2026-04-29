@@ -275,6 +275,7 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
+
 if (searchParams.get("debug") === "env") {
 
     return NextResponse.json({
