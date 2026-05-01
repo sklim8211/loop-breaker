@@ -377,6 +377,11 @@ if (day === 0) {
     const autoLink = `${baseUrl}/?auto=1&uid=${user.id}`;
 
  const messages = [
+
+  `생각버튼 켜질 시간이에요🙂
+${autoLink}`,
+  `생각할 시간 알려드려요🙂
+${autoLink}`,
   `잠깐 생각하고 갈게요 🙂
 ${autoLink}`,
   `지금 생각하는 시간이요 🙂
