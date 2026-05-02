@@ -1019,52 +1019,103 @@ if (action === "stop") {
     }
   };
 
-  const sendShareNow = async () => {
+const shareMessages = [
+`나 요즘 이거 쓰는데
 
-    const payload = getSharePayload();
-    try {
-      if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
-          await navigator.share({
-            title: payload.title,
-            text: payload.fullText,
-          });
-          setShareMessage("공유 창을 열었습니다");
-          return;
-         }
+하루 한 번 문자 오면
+잠깐 멈춰서 생각하는 거야
+그게 전부야
 
-      if (typeof navigator !== "undefined" && navigator.clipboard) {
-        await navigator.clipboard.writeText(payload.fullText);
-        setShareMessage("공유 창이 없어 복사해두었습니다");
-        return;
-      }
+https://loop-breaker-e1gt.vercel.app`,
 
-      setShareMessage(payload.fullText);
-    } catch {
-      setShareMessage("공유를 취소했거나 열 수 없었습니다");
+`이거 별거 아닌데
+
+하루 한 번 문자 오고
+그때 잠깐 생각하는 거야
+그걸 계속 하게 됨
+
+https://loop-breaker-e1gt.vercel.app`,
+
+`나 요즘 이거 쓰는데
+
+뭘 바꾸는 게 아니라
+그냥 한 번씩 생각하게 만드는 거야
+
+https://loop-breaker-e1gt.vercel.app`,
+
+`하루 한 번 문자 오거든
+그냥 잠깐 생각하는 거야
+그게 다인데
+
+https://loop-breaker-e1gt.vercel.app`,
+
+`앱 설치도 아니고
+그냥 문자로 하루 한 번 오거든
+잠깐 생각하고 버튼 하나 누르는 게 다야
+
+https://loop-breaker-e1gt.vercel.app`
+];
+
+const sendShareNow = async () => {
+  const message =
+    shareMessages[Math.floor(Math.random() * shareMessages.length)];
+
+  try {
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      await navigator.share({
+        title: "Loop Breaker",
+        text: message,
+      });
+      setShareMessage("공유 창을 열었습니다");
+      return;
     }
-  };
+
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      await navigator.clipboard.writeText(message);
+      setShareMessage("공유 창이 없어 복사해두었습니다");
+      return;
+    }
+
+    setShareMessage(message);
+  } catch {
+    setShareMessage("공유를 취소했거나 열 수 없었습니다");
+  }
+};
 
 const sendWeeklyReportShare = async () => {
 
-  const texts = [
+ const texts = [
+`나 요즘 이거 쓰는데
 
-    "나 이번 주 이거 나왔는데 좀 웃기지 않냐 🙂",
+하루 한 번 문자 오면
+잠깐 멈춰서 생각하는 거야
+그게 전부야`,
 
-    "나 이 정도라는데 너는 몇 번이냐 ㅋㅋ",
+`이거 별거 아닌데
 
-    "이거 은근 찔린다 🙂",
+하루 한 번 문자 오고
+그때 잠깐 생각하는 거야
+그걸 계속 하게 됨`,
 
-    "나 이런 상태래",
+`나 요즘 이거 쓰는데
 
-  ];
+뭘 바꾸는 게 아니라
+그냥 한 번씩 생각하게 만드는 거야`,
+
+`하루 한 번 문자 오거든
+그냥 잠깐 생각하는 거야
+그게 다인데`,
+
+`앱 설치도 아니고
+그냥 문자로 하루 한 번 오거든
+잠깐 생각하고 버튼 하나 누르는 게 다야`
+];
 
   const shareText = texts[Math.floor(Math.random() * texts.length)];
 
   const url = "https://loop-breaker-e1gt.vercel.app";
 
   const fullText = `${shareText}
-
-이번 주, ${weeklyStopCount}번 멈춰 생각했네요
 
 ${url}`;
 
@@ -1599,7 +1650,7 @@ ${url}`;
           onClick={() => setStep("alerts")}
           className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
         >
-          좋아요, 연결할까요 😅
+          좋아요, 연결할까요 📩
         </button>
 
         <button
