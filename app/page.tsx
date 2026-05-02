@@ -1020,6 +1020,7 @@ if (action === "stop") {
   };
 
   const sendShareNow = async () => {
+
     const payload = getSharePayload();
     try {
       if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
@@ -1042,6 +1043,66 @@ if (action === "stop") {
       setShareMessage("공유를 취소했거나 열 수 없었습니다");
     }
   };
+
+const sendWeeklyReportShare = async () => {
+
+  const texts = [
+
+    "나 이번 주 이거 나왔는데 좀 웃기지 않냐 🙂",
+
+    "나 이 정도라는데 너는 몇 번이냐 ㅋㅋ",
+
+    "이거 은근 찔린다 🙂",
+
+    "나 이런 상태래",
+
+  ];
+
+  const shareText = texts[Math.floor(Math.random() * texts.length)];
+
+  const url = "https://loop-breaker-e1gt.vercel.app";
+
+  const fullText = `${shareText}
+
+이번 주, ${weeklyStopCount}번 멈춰 생각했네요
+
+${url}`;
+
+  try {
+
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+
+      await navigator.share({
+
+        title: "Loop Breaker",
+
+        text: fullText,
+
+      });
+
+      return;
+
+    }
+
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+
+      await navigator.clipboard.writeText(fullText);
+
+      alert("공유 문구를 복사해두었습니다");
+
+      return;
+
+    }
+
+    alert(fullText);
+
+  } catch {
+
+    alert("공유를 취소했거나 열 수 없었습니다");
+
+  }
+
+};
 
   const resetAll = () => {
     localStorage.removeItem(STORAGE_KEYS.settings);
@@ -1697,14 +1758,22 @@ if (action === "stop") {
         </div>
       </div>
 
-      {weeklyStopCount > 0 && (
-        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-6 py-6 text-center shadow-sm">
-         <BodyText>이번 주, {weeklyStopCount}번 멈춰 생각했어요</BodyText>
-          <p className="mt-2 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
-            그 순간들의 반복, 변화가 찾아와요
-          </p>
-        </div>
-      )}
+     {weeklyStopCount > 0 && (
+  <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-6 py-6 text-center shadow-sm">
+    <BodyText>이번 주, {weeklyStopCount}번 멈춰 생각했어요</BodyText>
+
+    <p className="mt-2 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
+      그 순간들의 반복, 변화가 찾아와요
+    </p>
+
+    <button
+      onClick={sendWeeklyReportShare}
+      className="mt-4 h-11 w-full rounded-2xl border border-slate-200 bg-white text-sm text-slate-700 hover:bg-slate-50"
+    >
+      이거 보내볼까 🙂
+    </button>
+  </div>
+)}
     </div>
   </Screen>
 )}

@@ -146,46 +146,81 @@ async function sendWeeklyReports(supabase: any) {
 
     const autoLink = `https://loop-breaker-e1gt.vercel.app/?auto=1&uid=${user.id}`;
 
-     let text = "";
+const reportMessages = {
+  zero: [
+    `이번 주엔 그냥 지나갔네요
+괜찮아요, 다음 주가 있으니까요`,
+
+    `이번 주는 바빴나봐요 🙂`,
+
+    `이번 주엔 그냥 흘러갔네요
+그럴 때도 있어요`,
+
+    `이번 주는 그냥 지켜봤어요`,
+
+    `쉬어가는 주도 있는 거예요`,
+
+    `이번 주는 그냥 넘어갔네요
+다음 주 또 와요`,
+
+    `아무것도 안 한 주도 쌓이는 거예요`,
+  ],
+
+  low: [
+    `잠깐이었지만, 됐어요`,
+    `시작은 그렇게 하더라고요 🙂`,
+    `그거면 충분해요`,
+    `작지만 있었어요`,
+    `없는 것보다 훨씬 낫죠 🙂`,
+    `그게 다가 아니에요`,
+  ],
+
+  mid: [
+    `어느새요 🙂`,
+    `슬슬 몸에 배고 있어요`,
+    `그 순간들, 변화가 찾아와요`,
+    `꽤 했네요 🙂`,
+    `흐름이 생기고 있어요`,
+    `그 순간들이 모이고 있어요`,
+    `조금씩 달라지고 있는 거예요`,
+    `이쯤이면 습관이 되려나봐요 🙂`,
+  ],
+
+  high: [
+    `이제 자연스럽죠? 🙂`,
+    `어느새 일상이 되고 있네요`,
+    `그 순간들의 반복이에요`,
+    `이 정도면 진짜 달라지고 있어요`,
+    `멋지게 하고 계세요 🙂`,
+    `이제 몸이 먼저 알고 있을 거예요`,
+    `변화가 이미 시작됐어요`,
+    `이쯤이면 충분히 잘 하고 있어요`,
+  ],
+};
+
+let messagePool: string[] = [];
 
 if (stopCount === 0) {
-  text = `이번 주엔 아직 생각이 없었네요
-다음 주엔 한 번쯤은요
-${autoLink}`;
-
-} else if (stopCount === 1) {
-  text = `이번 주, 1번 생각했네요
-시작은 하셨네요
-${autoLink}`;
-
-} else if (stopCount === 2) {
-  text = `이번 주, 2번 생각했네요
-한 번에 한 번 더 생각했네요
-${autoLink}`;
-
-} else if (stopCount === 3) {
-  text = `이번 주, 3번 생각했네요
-슬슬 그냥 넘기긴 싫은 거죠
-${autoLink}`;
-
-} else if (stopCount === 4) {
-  text = `이번 주, 4번 생각했네요
-이제 진짜 뭘 해보려는 거죠
-${autoLink}`;
-
+  messagePool = reportMessages.zero;
+} else if (stopCount <= 2) {
+  messagePool = reportMessages.low;
+} else if (stopCount <= 5) {
+  messagePool = reportMessages.mid;
 } else {
-  const options = [
-  `이번 주, ${stopCount}번 생각했네요
-바꾸려는 결단이 보여요
-${autoLink}`,
-
-  `이번 주, ${stopCount}번 생각했네요
-이쯤 되면 변하고 싶은 거죠
-${autoLink}`,
-];
-
-  text = options[Math.floor(Math.random() * options.length)];
+  messagePool = reportMessages.high;
 }
+
+const comment =
+  messagePool[Math.floor(Math.random() * messagePool.length)];
+
+const text =
+  stopCount === 0
+    ? `${comment}
+${autoLink}`
+    : `이번 주, ${stopCount}번 멈춰 생각했네요
+${comment}
+${autoLink}`;
+
     const date = new Date().toISOString();
     const salt = Math.random().toString(36).slice(2);
     const signature = getSignature(apiSecret, date, salt);
