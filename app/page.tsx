@@ -211,10 +211,7 @@ const diagnosisCopy = {
   },
 } as const;
 
-const weeklyReportLines = {
-  body: "그 순간들이 쌓이고 있어요",
-  caption: "변화는 그렇게 시작됩니다",
-} as const;
+
 
 const STORAGE_KEYS = {
   settings: "loop-breaker-settings",
@@ -257,9 +254,6 @@ type EventItem = {
   at: string;
 };
 
-const SHARE_TITLE = "우린 멈춤을 알려드립니다";
-const SHARE_TEXT =
-  "하고 나서 후회하는 행동들을 잠깐 생각하게 알려주는 서비스입니다.\n멈추는 것만으로도 달라집니다.";
 
 function createUserId() {
   return `usr_${Math.random().toString(36).slice(2, 10)}${Date.now()
@@ -355,30 +349,11 @@ const effectiveDisplayText =
   selectedBehavior === "other" && customBehavior.trim()
     ? customBehavior.trim()
     : behavior.displayText;
-const diagnosis1Label =
-  diagnosis1 === "bored"
-    ? "심심하거나 멍할 때"
-    : diagnosis1 === "stress"
-    ? "스트레스 받거나 지칠 때"
-    : diagnosis1 === "habit"
-    ? "습관처럼 나도 모르게"
-    : diagnosis1 === "unknown"
-    ? "잘 모르겠어요"
-    : "";
+
 const currentDiagnosisCopy =
   diagnosisCopy[selectedBehavior as keyof typeof diagnosisCopy] ??
   diagnosisCopy.other;
 
-const diagnosis2Label =
-  diagnosis2 === "just_try"
-    ? "잠깐만 하려 했어요"
-    : diagnosis2 === "today_ok"
-    ? "오늘은 괜찮을 것 같았어요"
-    : diagnosis2 === "cant_stop"
-    ? "이미 시작하면 멈추기 싫어요"
-    : diagnosis2 === "unknown"
-    ? "잘 모르겠어요"
-    : "";
 
 const resultType = (() => {
   if (diagnosis1 === "bored" && diagnosis2 === "just_try") {
@@ -472,61 +447,47 @@ const resultType = (() => {
 })();
 
 const getShareDescription = () => {
-  if (resultType.title === "심심풀이 확장형") {
-    return "잠깐 하려다 본격적으로 가게 되는 타입^^";
+  if (resultType.title === "아쉬움 연장형") {
+    return "조금만 더 하려다 본격적으로 가게 되는 타입^^";
   }
-
-  if (resultType.title === "무료함 합리화형") {
-    return "심심한데 오늘쯤은 괜찮다며 시작하는 타입^^";
+  if (resultType.title === "오늘만 허가형") {
+    return "오늘만 괜찮다며 자주 넘어가는 타입^^";
   }
-
-  if (resultType.title === "멍때림 연장형") {
-    return "심심해서 시작했는데 끝이 잘 안 나는 타입^^";
+  if (resultType.title === "멈춤 타이밍 실종형") {
+    return "그만해도 되는데 끝내는 타이밍이 자꾸 늦어지는 타입^^";
   }
-
-  if (resultType.title === "피로 탈출 시도형") {
-    return "지친 마음 달래려다 길어지는 타입^^";
+  if (resultType.title === "마음 달래기 연장형") {
+    return "잠깐 달래려 했는데 그 시간이 길어지는 타입^^";
   }
-
-  if (resultType.title === "오늘은 봐주자형") {
-    return "오늘만 괜찮다고 자주 넘어가는 타입^^";
+  if (resultType.title === "지친 날 특혜형") {
+    return "힘든 날엔 나에게 조금 더 관대해지는 타입^^";
   }
-
   if (resultType.title === "지침 폭주형") {
-    return "힘들수록 멈추기가 더 어려운 타입^^";
+    return "지칠수록 멈추기가 더 어려운 타입^^";
   }
-
   if (resultType.title === "자동모드 연장형") {
     return "늘 하던 대로 시작했다가 더 가는 타입^^";
   }
-
   if (resultType.title === "익숙한 예외형") {
-    return "늘 하던 일에 오늘만 괜찮다를 더하는 타입^^";
+    return "익숙한 흐름에 오늘만 괜찮다를 더하는 타입^^";
   }
-
   if (resultType.title === "종료 버튼 실종형") {
-    return "잠깐 보려다 계속 넘기게 되는 타입^^";
+    return "시작은 익숙한데 끝내는 버튼이 잘 안 보이는 타입^^";
   }
-
   if (resultType.title === "이유는 몰라도 시작형") {
     return "왜 하는진 모르겠는데 하게 되는 타입^^";
   }
-
   if (resultType.title === "설명은 나중형") {
     return "일단 하고 이유는 나중에 붙이는 타입^^";
   }
-
   if (resultType.title === "출발 미상 질주형") {
     return "언제 시작했는지 모르겠는데 계속 가는 타입^^";
   }
-
   if (resultType.title === "정신 차려보니형") {
     return "언제 시작했는지 모르겠는데 여기까지 오는 타입^^";
   }
-
   return "생각이 쌓이면 변화가 오는 타입^^";
 };
-
 const homeMessages: Record<string, string[]> = {
   "아쉬움 연장형": [
     "조금만 더가 또 길어졌네요.",
@@ -1394,7 +1355,6 @@ ${url}`;
   <Screen key="behavior">
     <div className="space-y-5 py-3">
       <div>
-        <div className="mb-2 text-sm text-slate-600">1 / 3</div>
         <h2 className="text-2xl font-bold leading-snug text-slate-900">
           요즘 하고 나면 후회되는
           <br />
@@ -1500,7 +1460,6 @@ ${url}`;
   <Screen key="time">
     <div className="space-y-5 py-3">
       <div>
-        <div className="mb-2 text-sm text-slate-600">2 / 3</div>
         <h2 className="text-2xl font-bold text-slate-900">
           언제 가장 흔들리나요?
         </h2>
@@ -1564,7 +1523,6 @@ ${url}`;
   <Screen key="diagnosis">
     <div className="space-y-5 py-3">
       <div>
-        <div className="mb-2 text-sm text-slate-600">3 / 4</div>
 
         <h2 className="text-2xl font-bold text-slate-900">
           {currentDiagnosisCopy.question1}
@@ -1599,8 +1557,7 @@ ${url}`;
   <Screen key="diagnosis2">
     <div className="space-y-5 py-3">
       <div>
-        <div className="mb-2 text-sm text-slate-600">4 / 4</div>
-
+        
         <h2 className="text-2xl font-bold text-slate-900">
           {currentDiagnosisCopy.question2}
         </h2>
@@ -1794,7 +1751,7 @@ ${url}`;
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-4 py-6 text-center shadow-sm">
           <p className="text-3xl font-bold text-slate-900">{totalStopCount}</p>
-          <p className="mt-2 text-sm text-slate-600">아, 몇 번 생각했지?</p>
+          <p className="mt-2 text-sm text-slate-600">총 생각한 순간</p>
         </div>
         <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-4 py-6 text-center shadow-sm">
           <p className="text-3xl font-bold text-slate-900">
@@ -1805,7 +1762,7 @@ ${url}`;
                 ) + 1
               : 1}
           </p>
-          <p className="mt-2 text-sm text-slate-600">함께 며칠째?</p>
+        <p className="mt-2 text-sm text-slate-600">함께한 날</p>
         </div>
       </div>
 
