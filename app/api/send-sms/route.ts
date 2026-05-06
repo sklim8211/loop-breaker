@@ -313,9 +313,14 @@ export async function GET(req: Request) {
 
 
 
-  const slot = searchParams.get("slot");
-  const secret = searchParams.get("secret");
-  const allowedSlots = [
+ const slot = searchParams.get("slot");
+const secret = searchParams.get("secret");
+
+if (secret !== process.env.CRON_SECRET) {
+  return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+}
+
+const allowedSlots = [
   "08:00",
   "10:00",
   "12:00",
@@ -327,15 +332,8 @@ export async function GET(req: Request) {
 ];
 
 if (!slot || !allowedSlots.includes(slot)) {
-
   return NextResponse.json({ error: "invalid slot" }, { status: 400 });
-
 }
-
-
-  if (secret !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-  }
  
 if (searchParams.get("debug") === "env") {
   return NextResponse.json({
