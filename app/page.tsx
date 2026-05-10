@@ -354,95 +354,116 @@ const currentDiagnosisCopy =
   diagnosisCopy[selectedBehavior as keyof typeof diagnosisCopy] ??
   diagnosisCopy.other;
 
-
 const resultType = (() => {
+  if (diagnosis1 === "just_try" && diagnosis2 === "just_try") {
+    return {
+      title: "아쉬움 연장형",
+      description: "조금만 더 하려다가\n생각보다 길어졌네요…",
+      expandedDescription: "\"조금만 더\" 하려다가\n어느새 한참이 지나있어요.\n그만해도 된다는 걸 알면서도\n멈추는 타이밍이 자꾸 늦어지죠.",
+    };
+  }
+  if (diagnosis1 === "just_try" && diagnosis2 === "today_ok") {
+    return {
+      title: "오늘만 허가형",
+      description: "오늘은 괜찮다 했는데\n그 오늘이 자주 오네요…",
+      expandedDescription: "오늘은 괜찮다고 했어요.\n그런데 그 오늘이 꽤 자주 와요.\n예외가 반복되면\n어느새 그게 기본이 되죠.",
+    };
+  }
+  if (diagnosis1 === "just_try" && diagnosis2 === "cant_stop") {
+    return {
+      title: "멈춤 타이밍 실종형",
+      description: "그만해도 되는데\n끝내는 타이밍이 자꾸 늦어지네요…",
+      expandedDescription: "그만해야 하는 거 알아요.\n그런데 끝낼 타이밍이\n항상 조금씩 늦어져요.\n이미 한참 지나서야 보이죠.",
+    };
+  }
   if (diagnosis1 === "bored" && diagnosis2 === "just_try") {
     return {
       title: "아쉬움 연장형",
       description: "조금만 더 하려다가\n생각보다 길어졌네요…",
+      expandedDescription: "\"조금만 더\" 하려다가\n어느새 한참이 지나있어요.\n그만해도 된다는 걸 알면서도\n멈추는 타이밍이 자꾸 늦어지죠.",
     };
   }
-
   if (diagnosis1 === "bored" && diagnosis2 === "today_ok") {
     return {
       title: "오늘만 허가형",
       description: "오늘은 괜찮다 했는데\n그 오늘이 자주 오네요…",
+      expandedDescription: "오늘은 괜찮다고 했어요.\n그런데 그 오늘이 꽤 자주 와요.\n예외가 반복되면\n어느새 그게 기본이 되죠.",
     };
   }
-
   if (diagnosis1 === "bored" && diagnosis2 === "cant_stop") {
     return {
       title: "멈춤 타이밍 실종형",
       description: "그만해도 되는데\n끝내는 타이밍이 자꾸 늦어지네요…",
+      expandedDescription: "그만해야 하는 거 알아요.\n그런데 끝낼 타이밍이\n항상 조금씩 늦어져요.\n이미 한참 지나서야 보이죠.",
     };
   }
-
   if (diagnosis1 === "stress" && diagnosis2 === "just_try") {
     return {
       title: "마음 달래기 연장형",
       description: "잠깐 달래려 했는데\n그 시간이 길어졌네요…",
+      expandedDescription: "잠깐 달래려 했는데\n그 시간이 생각보다 길어졌어요.\n마음이 힘들수록\n멈추기가 더 어렵죠.",
     };
   }
-
   if (diagnosis1 === "stress" && diagnosis2 === "today_ok") {
     return {
       title: "지친 날 특혜형",
       description: "힘든 날엔 나에게\n조금 더 관대해지네요…",
+      expandedDescription: "힘든 날엔 나한테 좀 관대해져요.\n오늘만큼은 괜찮다고.\n근데 그 특혜가\n생각보다 자주 열리죠.",
     };
   }
-
   if (diagnosis1 === "stress" && diagnosis2 === "cant_stop") {
     return {
       title: "지침 폭주형",
       description: "지칠수록 멈추는 일이\n더 어려워지네요…",
+      expandedDescription: "지칠수록 브레이크가 잘 안 들어요.\n피곤한 날일수록\n오히려 더 멀리 가게 되죠.\n멈추는 게 제일 힘든 순간에.",
     };
   }
-
   if (diagnosis1 === "habit" && diagnosis2 === "just_try") {
     return {
       title: "자동모드 연장형",
       description: "늘 하던 흐름대로 갔다가\n또 길어지고 있네요…",
+      expandedDescription: "손이 먼저 알아요.\n생각하기 전에 이미 시작돼있고\n늘 하던 흐름대로 가다 보면\n또 길어지고 있죠.",
     };
   }
-
   if (diagnosis1 === "habit" && diagnosis2 === "today_ok") {
     return {
       title: "익숙한 예외형",
       description: "익숙한 흐름에\n오늘만 괜찮다를 더하네요…",
+      expandedDescription: "익숙한 흐름에\n오늘만 괜찮다를 슬쩍 더해요.\n그게 어느새 익숙해지면\n예외가 루틴이 되죠.",
     };
   }
-
   if (diagnosis1 === "habit" && diagnosis2 === "cant_stop") {
     return {
       title: "종료 버튼 실종형",
       description: "시작은 익숙한데\n끝내는 버튼은 잘 안 보이네요…",
+      expandedDescription: "시작은 자연스러운데\n끝내는 버튼이 잘 안 보여요.\n이쯤에서 끝내야 하는데\n하면서도 계속 가게 되죠.",
     };
   }
-
   if (diagnosis1 === "unknown" && diagnosis2 === "just_try") {
     return {
       title: "이유는 몰라도 시작형",
       description: "왜 시작했는진 모르겠는데\n어느새 하고 있네요…",
+      expandedDescription: "왜 시작했는지 모르겠어요.\n그냥 어느새 하고 있고\n이유는 나중에 붙이면 되니까\n일단 계속 가게 되죠.",
     };
   }
-
   if (diagnosis1 === "unknown" && diagnosis2 === "today_ok") {
     return {
       title: "설명은 나중형",
       description: "일단 하고 나서\n이유는 나중에 붙이네요…",
+      expandedDescription: "일단 하고 봐요.\n이유는 나중에 생각하면 되고\n설명은 끝나고 붙이면 되니까\n지금은 그냥 계속하죠.",
     };
   }
-
   if (diagnosis1 === "unknown" && diagnosis2 === "cant_stop") {
     return {
       title: "출발 미상 질주형",
       description: "언제 시작했는진 모르겠는데\n계속 가고 있네요…",
+      expandedDescription: "언제 시작했는지 모르겠어요.\n그냥 어느새 한참 와있고\n출발점은 흐릿한데\n진행은 선명하게 계속되죠.",
     };
   }
-
   return {
     title: "정신 차려보니형",
     description: "왜 시작했는진 모르겠는데\n여기까지 와 있네요…",
+    expandedDescription: "정신 차려보니 또 여기예요.\n언제 시작했는지도 모르겠는데\n어느새 여기까지 와있고\n또 그랬구나 싶은 거죠.",
   };
 })();
 
@@ -1597,26 +1618,56 @@ ${url}`;
       </div>
 
       <div className="rounded-[1.6rem] border border-slate-200 bg-slate-50 px-6 py-7 shadow-sm">
-        <p className="text-lg leading-relaxed text-slate-800 break-keep whitespace-pre-line">
-           {resultType.description}
-        </p>
+        <div className="space-y-3 text-left">
+          {resultType.expandedDescription.split("\n").map((line, i) => (
+            <motion.p
+              key={i}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.7, duration: 0.4 }}
+              className="text-xl font-medium leading-relaxed text-slate-900 break-keep"
+            >
+              {line}
+            </motion.p>
+          ))}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: resultType.expandedDescription.split("\n").length * 0.7 + 0.3, duration: 0.4 }}
+            className="mt-2 text-base font-medium text-slate-600"
+          >
+            이 패턴, 낯설지 않죠?
+          </motion.p>
+<motion.p
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ delay: resultType.expandedDescription.split("\n").length * 0.7 + 0.8, duration: 0.5 }}
+  className="mt-1 text-base font-medium text-slate-500"
+>
+  어때요? 이제 뭔가 보이세요?
+</motion.p>
+       </div>
       </div>
 
-      <div className="space-y-3">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: resultType.expandedDescription.split("\n").length * 0.7 + 1.5, duration: 0.5 }}
+        className="space-y-3"
+      >
         <button
           onClick={() => setStep("alerts")}
           className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
         >
-          좋아요, 연결할까요 📩
+          그럼 알림 받아볼까요?
         </button>
-
         <button
-  onClick={sendShareNow}
-  className="h-12 w-full rounded-2xl border border-slate-200 bg-white text-sm text-slate-700 hover:bg-slate-50"
+          onClick={sendShareNow}
+          className="h-12 w-full rounded-2xl border border-slate-200 bg-white text-sm text-slate-700 hover:bg-slate-50"
         >
           친구 반응 볼까요 😅
         </button>
-      </div>
+      </motion.div>
     </div>
   </Screen>
 )}
