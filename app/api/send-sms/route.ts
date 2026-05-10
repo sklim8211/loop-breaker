@@ -9,18 +9,15 @@ function getSignature(apiSecret: string, date: string, salt: string) {
     .digest("hex");
 }
 
-function isSundayNightReportTime(slot: string) {
+function getKoreaDayOfWeek() {
   const now = new Date();
+  const koreaOffset = 9 * 60;
+  const koreaTime = new Date(now.getTime() + koreaOffset * 60 * 1000);
+  return koreaTime.getUTCDay(); // 0 = Sunday
+}
 
-  const koreaNow = new Date(
-    now.toLocaleString("en-US", {
-      timeZone: "Asia/Seoul",
-    })
-  );
-
-  const day = koreaNow.getDay(); // 0 = Sunday
-
-  return day === 0 && slot === "20:00";
+function isSundayNightReportTime(slot: string) {
+  return getKoreaDayOfWeek() === 0 && slot === "20:00";
 }
   
 
@@ -359,11 +356,7 @@ if (searchParams.get("debug") === "env") {
   if (isSundayNightReportTime(slot)) {
     return await sendWeeklyReports(supabase);
   }
-const now = new Date();
-const koreaNow = new Date(
-  now.toLocaleString("en-US", { timeZone: "Asia/Seoul" })
-);
-const day = koreaNow.getDay();
+const day = getKoreaDayOfWeek();
 
 if (day === 0) {
   return NextResponse.json({
