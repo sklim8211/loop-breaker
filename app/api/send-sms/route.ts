@@ -308,10 +308,11 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
 
-
-
- const slot = searchParams.get("slot");
+const slot = searchParams.get("slot");
 const secret = searchParams.get("secret");
+const isReport = searchParams.get("report") === "1";
+
+ 
 
 if (secret !== process.env.CRON_SECRET) {
   return NextResponse.json({ error: "unauthorized" }, { status: 401 });
@@ -353,8 +354,8 @@ if (searchParams.get("debug") === "env") {
 
   await sendTrialEndingNotifications(supabase);
 
-  if (isSundayNightReportTime(slot)) {
-    return await sendWeeklyReports(supabase);
+  if (isReport || isSundayNightReportTime(slot)) {
+  return await sendWeeklyReports(supabase);
   }
 const day = getKoreaDayOfWeek();
 
