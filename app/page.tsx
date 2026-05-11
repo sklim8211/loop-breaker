@@ -1672,43 +1672,45 @@ ${url}`;
   </Screen>
 )}
 
-              {step === "alerts" && (
+ {step === "alerts" && (
   <Screen key="alerts">
     <div className="space-y-6 py-9 text-center">
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100 shadow-sm">
         <Bell className="h-8 w-8 text-slate-700" />
       </div>
-
       <div className="space-y-2">
         <h2 className="text-2xl font-bold text-slate-900">
           알림 받을 번호 입력해 주세요
         </h2>
         <SubText>
-  오늘도 생각 없이 시작된 행동들.
-  <br />
-  <br />
-  전화번호 주시면
-  <br />
-  생각 알림으로 찾아갈게요.
-</SubText>
+          오늘도 생각 없이 시작된 행동들.
+          <br />
+          <br />
+          전화번호 주시면
+          <br />
+          생각 알림으로 찾아갈게요.
+        </SubText>
       </div>
 
-href={`https://t.me/loopbreaker_admin_bot?start=${userId}`}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="flex items-center justify-center gap-2 h-14 w-full rounded-2xl bg-[#229ED9] text-base text-white shadow-sm hover:bg-[#1a8ec4]"
->
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/>
-  </svg>
-  텔레그램으로 알림 받기
-</a>
+      {/* 텔레그램 버튼 */}
+      
+        href={`https://t.me/loopbreaker_admin_bot?start=${userId}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 h-14 w-full rounded-2xl bg-[#229ED9] text-base text-white shadow-sm hover:bg-[#1a8ec4]"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L8.32 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.828.942z"/>
+        </svg>
+        텔레그램으로 알림 받기
+      </a>
 
-<div className="flex items-center gap-3 my-2">
-  <div className="flex-1 h-px bg-slate-200"/>
-  <span className="text-sm text-slate-400">또는</span>
-  <div className="flex-1 h-px bg-slate-200"/>
-</div>
+      <div className="flex items-center gap-3 my-2">
+        <div className="flex-1 h-px bg-slate-200"/>
+        <span className="text-sm text-slate-400">또는</span>
+        <div className="flex-1 h-px bg-slate-200"/>
+      </div>
+
       <div className="space-y-3 text-left">
         <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4">
           <label className="block text-base text-slate-900">전화번호</label>
@@ -1786,16 +1788,16 @@ href={`https://t.me/loopbreaker_admin_bot?start=${userId}`}
       >
         시작하기
       </button>
-    <p className="pt-2 text-center text-xs leading-relaxed text-slate-500">
-
-  번호는 알림 용도로만 사용돼요.<br />
-
-  광고 문자는 보내지 않아요.
-
-    </p>
+      <p className="pt-2 text-center text-xs leading-relaxed text-slate-500">
+        번호는 알림 용도로만 사용돼요.
+        <br />
+        광고 문자는 보내지 않아요.
+      </p>
     </div>
   </Screen>
-)}
+)}         
+
+    
 {step === "home" && (
   <Screen key="home">
     <div className="space-y-6 py-8 text-center">
