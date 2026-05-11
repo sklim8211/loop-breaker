@@ -1693,7 +1693,7 @@ ${url}`;
       </div>
 
       {/* 텔레그램 버튼 */}
-      
+      <a
         href={`https://t.me/loopbreaker_admin_bot?start=${userId}`}
         target="_blank"
         rel="noopener noreferrer"
