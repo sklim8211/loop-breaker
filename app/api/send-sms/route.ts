@@ -19,7 +19,17 @@ function getKoreaDayOfWeek() {
 function isSundayNightReportTime(slot: string) {
   return getKoreaDayOfWeek() === 0 && slot === "20:00";
 }
-  
+ async function sendTelegramMessage(chatId: string, text: string) {
+  const token = process.env.TELEGRAM_BOT_TOKEN!;
+  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text,
+    }),
+  });
+} 
 
 async function sendTrialEndingNotifications(supabase: any) {
   const apiKey = process.env.SOLAPI_API_KEY!;
@@ -34,8 +44,7 @@ async function sendTrialEndingNotifications(supabase: any) {
 
   const { data: users } = await supabase
     .from("users")
-    .select("id, phone_number, trial_started_at, created_at")
-    .eq("is_paid", false)
+    .select("id, phone_number, sms_consent, telegram_chat_id")
     .eq("sms_consent", true);
 
   for (const user of users ?? []) {
@@ -80,24 +89,28 @@ ${paymentLink}
 
     if (!text) continue;
 
-    const date = new Date().toISOString();
-    const salt = Math.random().toString(36).slice(2);
-    const signature = getSignature(apiSecret, date, salt);
+   if (user.telegram_chat_id) {
+      await sendTelegramMessage(user.telegram_chat_id, text);
+    } else {
+      const date = new Date().toISOString();
+      const salt = Math.random().toString(36).slice(2);
+      const signature = getSignature(apiSecret, date, salt);
 
-    await fetch("https://api.solapi.com/messages/v4/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`,
-      },
-      body: JSON.stringify({
-        message: {
-          to: user.phone_number,
-          from: sender,
-          text,
+      await fetch("https://api.solapi.com/messages/v4/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`,
         },
-      }),
-    });
+        body: JSON.stringify({
+          message: {
+            to: user.phone_number,
+            from: sender,
+            text,
+          },
+        }),
+      });
+    }
   }
 }
 
@@ -218,24 +231,28 @@ ${autoLink}`
 ${comment}
 ${autoLink}`;
 
-    const date = new Date().toISOString();
-    const salt = Math.random().toString(36).slice(2);
-    const signature = getSignature(apiSecret, date, salt);
+    if (user.telegram_chat_id) {
+      await sendTelegramMessage(user.telegram_chat_id, text);
+    } else {
+      const date = new Date().toISOString();
+      const salt = Math.random().toString(36).slice(2);
+      const signature = getSignature(apiSecret, date, salt);
 
-    await fetch("https://api.solapi.com/messages/v4/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`,
-      },
-      body: JSON.stringify({
-        message: {
-          to: user.phone_number,
-          from: sender,
-          text,
+      await fetch("https://api.solapi.com/messages/v4/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`,
         },
-      }),
-    });
+        body: JSON.stringify({
+          message: {
+            to: user.phone_number,
+            from: sender,
+            text,
+          },
+        }),
+      });
+    }
 
     await supabase.from("report_send_logs").insert([
       {
@@ -425,27 +442,32 @@ ${autoLink}`,
       salt
     );
 
-    const smsRes = await fetch("https://api.solapi.com/messages/v4/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `HMAC-SHA256 apiKey=${process.env.SOLAPI_API_KEY}, date=${date}, salt=${salt}, signature=${signature}`,
-      },
-      body: JSON.stringify({
-        message: {
-          to: user.phone_number,
-          from: process.env.SOLAPI_SENDER,
-          text,
+    if (user.telegram_chat_id) {
+      await sendTelegramMessage(user.telegram_chat_id, text);
+    } else {
+      const smsRes = await fetch("https://api.solapi.com/messages/v4/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `HMAC-SHA256 apiKey=${process.env.SOLAPI_API_KEY}, date=${date}, salt=${salt}, signature=${signature}`,
         },
-      }),
-    });
+        body: JSON.stringify({
+          message: {
+            to: user.phone_number,
+            from: process.env.SOLAPI_SENDER,
+            text,
+          },
+        }),
+      });
 
-    const smsData = await smsRes.json();
+      const smsData = await smsRes.json();
 
-   if (!smsRes.ok) {
-  console.error("문자 발송 실패", user.phone_number, smsData);
-  continue;
-}
+      if (!smsRes.ok) {
+        console.error("문자 발송 실패", user.phone_number, smsData);
+        continue;
+      }
+    }
+
     await supabase.from("sms_send_logs").insert([
       {
         user_id: user.id,
