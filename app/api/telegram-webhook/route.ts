@@ -49,9 +49,9 @@ export async function POST(req: Request) {
 
     // 연결 성공 메시지
     await sendTelegramMessage(
-      chatId,
-      `연결됐어요 🙂\n이제 루프브레이커 알림을 텔레그램으로 받으실 수 있어요.`
-    );
+  chatId,
+  `연결됐어요 🙂\n이제 루프브레이커 알림을 텔레그램으로 받으실 수 있어요.\n\n아래 링크로 돌아가서 시작하기를 눌러주세요.\nhttps://loop-breaker-e1gt.vercel.app/?auto=1&uid=${userId}`
+);
 
     return NextResponse.json({ ok: true });
 

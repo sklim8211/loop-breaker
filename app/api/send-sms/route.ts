@@ -384,10 +384,10 @@ if (day === 0) {
   });
 }
   const { data: users, error } = await supabase
-    .from("users")
-    .select("*")
-    .eq("notification_time", slot)
-    .eq("sms_consent", true);
+  .from("users")
+  .select("*")
+  .eq("notification_time", slot)
+  .or("sms_consent.eq.true,telegram_chat_id.not.is.null");
 
   if (error) {
     console.error("유저 조회 실패", error);
