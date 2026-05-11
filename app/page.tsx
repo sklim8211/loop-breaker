@@ -1693,10 +1693,7 @@ ${url}`;
 </SubText>
       </div>
 
-{/* ★ 텔레그램 버튼 */}
-
-
-  href={`https://t.me/loopbreaker_admin_bot?start=${userId}`}
+href={`https://t.me/loopbreaker_admin_bot?start=${userId}`}
   target="_blank"
   rel="noopener noreferrer"
   className="flex items-center justify-center gap-2 h-14 w-full rounded-2xl bg-[#229ED9] text-base text-white shadow-sm hover:bg-[#1a8ec4]"
