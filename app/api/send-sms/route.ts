@@ -50,24 +50,7 @@ function getTelegramAlertText(): string {
   return phrases[Math.floor(Math.random() * phrases.length)];
 }
 
-function getTelegramAlertText(user: any): string {
-  const behaviorLabel =
-    user.behavior_type === "other" && user.custom_behavior
-      ? user.custom_behavior
-      : user.behavior_type === "smartphone" ? "스마트폰"
-      : user.behavior_type === "delay" ? "일 미루기"
-      : user.behavior_type === "overeating" ? "과식"
-      : "반복 행동";
 
-  const phrases = [
-    `오늘 하루\n한 번쯤\n생각해봐요 🙂`,
-    `${behaviorLabel}, 지금 이 순간\n한번 봐요`,
-    `잠깐 멈춰\n생각할 시간이에요 🙂`,
-    `지금 이 순간\n생각 한 번 어때요?`,
-  ];
-
-  return phrases[Math.floor(Math.random() * phrases.length)];
-}
 
 async function sendTrialEndingNotifications(supabase: any) {
   const apiKey = process.env.SOLAPI_API_KEY!;
@@ -470,8 +453,8 @@ ${autoLink}`,
 ${autoLink}`,
 ];
 
-    const text = user.telegram_chat_id
-  ? getTelegramAlertText(user)
+   const text = user.telegram_chat_id
+  ? getTelegramAlertText()
   : messages[Math.floor(Math.random() * messages.length)];
 
     const date = new Date().toISOString();
