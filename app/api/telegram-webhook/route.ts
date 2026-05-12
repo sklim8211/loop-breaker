@@ -91,13 +91,13 @@ export async function POST(req: Request) {
     chatId,
     "친구에게 보내기 버튼을 눌러주세요 🙂",
     {
-      inline_keyboard: [[
-        {
-          text: "친구에게 보내기",
-          switch_inline_query: "나 요즘 이거 쓰는데\n\n하루 한 번 문자 오면\n잠깐 멈춰서 생각하는 거야\n그게 전부야\n\nhttps://loop-breaker-e1gt.vercel.app"
-        }
-      ]]
-    }
+  inline_keyboard: [[
+    {
+  text: "친구에게 보내기",
+  url: "https://t.me/share/url?url=https://loop-breaker-e1gt.vercel.app&text=나 요즘 이거 쓰는데%0A%0A하루 한 번 문자 오면%0A잠깐 멈춰서 생각하는 거야%0A그게 전부야"
+}
+  ]]
+}
   );
   return NextResponse.json({ ok: true });
 }
