@@ -25,6 +25,7 @@ function isSundayNightReportTime(slot: string) {
   userId: string
 ) {
   const token = process.env.TELEGRAM_BOT_TOKEN!;
+  const autoLink = `https://loop-breaker-e1gt.vercel.app/?auto=1&uid=${userId}`;
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -33,8 +34,7 @@ function isSundayNightReportTime(slot: string) {
       text,
       reply_markup: {
         inline_keyboard: [[
-          { text: "생각했어요 ✋", callback_data: `stop:${userId}` },
-          { text: "괜찮아요", callback_data: `continue:${userId}` },
+          { text: "생각하러 가기 →", url: autoLink }
         ]]
       }
     }),
@@ -442,15 +442,10 @@ if (day === 0) {
     const autoLink = `${baseUrl}/?auto=1&uid=${user.id}`;
 
  const messages = [
-
-  `생각버튼 켜질 시간이에요🙂
-${autoLink}`,
-  `생각할 시간 알려드려요🙂
-${autoLink}`,
-  `잠깐 생각하고 갈게요 🙂
-${autoLink}`,
-  `지금 생각하는 시간이요 🙂
-${autoLink}`,
+  `생각버튼 켜질 시간이에요🙂`,
+  `생각할 시간 알려드려요🙂`,
+  `잠깐 생각하고 갈게요 🙂`,
+  `지금 생각하는 시간이요 🙂`,
 ];
 
    const text = user.telegram_chat_id
