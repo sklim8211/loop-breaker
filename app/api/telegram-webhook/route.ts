@@ -87,12 +87,20 @@ export async function POST(req: Request) {
 
       // 공유하기 버튼
       if (action === "share") {
-        const shareText = shareMessages[
-          Math.floor(Math.random() * shareMessages.length)
-        ];
-        await sendTelegramMessage(chatId, shareText);
-        return NextResponse.json({ ok: true });
-      }
+  await sendTelegramMessage(
+    chatId,
+    "친구에게 보내기 버튼을 눌러주세요 🙂",
+    {
+      inline_keyboard: [[
+        {
+          text: "친구에게 보내기",
+          switch_inline_query: "나 요즘 이거 쓰는데\n\n하루 한 번 문자 오면\n잠깐 멈춰서 생각하는 거야\n그게 전부야\n\nhttps://loop-breaker-e1gt.vercel.app"
+        }
+      ]]
+    }
+  );
+  return NextResponse.json({ ok: true });
+}
 
       // 확인 버튼
       if (action === "confirm") {
