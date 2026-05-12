@@ -19,7 +19,11 @@ function getKoreaDayOfWeek() {
 function isSundayNightReportTime(slot: string) {
   return getKoreaDayOfWeek() === 0 && slot === "20:00";
 }
- async function sendTelegramMessage(chatId: string, text: string) {
+ async function sendTelegramMessage(
+  chatId: string,
+  text: string,
+  userId: string
+) {
   const token = process.env.TELEGRAM_BOT_TOKEN!;
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
@@ -27,9 +31,15 @@ function isSundayNightReportTime(slot: string) {
     body: JSON.stringify({
       chat_id: chatId,
       text,
+      reply_markup: {
+        inline_keyboard: [[
+          { text: "생각했어요 ✋", callback_data: `stop:${userId}` },
+          { text: "괜찮아요", callback_data: `continue:${userId}` },
+        ]]
+      }
     }),
   });
-} 
+}
 
 async function sendTrialEndingNotifications(supabase: any) {
   const apiKey = process.env.SOLAPI_API_KEY!;
@@ -90,7 +100,7 @@ ${paymentLink}
     if (!text) continue;
 
    if (user.telegram_chat_id) {
-      await sendTelegramMessage(user.telegram_chat_id, text);
+      await sendTelegramMessage(user.telegram_chat_id, text, user.id);
     } else {
       const date = new Date().toISOString();
       const salt = Math.random().toString(36).slice(2);
@@ -232,7 +242,7 @@ ${comment}
 ${autoLink}`;
 
     if (user.telegram_chat_id) {
-      await sendTelegramMessage(user.telegram_chat_id, text);
+      await sendTelegramMessage(user.telegram_chat_id, text, user.id);
     } else {
       const date = new Date().toISOString();
       const salt = Math.random().toString(36).slice(2);
@@ -443,7 +453,7 @@ ${autoLink}`,
     );
 
     if (user.telegram_chat_id) {
-      await sendTelegramMessage(user.telegram_chat_id, text);
+      await sendTelegramMessage(user.telegram_chat_id, text, user.id);
     } else {
       const smsRes = await fetch("https://api.solapi.com/messages/v4/send", {
         method: "POST",
