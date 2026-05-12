@@ -138,7 +138,7 @@ export async function POST(req: Request) {
           `${responseLine} 🙂\n이번 주 ${weeklyCount}번째 멈춤이에요.`,
           {
             inline_keyboard: [[
-              { text: "같이 해볼 사람 있어요?", callback_data: `share:${userId}` },
+              { text: "생각나는 친구에게 공유해 주세요", callback_data: `share:${userId}` },
             ], [
               { text: "확인", callback_data: `confirm:${userId}` },
             ]]

@@ -40,6 +40,15 @@ function isSundayNightReportTime(slot: string) {
     }),
   });
 }
+function getTelegramAlertText(): string {
+  const phrases = [
+    `생각버튼 켜질 시간이에요🙂`,
+    `생각할 시간 알려드려요🙂`,
+    `잠깐 생각하고 갈게요 🙂`,
+    `지금 생각하는 시간이요 🙂`,
+  ];
+  return phrases[Math.floor(Math.random() * phrases.length)];
+}
 
 function getTelegramAlertText(user: any): string {
   const behaviorLabel =
