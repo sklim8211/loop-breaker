@@ -852,6 +852,7 @@ const verifyCode = async () => {
       sms_consent: smsConsent,
       diagnosis_1: diagnosis1,
       diagnosis_2: diagnosis2,
+      result_type: resultType.title,
     },
     {
       onConflict: "phone_number",
