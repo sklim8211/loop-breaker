@@ -13,13 +13,14 @@ function getKoreaDayOfWeek() {
   const now = new Date();
   const koreaOffset = 9 * 60;
   const koreaTime = new Date(now.getTime() + koreaOffset * 60 * 1000);
-  return koreaTime.getUTCDay(); // 0 = Sunday
+  return koreaTime.getUTCDay();
 }
 
 function isSundayNightReportTime(slot: string) {
   return getKoreaDayOfWeek() === 0 && slot === "20:00";
 }
- async function sendTelegramMessage(
+
+async function sendTelegramMessage(
   chatId: string,
   text: string,
   userId: string
@@ -40,6 +41,7 @@ function isSundayNightReportTime(slot: string) {
     }),
   });
 }
+
 function getTelegramAlertText(): string {
   const phrases = [
     `생각버튼 켜질 시간이에요🙂`,
@@ -50,7 +52,50 @@ function getTelegramAlertText(): string {
   return phrases[Math.floor(Math.random() * phrases.length)];
 }
 
+// ★ 타입별 expandedDescription
+const expandedDescriptions: Record<string, string> = {
+  "아쉬움 연장형": `"조금만 더" 하려다가\n어느새 한참이 지나있어요.\n그만해도 된다는 걸 알면서도\n멈추는 타이밍이 자꾸 늦어지죠.`,
+  "오늘만 허가형": `오늘은 괜찮다고 했어요.\n그런데 그 오늘이 꽤 자주 와요.\n예외가 반복되면\n어느새 그게 기본이 되죠.`,
+  "멈춤 타이밍 실종형": `그만해야 하는 거 알아요.\n그런데 끝낼 타이밍이\n항상 조금씩 늦어져요.\n이미 한참 지나서야 보이죠.`,
+  "마음 달래기 연장형": `잠깐 달래려 했는데\n그 시간이 생각보다 길어졌어요.\n마음이 힘들수록\n멈추기가 더 어렵죠.`,
+  "지친 날 특혜형": `힘든 날엔 나한테 좀 관대해져요.\n오늘만큼은 괜찮다고.\n근데 그 특혜가\n생각보다 자주 열리죠.`,
+  "지침 폭주형": `지칠수록 브레이크가 잘 안 들어요.\n피곤한 날일수록\n오히려 더 멀리 가게 되죠.\n멈추는 게 제일 힘든 순간에.`,
+  "자동모드 연장형": `손이 먼저 알아요.\n생각하기 전에 이미 시작돼있고\n늘 하던 흐름대로 가다 보면\n또 길어지고 있죠.`,
+  "익숙한 예외형": `익숙한 흐름에\n오늘만 괜찮다를 슬쩍 더해요.\n그게 어느새 익숙해지면\n예외가 루틴이 되죠.`,
+  "종료 버튼 실종형": `시작은 자연스러운데\n끝내는 버튼이 잘 안 보여요.\n이쯤에서 끝내야 하는데\n하면서도 계속 가게 되죠.`,
+  "이유는 몰라도 시작형": `왜 시작했는지 모르겠어요.\n그냥 어느새 하고 있고\n이유는 나중에 붙이면 되니까\n일단 계속 가게 되죠.`,
+  "설명은 나중형": `일단 하고 봐요.\n이유는 나중에 생각하면 되고\n설명은 끝나고 붙이면 되니까\n지금은 그냥 계속하죠.`,
+  "출발 미상 질주형": `언제 시작했는지 모르겠어요.\n그냥 어느새 한참 와있고\n출발점은 흐릿한데\n진행은 선명하게 계속되죠.`,
+  "정신 차려보니형": `정신 차려보니 또 여기예요.\n언제 시작했는지도 모르겠는데\n어느새 여기까지 와있고\n또 그랬구나 싶은 거죠.`,
+};
 
+// ★ 이번 달 멈춤 횟수 계산
+async function getMonthlyPauseCount(supabase: any, userId: string): Promise<number> {
+  const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const { data } = await supabase
+    .from("pause_logs")
+    .select("action_type")
+    .eq("user_id", userId)
+    .eq("action_type", "pause")
+    .gte("created_at", monthAgo);
+  return data?.length ?? 0;
+}
+
+// ★ 기억형 문구 생성
+function getMemoryText(user: any, pauseCount: number, daysSinceJoined: number): string {
+  const desc = expandedDescriptions[user.result_type] ?? null;
+  if (!desc) return "";
+
+  if (daysSinceJoined >= 14 && daysSinceJoined <= 16) {
+    return `처음 시작할 때 이걸 보셨어요.\n\n${desc}\n\n지금도 낯설지 않죠?`;
+  }
+
+  if (daysSinceJoined >= 29 && daysSinceJoined <= 31) {
+    return `한 달 전, 이 패턴을 발견했어요.\n\n이번 달 ${pauseCount}번 멈췄어요.\n\n그때랑 지금, 달라진 게 있나요?`;
+  }
+
+  return "";
+}
 
 async function sendTrialEndingNotifications(supabase: any) {
   const apiKey = process.env.SOLAPI_API_KEY!;
@@ -58,14 +103,10 @@ async function sendTrialEndingNotifications(supabase: any) {
   const sender = process.env.SOLAPI_SENDER!;
 
   const now = new Date();
-  const d1Date = new Date(now);
-  d1Date.setDate(now.getDate() - 13);
-  const d0Date = new Date(now);
-  d0Date.setDate(now.getDate() - 14);
 
   const { data: users } = await supabase
     .from("users")
-    .select("id, phone_number, sms_consent, telegram_chat_id")
+    .select("id, phone_number, sms_consent, telegram_chat_id, trial_started_at, created_at")
     .eq("sms_consent", true);
 
   for (const user of users ?? []) {
@@ -110,7 +151,7 @@ ${paymentLink}
 
     if (!text) continue;
 
-   if (user.telegram_chat_id) {
+    if (user.telegram_chat_id) {
       await sendTelegramMessage(user.telegram_chat_id, text, user.id);
     } else {
       const date = new Date().toISOString();
@@ -124,11 +165,7 @@ ${paymentLink}
           Authorization: `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`,
         },
         body: JSON.stringify({
-          message: {
-            to: user.phone_number,
-            from: sender,
-            text,
-          },
+          message: { to: user.phone_number, from: sender, text },
         }),
       });
     }
@@ -142,7 +179,7 @@ async function sendWeeklyReports(supabase: any) {
 
   const { data: users } = await supabase
     .from("users")
-    .select("id, phone_number, sms_consent")
+    .select("id, phone_number, sms_consent, telegram_chat_id")
     .eq("sms_consent", true);
 
   const now = new Date();
@@ -177,80 +214,56 @@ async function sendWeeklyReports(supabase: any) {
 
     const autoLink = `https://loop-breaker-e1gt.vercel.app/?auto=1&uid=${user.id}`;
 
-const reportMessages = {
-  zero: [
-    `이번 주엔 그냥 지나갔네요
-괜찮아요, 다음 주가 있으니까요`,
+    const reportMessages = {
+      zero: [
+        `이번 주엔 그냥 지나갔네요\n괜찮아요, 다음 주가 있으니까요`,
+        `이번 주는 바빴나봐요 🙂`,
+        `이번 주엔 그냥 흘러갔네요\n그럴 때도 있어요`,
+        `이번 주는 그냥 지켜봤어요`,
+        `쉬어가는 주도 있는 거예요`,
+        `이번 주는 그냥 넘어갔네요\n다음 주 또 와요`,
+        `아무것도 안 한 주도 쌓이는 거예요`,
+      ],
+      low: [
+        `잠깐이었지만, 됐어요`,
+        `시작은 그렇게 하더라고요 🙂`,
+        `그거면 충분해요`,
+        `작지만 있었어요`,
+        `없는 것보다 훨씬 낫죠 🙂`,
+        `그게 다가 아니에요`,
+      ],
+      mid: [
+        `어느새요 🙂`,
+        `슬슬 몸에 배고 있어요`,
+        `그 순간들, 변화가 찾아와요`,
+        `꽤 했네요 🙂`,
+        `흐름이 생기고 있어요`,
+        `그 순간들이 모이고 있어요`,
+        `조금씩 달라지고 있는 거예요`,
+        `이쯤이면 습관이 되려나봐요 🙂`,
+      ],
+      high: [
+        `이제 자연스럽죠? 🙂`,
+        `어느새 일상이 되고 있네요`,
+        `그 순간들의 반복이에요`,
+        `이 정도면 진짜 달라지고 있어요`,
+        `멋지게 하고 계세요 🙂`,
+        `이제 몸이 먼저 알고 있을 거예요`,
+        `변화가 이미 시작됐어요`,
+        `이쯤이면 충분히 잘 하고 있어요`,
+      ],
+    };
 
-    `이번 주는 바빴나봐요 🙂`,
+    let messagePool: string[] = [];
+    if (stopCount === 0) messagePool = reportMessages.zero;
+    else if (stopCount <= 2) messagePool = reportMessages.low;
+    else if (stopCount <= 5) messagePool = reportMessages.mid;
+    else messagePool = reportMessages.high;
 
-    `이번 주엔 그냥 흘러갔네요
-그럴 때도 있어요`,
-
-    `이번 주는 그냥 지켜봤어요`,
-
-    `쉬어가는 주도 있는 거예요`,
-
-    `이번 주는 그냥 넘어갔네요
-다음 주 또 와요`,
-
-    `아무것도 안 한 주도 쌓이는 거예요`,
-  ],
-
-  low: [
-    `잠깐이었지만, 됐어요`,
-    `시작은 그렇게 하더라고요 🙂`,
-    `그거면 충분해요`,
-    `작지만 있었어요`,
-    `없는 것보다 훨씬 낫죠 🙂`,
-    `그게 다가 아니에요`,
-  ],
-
-  mid: [
-    `어느새요 🙂`,
-    `슬슬 몸에 배고 있어요`,
-    `그 순간들, 변화가 찾아와요`,
-    `꽤 했네요 🙂`,
-    `흐름이 생기고 있어요`,
-    `그 순간들이 모이고 있어요`,
-    `조금씩 달라지고 있는 거예요`,
-    `이쯤이면 습관이 되려나봐요 🙂`,
-  ],
-
-  high: [
-    `이제 자연스럽죠? 🙂`,
-    `어느새 일상이 되고 있네요`,
-    `그 순간들의 반복이에요`,
-    `이 정도면 진짜 달라지고 있어요`,
-    `멋지게 하고 계세요 🙂`,
-    `이제 몸이 먼저 알고 있을 거예요`,
-    `변화가 이미 시작됐어요`,
-    `이쯤이면 충분히 잘 하고 있어요`,
-  ],
-};
-
-let messagePool: string[] = [];
-
-if (stopCount === 0) {
-  messagePool = reportMessages.zero;
-} else if (stopCount <= 2) {
-  messagePool = reportMessages.low;
-} else if (stopCount <= 5) {
-  messagePool = reportMessages.mid;
-} else {
-  messagePool = reportMessages.high;
-}
-
-const comment =
-  messagePool[Math.floor(Math.random() * messagePool.length)];
-
-const text =
-  stopCount === 0
-    ? `${comment}
-${autoLink}`
-    : `이번 주, ${stopCount}번 멈춰 생각했네요
-${comment}
-${autoLink}`;
+    const comment = messagePool[Math.floor(Math.random() * messagePool.length)];
+    const text = stopCount === 0
+      ? `${comment}\n${autoLink}`
+      : `이번 주, ${stopCount}번 멈춰 생각했네요\n${comment}\n${autoLink}`;
 
     if (user.telegram_chat_id) {
       await sendTelegramMessage(user.telegram_chat_id, text, user.id);
@@ -266,30 +279,20 @@ ${autoLink}`;
           Authorization: `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`,
         },
         body: JSON.stringify({
-          message: {
-            to: user.phone_number,
-            from: sender,
-            text,
-          },
+          message: { to: user.phone_number, from: sender, text },
         }),
       });
     }
 
-    await supabase.from("report_send_logs").insert([
-      {
-        user_id: user.id,
-        report_type: "weekly",
-      },
-    ]);
+    await supabase.from("report_send_logs").insert([{
+      user_id: user.id,
+      report_type: "weekly",
+    }]);
 
     sentCount++;
   }
 
-  return NextResponse.json({
-    mode: "weekly_report",
-    sentCount,
-    skippedCount,
-  });
+  return NextResponse.json({ mode: "weekly_report", sentCount, skippedCount });
 }
 
 export async function POST(req: Request) {
@@ -324,59 +327,39 @@ export async function POST(req: Request) {
         "Content-Type": "application/json",
         Authorization: `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`,
       },
-      body: JSON.stringify({
-        message: {
-          to,
-          from,
-          text,
-        },
-      }),
+      body: JSON.stringify({ message: { to, from, text } }),
     });
 
     const data = await response.json();
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    return NextResponse.json(
-      { error: String(error) },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
 
-const slot = searchParams.get("slot");
-const secret = searchParams.get("secret");
-const isReport = searchParams.get("report") === "1";
+  const slot = searchParams.get("slot");
+  const secret = searchParams.get("secret");
+  const isReport = searchParams.get("report") === "1";
 
- 
+  if (secret !== process.env.CRON_SECRET) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
 
-if (secret !== process.env.CRON_SECRET) {
-  return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-}
+  const allowedSlots = ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"];
 
-const allowedSlots = [
-  "08:00",
-  "10:00",
-  "12:00",
-  "14:00",
-  "16:00",
-  "18:00",
-  "20:00",
-  "22:00",
-];
+  if (!slot || !allowedSlots.includes(slot)) {
+    return NextResponse.json({ error: "invalid slot" }, { status: 400 });
+  }
 
-if (!slot || !allowedSlots.includes(slot)) {
-  return NextResponse.json({ error: "invalid slot" }, { status: 400 });
-}
- 
-if (searchParams.get("debug") === "env") {
-  return NextResponse.json({
-    solapiApiKeyLength: process.env.SOLAPI_API_KEY?.length ?? 0,
-    solapiSender: process.env.SOLAPI_SENDER ? "exists" : "missing",
-  });
-}
+  if (searchParams.get("debug") === "env") {
+    return NextResponse.json({
+      solapiApiKeyLength: process.env.SOLAPI_API_KEY?.length ?? 0,
+      solapiSender: process.env.SOLAPI_SENDER ? "exists" : "missing",
+    });
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -393,22 +376,23 @@ if (searchParams.get("debug") === "env") {
   await sendTrialEndingNotifications(supabase);
 
   if (isReport || isSundayNightReportTime(slot)) {
-  return await sendWeeklyReports(supabase);
+    return await sendWeeklyReports(supabase);
   }
-const day = getKoreaDayOfWeek();
 
-if (day === 0) {
-  return NextResponse.json({
-    mode: "sunday_no_regular_sms",
-    message: "Sunday regular SMS is skipped",
-    slot,
-  });
-}
+  const day = getKoreaDayOfWeek();
+  if (day === 0) {
+    return NextResponse.json({
+      mode: "sunday_no_regular_sms",
+      message: "Sunday regular SMS is skipped",
+      slot,
+    });
+  }
+
   const { data: users, error } = await supabase
-  .from("users")
-  .select("*")
-  .eq("notification_time", slot)
-  .or("sms_consent.eq.true,telegram_chat_id.not.is.null");
+    .from("users")
+    .select("*")
+    .eq("notification_time", slot)
+    .or("sms_consent.eq.true,telegram_chat_id.not.is.null");
 
   if (error) {
     console.error("유저 조회 실패", error);
@@ -416,9 +400,11 @@ if (day === 0) {
   }
 
   const today = new Date().toISOString().slice(0, 10);
+  const now = new Date();
 
   let sentCount = 0;
   let skippedCount = 0;
+  let memoryCount = 0;
 
   for (const user of users ?? []) {
     const { data: alreadySent } = await supabase
@@ -441,24 +427,47 @@ if (day === 0) {
     const baseUrl = "https://loop-breaker-e1gt.vercel.app";
     const autoLink = `${baseUrl}/?auto=1&uid=${user.id}`;
 
- const messages = [
-  `생각버튼 켜질 시간이에요🙂`,
-  `생각할 시간 알려드려요🙂`,
-  `잠깐 생각하고 갈게요 🙂`,
-  `지금 생각하는 시간이요 🙂`,
-];
+    // ★ 가입 후 경과일 계산
+    const joinedAt = user.trial_started_at
+      ? new Date(user.trial_started_at)
+      : new Date(user.created_at);
+    const daysSinceJoined = Math.floor(
+      (now.getTime() - joinedAt.getTime()) / (1000 * 60 * 60 * 24)
+    );
 
-   const text = user.telegram_chat_id
-  ? getTelegramAlertText()
-  : messages[Math.floor(Math.random() * messages.length)];
+    // ★ 기억형 대상 여부 확인
+    const isMemoryDay =
+      user.result_type &&
+      ((daysSinceJoined >= 14 && daysSinceJoined <= 16) ||
+        (daysSinceJoined >= 29 && daysSinceJoined <= 31));
+
+    let text = "";
+
+    if (isMemoryDay) {
+      const pauseCount = await getMonthlyPauseCount(supabase, user.id);
+      const memoryText = getMemoryText(user, pauseCount, daysSinceJoined);
+      if (memoryText) {
+        text = memoryText;
+        memoryCount++;
+      }
+    }
+
+    // 기억형 아니면 기본 알림
+    if (!text) {
+      const messages = [
+        `생각버튼 켜질 시간이에요🙂`,
+        `생각할 시간 알려드려요🙂`,
+        `잠깐 생각하고 갈게요 🙂`,
+        `지금 생각하는 시간이요 🙂`,
+      ];
+      text = user.telegram_chat_id
+        ? getTelegramAlertText()
+        : messages[Math.floor(Math.random() * messages.length)];
+    }
 
     const date = new Date().toISOString();
     const salt = Math.random().toString(36).slice(2);
-    const signature = getSignature(
-      process.env.SOLAPI_API_SECRET!,
-      date,
-      salt
-    );
+    const signature = getSignature(process.env.SOLAPI_API_SECRET!, date, salt);
 
     if (user.telegram_chat_id) {
       await sendTelegramMessage(user.telegram_chat_id, text, user.id);
@@ -479,21 +488,18 @@ if (day === 0) {
       });
 
       const smsData = await smsRes.json();
-
       if (!smsRes.ok) {
         console.error("문자 발송 실패", user.phone_number, smsData);
         continue;
       }
     }
 
-    await supabase.from("sms_send_logs").insert([
-      {
-        user_id: user.id,
-        phone_number: user.phone_number,
-        notification_time: slot,
-        message_text: text,
-      },
-    ]);
+    await supabase.from("sms_send_logs").insert([{
+      user_id: user.id,
+      phone_number: user.phone_number,
+      notification_time: slot,
+      message_text: text,
+    }]);
 
     sentCount += 1;
   }
@@ -503,5 +509,6 @@ if (day === 0) {
     total: users?.length ?? 0,
     sentCount,
     skippedCount,
+    memoryCount,
   });
 }
