@@ -1,6 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
+const ADMIN_CHAT_ID = "59182410";
+
 // 텔레그램 메시지 발송
 async function sendTelegramMessage(
   chatId: string,
@@ -28,6 +30,122 @@ async function answerCallbackQuery(callbackQueryId: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ callback_query_id: callbackQueryId }),
   });
+}
+
+// ★ 운영 명령어: /stats
+async function handleStats(chatId: string, supabase: any) {
+  const today = new Date().toISOString().slice(0, 10);
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  const { count: totalUsers } = await supabase
+    .from("users")
+    .select("*", { count: "exact", head: true });
+
+  const { count: telegramUsers } = await supabase
+    .from("users")
+    .select("*", { count: "exact", head: true })
+    .not("telegram_chat_id", "is", null);
+
+  const { count: todaySent } = await supabase
+    .from("sms_send_logs")
+    .select("*", { count: "exact", head: true })
+    .gte("sent_at", `${today}T00:00:00.000Z`)
+    .lt("sent_at", `${today}T23:59:59.999Z`);
+
+  const { count: weeklyPause } = await supabase
+    .from("pause_logs")
+    .select("*", { count: "exact", head: true })
+    .eq("action_type", "pause")
+    .gte("created_at", weekAgo);
+
+  const { count: weeklyCount } = await supabase
+    .from("pause_logs")
+    .select("*", { count: "exact", head: true })
+    .eq("action_type", "continue")
+    .gte("created_at", weekAgo);
+
+  const text =
+    `📊 <b>운영 현황</b>\n\n` +
+    `👥 전체 사용자: <b>${totalUsers ?? 0}명</b>\n` +
+    `📱 텔레그램 연결: <b>${telegramUsers ?? 0}명</b>\n` +
+    `📨 오늘 발송: <b>${todaySent ?? 0}건</b>\n\n` +
+    `이번 주 멈춤 횟수: <b>${weeklyPause ?? 0}번</b>\n` +
+    `이번 주 넘어간 횟수: <b>${weeklyCount ?? 0}번</b>`;
+
+  await sendTelegramMessage(chatId, text);
+}
+
+// ★ 운영 명령어: /users
+async function handleUsers(chatId: string, supabase: any) {
+  const { data: users } = await supabase
+    .from("users")
+    .select("id, phone_number, telegram_chat_id, created_at, notification_time")
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  if (!users || users.length === 0) {
+    await sendTelegramMessage(chatId, "등록된 사용자가 없어요.");
+    return;
+  }
+
+  const lines = users.map((u: any, i: number) => {
+    const date = u.created_at?.slice(0, 10) ?? "-";
+    const channel = u.telegram_chat_id ? "📱텔레그램" : "💬문자";
+    const phone = u.phone_number
+      ? u.phone_number.slice(0, 3) + "****" + u.phone_number.slice(-4)
+      : "-";
+    return `${i + 1}. ${channel} | ${phone} | ${u.notification_time ?? "-"} | 가입 ${date}`;
+  });
+
+  const text = `👤 <b>최근 가입자 10명</b>\n\n` + lines.join("\n");
+  await sendTelegramMessage(chatId, text);
+}
+
+// ★ 운영 명령어: /logs
+async function handleLogs(chatId: string, supabase: any) {
+  const today = new Date().toISOString().slice(0, 10);
+
+  const { data: logs } = await supabase
+    .from("sms_send_logs")
+    .select("notification_time, created_at")
+    .gte("sent_at", `${today}T00:00:00.000Z`)
+    .lt("sent_at", `${today}T23:59:59.999Z`)
+    .order("sent_at", { ascending: false })
+    .limit(20);
+
+  if (!logs || logs.length === 0) {
+    await sendTelegramMessage(chatId, `오늘(${today}) 발송 내역이 없어요.`);
+    return;
+  }
+
+  // 시간대별 집계
+  const slotCounts: Record<string, number> = {};
+  for (const log of logs) {
+    const slot = log.notification_time ?? "unknown";
+    slotCounts[slot] = (slotCounts[slot] ?? 0) + 1;
+  }
+
+  const lines = Object.entries(slotCounts)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([slot, count]) => `${slot} — ${count}건`);
+
+  const text =
+    `📨 <b>오늘 발송 로그 (${today})</b>\n\n` +
+    lines.join("\n") +
+    `\n\n총 ${logs.length}건`;
+
+  await sendTelegramMessage(chatId, text);
+}
+
+// ★ 운영 명령어: /help
+async function handleHelp(chatId: string) {
+  const text =
+    `🛠 <b>운영 명령어</b>\n\n` +
+    `/stats — 전체 현황 (사용자, 발송, 멈춤 횟수)\n` +
+    `/users — 최근 가입자 10명\n` +
+    `/logs — 오늘 발송 로그\n` +
+    `/help — 명령어 목록`;
+  await sendTelegramMessage(chatId, text);
 }
 
 const shareMessages = [
@@ -87,20 +205,20 @@ export async function POST(req: Request) {
 
       // 공유하기 버튼
       if (action === "share") {
-  await sendTelegramMessage(
-    chatId,
-    "친구에게 보내기 버튼을 눌러주세요 🙂",
-    {
-  inline_keyboard: [[
-    {
-  text: "친구에게 보내기",
-  url: "https://t.me/share/url?url=https://loop-breaker-e1gt.vercel.app&text=나 요즘 이거 쓰는데%0A%0A하루 한 번 문자 오면%0A잠깐 멈춰서 생각하는 거야%0A그게 전부야"
-}
-  ]]
-}
-  );
-  return NextResponse.json({ ok: true });
-}
+        await sendTelegramMessage(
+          chatId,
+          "친구에게 보내기 버튼을 눌러주세요 🙂",
+          {
+            inline_keyboard: [[
+              {
+                text: "친구에게 보내기",
+                url: "https://t.me/share/url?url=https://loop-breaker-e1gt.vercel.app&text=나 요즘 이거 쓰는데%0A%0A하루 한 번 문자 오면%0A잠깐 멈춰서 생각하는 거야%0A그게 전부야"
+              }
+            ]]
+          }
+        );
+        return NextResponse.json({ ok: true });
+      }
 
       // 확인 버튼
       if (action === "confirm") {
@@ -110,14 +228,12 @@ export async function POST(req: Request) {
 
       // 생각했어요 버튼
       if (action === "stop") {
-        // pause_log 저장
         await supabase.from("pause_logs").insert([{
           user_id: userId,
           action_type: "pause",
           created_at: new Date().toISOString(),
         }]);
 
-        // 이번 주 멈춤 횟수
         const weekAgo = new Date(
           Date.now() - 7 * 24 * 60 * 60 * 1000
         ).toISOString();
@@ -158,7 +274,6 @@ export async function POST(req: Request) {
 
       // 괜찮아요 버튼
       if (action === "continue") {
-        // pause_log 저장
         await supabase.from("pause_logs").insert([{
           user_id: userId,
           action_type: "continue",
@@ -182,7 +297,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // ★ 일반 메시지 처리 (/start 명령어)
+    // ★ 일반 메시지 처리
     const message = body?.message;
     if (!message) {
       return NextResponse.json({ ok: true });
@@ -191,6 +306,27 @@ export async function POST(req: Request) {
     const chatId = message?.chat?.id?.toString();
     const text = message?.text ?? "";
 
+    // ★ 운영 명령어 처리 (관리자만)
+    if (chatId === ADMIN_CHAT_ID) {
+      if (text === "/stats") {
+        await handleStats(chatId, supabase);
+        return NextResponse.json({ ok: true });
+      }
+      if (text === "/users") {
+        await handleUsers(chatId, supabase);
+        return NextResponse.json({ ok: true });
+      }
+      if (text === "/logs") {
+        await handleLogs(chatId, supabase);
+        return NextResponse.json({ ok: true });
+      }
+      if (text === "/help") {
+        await handleHelp(chatId);
+        return NextResponse.json({ ok: true });
+      }
+    }
+
+    // ★ /start 명령어 처리
     if (!text.startsWith("/start")) {
       return NextResponse.json({ ok: true });
     }
@@ -206,7 +342,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    // Supabase에 chat_id 저장
     const { error } = await supabase
       .from("users")
       .update({ telegram_chat_id: chatId })
