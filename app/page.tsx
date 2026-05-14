@@ -1492,12 +1492,20 @@ ${url}`;
 
       <div className="space-y-3">
         {timeOptions.map((item) => (
-          <button
-            key={item.key}
-            onClick={() => {
-              setSelectedTime(item.key);
-              setStep("diagnosis");
-            }}
+  <button
+    key={item.key}
+    onClick={async () => {
+      setSelectedTime(item.key);
+      if (userId) {
+        await supabase
+          .from("users")
+          .update({ notification_time: item.key })
+          .eq("id", userId);
+        setStep("home");
+        return;
+      }
+      setStep("diagnosis");
+    }}
             className="w-full rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-slate-900 shadow-sm transition hover:bg-slate-100"
           >
             <div className="flex items-center gap-3">
@@ -1525,10 +1533,22 @@ ${url}`;
             {customTimeOptions.map((item) => (
               <button
                 key={item.key}
-                onClick={() => {
-                  setSelectedTime(item.key);
-                  setStep("diagnosis");
-                }}
+               onClick={async () => {
+  setSelectedTime(item.key);
+  
+  // 이미 등록된 사용자면 DB 업데이트 후 홈으로
+  if (userId) {
+    await supabase
+      .from("users")
+      .update({ notification_time: item.key })
+      .eq("id", userId);
+    setStep("home");
+    return;
+  }
+  
+  // 신규 사용자면 기존처럼 진단으로
+  setStep("diagnosis");
+}}
                 className="h-12 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
               >
                 {item.label}
