@@ -69,7 +69,7 @@ const expandedDescriptions: Record<string, string> = {
   "정신 차려보니형": `정신 차려보니 또 여기예요.\n언제 시작했는지도 모르겠는데\n어느새 여기까지 와있고\n또 그랬구나 싶은 거죠.`,
 };
 
-// ★ 이번 달 멈춤 횟수 계산
+// ★ 이번 달 멈춰 생각한 횟수
 async function getMonthlyPauseCount(supabase: any, userId: string): Promise<number> {
   const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const { data } = await supabase
@@ -81,7 +81,7 @@ async function getMonthlyPauseCount(supabase: any, userId: string): Promise<numb
   return data?.length ?? 0;
 }
 
-// ★ 기억형 문구 생성
+// ★ 기억형 문구 생성 (90일 6사이클)
 function getMemoryText(user: any, pauseCount: number, daysSinceJoined: number): string {
   const desc = expandedDescriptions[user.result_type] ?? null;
   if (!desc) return "";
@@ -91,7 +91,23 @@ function getMemoryText(user: any, pauseCount: number, daysSinceJoined: number): 
   }
 
   if (daysSinceJoined >= 29 && daysSinceJoined <= 31) {
-    return `한 달 전, 이 패턴을 발견했어요.\n\n이번 달 ${pauseCount}번 멈췄어요.\n\n그때랑 지금, 달라진 게 있나요?`;
+    return `한 달이 지났어요.\n\n이번 달 ${pauseCount}번 멈춰 생각했어요.\n\n그때랑 지금, 달라진 게 있나요?`;
+  }
+
+  if (daysSinceJoined >= 44 && daysSinceJoined <= 46) {
+    return `벌써 한 달 반이에요.\n\n멈춰 생각하는 게\n조금은 익숙해졌나요?\n\n어느 쪽이든 괜찮아요.`;
+  }
+
+  if (daysSinceJoined >= 59 && daysSinceJoined <= 61) {
+    return `두 달이 지났어요.\n\n이번 달 ${pauseCount}번 멈춰 생각했어요.\n\n처음보다 달라진 게\n느껴지는 순간이 있었나요?`;
+  }
+
+  if (daysSinceJoined >= 74 && daysSinceJoined <= 76) {
+    return `거의 다 왔어요.\n\n이 패턴,\n처음보다 가벼워졌나요?\n\n멈춰 생각하는 그 순간들이\n조금씩 쌓이고 있어요.`;
+  }
+
+  if (daysSinceJoined >= 89 && daysSinceJoined <= 91) {
+    return `90일이 됐어요.\n\n${desc}\n\n이제 이게 낯설어졌다면\n졸업할 때가 된 거예요.\n\n수고하셨어요.`;
   }
 
   return "";
@@ -134,7 +150,7 @@ async function sendTrialEndingNotifications(supabase: any) {
 ${paymentLink}
 
 안 하셔도 괜찮아요.
-멈추려 했던 순간들은 이미 당신 안에 있으니까요.`;
+멈춰 생각했던 순간들은 이미 당신 안에 있으니까요.`;
     } else if (daysSinceTrial === 60) {
       text = `루프브레이커입니다.
 
@@ -145,7 +161,8 @@ ${paymentLink}
 
 ${paymentLink}
 
-짧은 멈춤이 변화를 만든다는 걸
+짧게 멈춰 생각하는 순간이
+변화를 만든다는 걸
 이미 아시잖아요.`;
     }
 
@@ -437,9 +454,14 @@ export async function GET(req: Request) {
 
     // ★ 기억형 대상 여부 확인
     const isMemoryDay =
-      user.result_type &&
-      ((daysSinceJoined >= 14 && daysSinceJoined <= 16) ||
-        (daysSinceJoined >= 29 && daysSinceJoined <= 31));
+      user.result_type && (
+        (daysSinceJoined >= 14 && daysSinceJoined <= 16) ||
+        (daysSinceJoined >= 29 && daysSinceJoined <= 31) ||
+        (daysSinceJoined >= 44 && daysSinceJoined <= 46) ||
+        (daysSinceJoined >= 59 && daysSinceJoined <= 61) ||
+        (daysSinceJoined >= 74 && daysSinceJoined <= 76) ||
+        (daysSinceJoined >= 89 && daysSinceJoined <= 91)
+      );
 
     let text = "";
 

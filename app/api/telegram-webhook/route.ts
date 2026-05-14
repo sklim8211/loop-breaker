@@ -69,7 +69,7 @@ async function handleStats(chatId: string, supabase: any) {
     `👥 전체 사용자: <b>${totalUsers ?? 0}명</b>\n` +
     `📱 텔레그램 연결: <b>${telegramUsers ?? 0}명</b>\n` +
     `📨 오늘 발송: <b>${todaySent ?? 0}건</b>\n\n` +
-    `이번 주 멈춤 횟수: <b>${weeklyPause ?? 0}번</b>\n` +
+    `이번 주 멈춰 생각한 횟수: <b>${weeklyPause ?? 0}번</b>\n` +
     `이번 주 넘어간 횟수: <b>${weeklyCount ?? 0}번</b>`;
 
   await sendTelegramMessage(chatId, text);
@@ -141,7 +141,7 @@ async function handleLogs(chatId: string, supabase: any) {
 async function handleHelp(chatId: string) {
   const text =
     `🛠 <b>운영 명령어</b>\n\n` +
-    `/stats — 전체 현황 (사용자, 발송, 멈춤 횟수)\n` +
+    `/stats — 전체 현황 (사용자, 발송, 멈춰 생각한 횟수)\n` +
     `/users — 최근 가입자 10명\n` +
     `/logs — 오늘 발송 로그\n` +
     `/help — 명령어 목록`;
@@ -222,7 +222,7 @@ export async function POST(req: Request) {
 
       // 확인 버튼
       if (action === "confirm") {
-        await sendTelegramMessage(chatId, "오늘도 잠깐 멈춤, 충분합니다 🙂");
+        await sendTelegramMessage(chatId, "오늘도 잠깐 멈춰 생각했어요, 충분합니다 🙂");
         return NextResponse.json({ ok: true });
       }
 
@@ -259,7 +259,7 @@ export async function POST(req: Request) {
 
         await sendTelegramMessage(
           chatId,
-          `${responseLine} 🙂\n이번 주 ${weeklyCount}번째 멈춤이에요.`,
+          `${responseLine} 🙂\n이번 주 ${weeklyCount}번째 멈춰 생각했어요.`,
           {
             inline_keyboard: [[
               { text: "생각나는 친구에게 공유해 주세요", callback_data: `share:${userId}` },
