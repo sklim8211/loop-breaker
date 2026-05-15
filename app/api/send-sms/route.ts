@@ -501,7 +501,7 @@ export async function GET(req: Request) {
     const daysSinceJoined = Math.floor((now.getTime() - joinedAt.getTime()) / (1000 * 60 * 60 * 24));
 
     // ★ 기억형 대상 여부
-    const isMemoryDay = user.result_type && (
+    let isMemoryDay = user.result_type && (
       (daysSinceJoined >= 14 && daysSinceJoined <= 16) ||
       (daysSinceJoined >= 29 && daysSinceJoined <= 31) ||
       (daysSinceJoined >= 44 && daysSinceJoined <= 46) ||
@@ -510,6 +510,22 @@ export async function GET(req: Request) {
       (daysSinceJoined >= 89 && daysSinceJoined <= 91)
     );
 
+    // ★ 기억형 중복 발송 방지 — 최근 5일 안에 이미 보냈으면 스킵
+    if (isMemoryDay) {
+      const fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString();
+      const { data: recentMemory } = await supabase
+        .from("sms_send_logs")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("message_type", "memory")
+        .gte("sent_at", fiveDaysAgo)
+        .limit(1);
+
+      if (recentMemory && recentMemory.length > 0) {
+        isMemoryDay = false;
+      }
+    }
+
     // ★ 공백일이면 기억형 대상자만 발송, 나머지 스킵
     if (today === silentDay && !isMemoryDay) {
       silentCount += 1;
@@ -517,24 +533,26 @@ export async function GET(req: Request) {
     }
 
     let text = "";
+    let messageType = "basic";
     const autoLink = `https://loop-breaker-e1gt.vercel.app/?auto=1&uid=${user.id}`;
 
     // ★ 우선순위: 기억형 > 질문형 > 기본 알림
     if (isMemoryDay) {
       const pauseCount = await getMonthlyPauseCount(supabase, user.id);
       const memoryText = getMemoryText(user, pauseCount, daysSinceJoined);
-      if (memoryText) { text = memoryText; memoryCount++; }
+      if (memoryText) { text = memoryText; messageType = "memory"; memoryCount++; }
     }
 
     if (!text && today === questionDay) {
       const question = getRandomQuestion(user.result_type ?? null);
-      // 문자 사용자는 링크 추가, 텔레그램은 버튼이 자동으로 붙음
       text = user.telegram_chat_id ? question : `${question}\n${autoLink}`;
+      messageType = "question";
       questionCount++;
     }
 
     if (!text) {
       text = getBasicAlertText(user.result_type);
+      messageType = "basic";
     }
 
     const date = new Date().toISOString();
@@ -558,6 +576,7 @@ export async function GET(req: Request) {
       phone_number: user.phone_number,
       notification_time: slot,
       message_text: text,
+      message_type: messageType,
     }]);
 
     sentCount += 1;
