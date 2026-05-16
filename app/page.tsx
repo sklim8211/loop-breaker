@@ -2278,16 +2278,9 @@ ${url}`;
   </Screen>
 )}
               {step === "response" && (
-  <Screen key="response">
+  <Screen key={`response-${responseMode}`}>
     <div
-  style={{
-    position: "relative",
-    overflow: "hidden",
-    backgroundImage: responseMode === "stop"
-          ? "url('/response-stop-bg.jpg')"
-          : undefined,
-        backgroundSize: "cover",
-        backgroundPosition: "center top",
+      style={{
         borderRadius: "1.5rem",
         margin: "-28px",
         minHeight: "560px",
@@ -2295,30 +2288,31 @@ ${url}`;
         flexDirection: "column",
         justifyContent: "space-between",
         padding: "52px 24px 36px",
-        background: responseMode === "stop" ? undefined : "#f5f0e8",
+        background:
+          responseMode === "stop"
+            ? "linear-gradient(180deg, #1f1b18 0%, #3a2f27 55%, #f1dfc2 100%)"
+            : "#f5f0e8",
+        position: "relative",
       }}
     >
       {!sharePreviewOpen && (
         <>
-          {/* 상단 응답 텍스트 */}
-          <div style={{ textAlign: "center", position: "relative", zIndex: 10 }}>
-            <h2 style={{
-              fontSize: "2.4rem",
-              fontWeight: 700,
-              lineHeight: 1.3,
-              letterSpacing: "-0.03em",
-              color: responseMode === "stop" ? "white" : "#1a1612",
-              textShadow: responseMode === "stop"
-                ? "0 0 30px rgba(255,255,255,0.3)"
-                : "none",
-              margin: 0,
-            }}>
+          <div style={{ textAlign: "center" }}>
+            <h2
+              style={{
+                fontSize: "2.4rem",
+                fontWeight: 700,
+                lineHeight: 1.3,
+                letterSpacing: "-0.03em",
+                color: responseMode === "stop" ? "white" : "#1a1612",
+                margin: 0,
+              }}
+            >
               {responseMode === "stop" ? responseLine : continueLine}
             </h2>
           </div>
 
-          {/* 하단 버튼 */}
-          <div className="space-y-3" style={{ position: "relative", zIndex: 10 }}>
+          <div className="space-y-3">
             {responseMode === "stop" && (
               <button
                 onClick={openSharePreview}
@@ -2332,30 +2326,47 @@ ${url}`;
                   cursor: "pointer",
                 }}
               >
-                <p style={{ fontSize: "15px", fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: 0 }}>
+                <p
+                  style={{
+                    fontSize: "15px",
+                    fontWeight: 500,
+                    color: "rgba(255,255,255,0.85)",
+                    margin: 0,
+                  }}
+                >
                   혹시 생각나는 분 있어요?
                 </p>
-                <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", marginTop: "4px" }}>
+                <p
+                  style={{
+                    fontSize: "13px",
+                    color: "rgba(255,255,255,0.5)",
+                    marginTop: "4px",
+                  }}
+                >
                   탭해서 전해주세요
                 </p>
               </button>
             )}
+
             <button
               style={{
                 width: "100%",
                 height: "52px",
                 borderRadius: "14px",
-                border: responseMode === "stop"
-                  ? "0.5px solid rgba(255,255,255,0.2)"
-                  : "1px solid rgba(0,0,0,0.12)",
-                background: responseMode === "stop"
-                  ? "rgba(255,255,255,0.1)"
-                  : "rgba(0,0,0,0.06)",
+                border:
+                  responseMode === "stop"
+                    ? "0.5px solid rgba(255,255,255,0.2)"
+                    : "1px solid rgba(0,0,0,0.12)",
+                background:
+                  responseMode === "stop"
+                    ? "rgba(255,255,255,0.1)"
+                    : "rgba(0,0,0,0.06)",
                 fontSize: "16px",
                 fontWeight: 500,
-                color: responseMode === "stop"
-                  ? "rgba(255,255,255,0.7)"
-                  : "#5a4a3a",
+                color:
+                  responseMode === "stop"
+                    ? "rgba(255,255,255,0.78)"
+                    : "#5a4a3a",
                 cursor: "pointer",
               }}
               onClick={() => setStep("home")}
@@ -2366,58 +2377,43 @@ ${url}`;
         </>
       )}
 
- 
-              
-                    {sharePreviewOpen && (
-  <div className="space-y-6 text-center py-2">
-  
-  <div className="space-y-4">
-    <p className="text-base leading-relaxed text-slate-800 max-w-[300px] mx-auto break-keep">
-      하고 나서 후회하는 행동들,<br />
-      멈추고 싶은데 계속 하게 되는 순간들.<br />
-      <br />
-      하루 한 번 문자로 알려드려요.<br />
-      그 순간 잠깐 생각하는 것, 그게 전부예요.<br />
-      변화는 거기서 시작돼요.
-    </p>
+      {sharePreviewOpen && (
+        <div className="space-y-6 text-center py-2">
+          <div className="space-y-4">
+            <p className="text-base leading-relaxed text-white max-w-[300px] mx-auto break-keep">
+              하고 나서 후회하는 행동들,
+              <br />
+              멈추고 싶은데 계속 하게 되는 순간들.
+              <br />
+              <br />
+              하루 한 번 문자로 알려드려요.
+              <br />
+              그 순간 잠깐 생각하는 것, 그게 전부예요.
+            </p>
+          </div>
 
-    <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 mx-auto max-w-[300px]">
-      <p className="text-sm font-medium text-slate-700 break-all">
-        {typeof window !== "undefined" ? window.location.origin : ""}
-      </p>
+          <div className="space-y-2">
+            <button
+              className="h-12 w-full rounded-2xl bg-white text-slate-900 shadow-sm"
+              onClick={sendShareNow}
+            >
+              보내기
+            </button>
+
+            <button
+              className="h-11 w-full rounded-2xl border border-white/20 bg-white/10 text-sm text-white"
+              onClick={() => {
+                setSharePreviewOpen(false);
+                setShareMessage("");
+              }}
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-    {shareMessage && (
-      <p className="text-sm text-slate-600">{shareMessage}</p>
-    )}
-
-    <div className="space-y-2">
-      <button
-        className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
-        onClick={sendShareNow}
-      >
-        보내기
-      </button>
-
-      <div className="flex gap-2">
-        <button
-          className="h-11 flex-1 rounded-2xl bg-slate-100 text-sm text-slate-700 hover:bg-slate-200"
-          onClick={copyShareText}
-        >
-          복사
-        </button>
-        <button
-          className="h-11 flex-1 rounded-2xl border border-slate-200 bg-white text-sm text-slate-600 hover:bg-slate-50"
-          onClick={() => {
-            setSharePreviewOpen(false);
-            setShareMessage("");
-          }}
-       >
-          닫기
-        </button>
-      </div>
-    </div>
-  </div>
+  </Screen>
 )}
                   </div>
                 </Screen>
