@@ -2279,11 +2279,12 @@ ${url}`;
         justifyContent: "space-between",
         padding: "52px 24px 36px",
         backgroundImage:
+  backgroundImage:
   responseMode === "stop"
     ? "url('/response-light-bg.jpg')"
-    : undefined,
+    : "url('/response-continue-bg.jpg')",
 backgroundSize: "cover",
-backgroundPosition: "center top",
+backgroundPosition: "center",
 backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
         position: "relative",
       }}
