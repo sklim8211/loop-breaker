@@ -2169,24 +2169,7 @@ ${url}`;
         }}
       />
 
-      {/* 아주 미세한 안개 레이어 */}
-      <motion.div
-        className="pointer-events-none absolute inset-0"
-        animate={{
-          x: [-12, 12, -12],
-          opacity: [0.08, 0.16, 0.08],
-        }}
-        transition={{
-          duration: 18,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        style={{
-          background:
-            "linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.18) 48%, transparent 76%)",
-          filter: "blur(28px)",
-        }}
-      />
+      
 
       {/* 실제 내용 */}
       <div
