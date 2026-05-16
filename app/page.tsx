@@ -624,8 +624,31 @@ useEffect(() => {
 
     const params = new URLSearchParams(window.location.search);
     const isAuto = params.get("auto") === "1";
+    const isTelegram = params.get("telegram") === "1"; // ★ 추가
     const uid = params.get("uid");
 
+    if (isTelegram && uid) {
+  autoHandledRef.current = true;
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, behavior_type, custom_behavior, notification_time, phone_number, sms_consent")
+    .eq("id", uid)
+    .single();
+
+  if (error || !data) {
+    setStep("intro");
+    return;
+  }
+
+  setUserId(data.id);
+  setSelectedBehavior(data.behavior_type ?? null);
+  setCustomBehavior(data.custom_behavior ?? "");
+  setSelectedTime(data.notification_time ?? null);
+  setPhoneNumber(data.phone_number ?? "");
+  setSmsConsent(Boolean(data.sms_consent));
+  setStep("alerts");
+  return;
+}
     if (!isAuto || !uid) return;
 
     autoHandledRef.current = true;
