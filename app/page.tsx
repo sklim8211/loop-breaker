@@ -2188,39 +2188,7 @@ ${url}`;
     </div>
   </Screen>
 )}
-                    <div className="space-y-5 px-2 py-4">
-                     <p className="text-lg text-slate-700 leading-relaxed font-medium">{interventionLine}</p>
-                      <h2 className="text-3xl font-bold leading-tight text-slate-900">
-                        오늘 하루<br />한 번쯤<br />생각해봐요
-                      </h2>
-                    </div>
-
-                    <div className="flex flex-col gap-3 pt-2">
-                      <motion.div
-                        animate={{ scale: [1, 1.03, 1] }}
-                        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                        whileTap={{ scale: 0.97 }}
-                      >
-                        <button
-  className="h-20 w-full rounded-2xl bg-red-500 text-xl font-bold text-white shadow-sm hover:bg-red-400"
-                     onClick={() => handleDecision("stop")}
-                     >
-                     생각했어요
-                     </button>
-                      </motion.div>
-
-                      <motion.div whileTap={{ scale: 0.97 }}>
-                        <button
-  className="h-11 w-full rounded-2xl border border-slate-200 bg-transparent text-sm text-slate-500 hover:bg-slate-50"
-                      onClick={() => handleDecision("continue")}
-                      >
-                      괜찮아요
-                      </button>
-                      </motion.div>
-                    </div>
-                  </div>
-                </Screen>
-              )}
+                   
               {step === "response" && (
                 <Screen key="response">
                   <div className="space-y-6 py-10 text-center">
