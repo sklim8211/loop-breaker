@@ -2319,8 +2319,7 @@ ${url}`;
       )}
 
  
-                      </>
-                    )}
+              
                     {sharePreviewOpen && (
   <div className="space-y-6 text-center py-2">
   
