@@ -2110,7 +2110,7 @@ ${url}`;
     </div>
   </Screen>
 )}
-             {step === "intervention" && (
+            {step === "intervention" && (
   <Screen key="intervention">
     <div
       className="relative overflow-hidden rounded-[1.5rem]"
@@ -2119,9 +2119,19 @@ ${url}`;
         minHeight: "560px",
       }}
     >
-      {/* 배경 이미지 */}
-      <div
+      {/* 배경 이미지 — 아주 천천히 숨쉬듯 움직임 */}
+      <motion.div
         className="absolute inset-0"
+        initial={{ scale: 1.04, opacity: 0.92 }}
+        animate={{
+          scale: [1.04, 1.08, 1.04],
+          opacity: [0.9, 1, 0.9],
+        }}
+        transition={{
+          duration: 14,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
         style={{
           backgroundImage: "url('/intervention-bg.jpg')",
           backgroundSize: "cover",
@@ -2129,15 +2139,24 @@ ${url}`;
         }}
       />
 
-      {/* 어두운 오버레이 */}
-      <div className="absolute inset-0 bg-black/35" />
+      {/* 어두운 막 */}
+      <div className="absolute inset-0 bg-black/28" />
 
-      {/* 위쪽 빛 번짐 */}
-      <div
+      {/* 위쪽 빛 — 천천히 움직이는 느낌 */}
+      <motion.div
         className="absolute inset-0"
+        animate={{
+          opacity: [0.28, 0.48, 0.28],
+          scale: [1, 1.08, 1],
+        }}
+        transition={{
+          duration: 9,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
         style={{
           background:
-            "radial-gradient(circle at 50% 18%, rgba(255,255,255,0.22), transparent 34%)",
+            "radial-gradient(circle at 50% 18%, rgba(255,255,255,0.32), transparent 34%)",
         }}
       />
 
@@ -2146,7 +2165,26 @@ ${url}`;
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0.25), rgba(0,0,0,0.6))",
+            "linear-gradient(to bottom, rgba(0,0,0,0.03), rgba(0,0,0,0.18), rgba(0,0,0,0.52))",
+        }}
+      />
+
+      {/* 아주 미세한 안개 레이어 */}
+      <motion.div
+        className="absolute inset-0"
+        animate={{
+          x: [-12, 12, -12],
+          opacity: [0.08, 0.16, 0.08],
+        }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        style={{
+          background:
+            "linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.18) 48%, transparent 76%)",
+          filter: "blur(28px)",
         }}
       />
 
@@ -2157,7 +2195,12 @@ ${url}`;
           padding: "52px 24px 36px",
         }}
       >
-        <div style={{ textAlign: "center" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          style={{ textAlign: "center" }}
+        >
           <p
             style={{
               fontSize: "15px",
@@ -2170,14 +2213,25 @@ ${url}`;
             {interventionLine}
           </p>
 
-          <h2
+          <motion.h2
+            animate={{
+              textShadow: [
+                "0 0 22px rgba(255,255,255,0.22)",
+                "0 0 36px rgba(255,255,255,0.42)",
+                "0 0 22px rgba(255,255,255,0.22)",
+              ],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
             style={{
               fontSize: "2.6rem",
               fontWeight: 700,
               color: "white",
               lineHeight: 1.25,
               letterSpacing: "-0.03em",
-              textShadow: "0 0 30px rgba(255,255,255,0.35)",
               margin: 0,
             }}
           >
@@ -2186,10 +2240,15 @@ ${url}`;
             한 번쯤
             <br />
             생각해봐요
-          </h2>
-        </div>
+          </motion.h2>
+        </motion.div>
 
-        <div style={{ display: "flex", gap: "12px" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.25 }}
+          style={{ display: "flex", gap: "12px" }}
+        >
           <button
             style={{
               flex: 2,
@@ -2203,6 +2262,7 @@ ${url}`;
               cursor: "pointer",
               letterSpacing: "-0.01em",
               boxShadow: "0 12px 34px rgba(0,0,0,0.28)",
+              backdropFilter: "blur(10px)",
             }}
             onClick={() => handleDecision("stop")}
           >
@@ -2225,12 +2285,11 @@ ${url}`;
           >
             괜찮아요
           </button>
-        </div>
+        </motion.div>
       </div>
     </div>
   </Screen>
 )}
-                   
               {step === "response" && (
   <Screen key="response">
     <div
