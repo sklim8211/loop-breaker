@@ -1916,6 +1916,7 @@ ${url}`;
     "_blank"
   );
 }}
+  style={{ position: "relative", zIndex: 50 }} 
   className="flex items-center justify-center gap-2 h-14 w-full rounded-2xl bg-[#229ED9] text-base text-white shadow-sm hover:bg-[#1a8ec4]"
 >
   <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
