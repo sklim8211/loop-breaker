@@ -2125,7 +2125,7 @@ ${url}`;
         style={{
           backgroundImage: "url('/intervention-bg.jpg')",
           backgroundSize: "cover",
-          backgroundPosition: "center top",
+          backgroundPosition: "28% center",
         }}
       />
 
@@ -2191,19 +2191,17 @@ ${url}`;
               ease: "easeInOut",
             }}
             style={{
-              fontSize: "2.6rem",
+              fontSize: "2rem",
               fontWeight: 700,
               color: "white",
-              lineHeight: 1.25,
+              lineHeight: 1.4,
               letterSpacing: "-0.03em",
               margin: 0,
             }}
           >
-            오늘 하루
+            오늘 하루,
             <br />
-            한 번쯤
-            <br />
-            생각해봐요
+            한 번쯤 생각해봐요
           </motion.h2>
         </motion.div>
 
