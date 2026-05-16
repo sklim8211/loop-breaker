@@ -1896,7 +1896,7 @@ ${url}`;
   const ensuredId = userId ?? createUserId();
   if (!userId) setUserId(ensuredId);
 
-  // insert 먼저
+  // insert 먼저 완료
   try {
     await fetch("/api/telegram-register", {
       method: "POST",
@@ -1911,11 +1911,8 @@ ${url}`;
     console.error("저장 실패", e);
   }
 
-  // insert 완료 후 텔레그램으로 이동
-  window.open(
-    `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`,
-    "_blank"
-  );
+  // fetch 완료 후 이동 — location.href 사용
+  location.href = `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`;
 }}
   try {
     const res = await fetch("/api/telegram-register", {
