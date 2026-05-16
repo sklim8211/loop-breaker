@@ -2575,16 +2575,17 @@ backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
       )}
 
       {sharePreviewOpen && (
-        <div
-  className="space-y-6 text-center"
-  style={{
-    minHeight: "460px",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    paddingTop: "40px",
-  }}
->
+  <div
+    className="text-center"
+    style={{
+      minHeight: "460px",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      paddingTop: "60px",
+      paddingBottom: "0px",
+    }}
+  >
           <div className="space-y-4">
            <div
   style={{
