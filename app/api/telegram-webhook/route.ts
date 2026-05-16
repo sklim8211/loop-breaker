@@ -342,19 +342,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    const { error } = await supabase
-      .from("users")
-      .update({ telegram_chat_id: chatId })
-      .eq("id", userId);
+   const { data, error } = await supabase
+  .from("users")
+  .update({ telegram_chat_id: chatId })
+  .eq("id", userId)
+  .select();
 
-    if (error) {
-      console.error("chat_id 저장 실패", error);
-      await sendTelegramMessage(
-        chatId,
-        "연결 중 문제가 생겼어요. 다시 시도해주세요."
-      );
-      return NextResponse.json({ ok: false });
-    }
+if (error || !data || data.length === 0) {
+  console.error("chat_id 저장 실패 — userId 없음", userId);
+  await sendTelegramMessage(
+    chatId,
+    `연결 중 문제가 생겼어요.\n\n처음부터 다시 설정해주세요.\nhttps://loop-breaker-e1gt.vercel.app`
+  );
+  return NextResponse.json({ ok: false });
+}
 
     await sendTelegramMessage(
       chatId,
