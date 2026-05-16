@@ -1892,20 +1892,24 @@ ${url}`;
   onClick={async () => {
   const ensuredId = ensureUserId();
 
-  const { data: existing } = await supabase
-    .from("users")
-    .select("id")
-    .eq("id", ensuredId)
-    .single();
+  try {
+    const { data: existing } = await supabase
+      .from("users")
+      .select("id")
+      .eq("id", ensuredId)
+      .single();
 
-  if (!existing) {
-    await supabase.from("users").upsert([{
-      id: ensuredId,
-      phone_number: `tg_${ensuredId}`,
-      behavior_type: selectedBehavior ?? "other",
-      notification_time: selectedTime ?? "20:00",
-      sms_consent: false,
-    }], { onConflict: "phone_number" });
+    if (!existing) {
+      await supabase.from("users").insert([{
+        id: ensuredId,
+        phone_number: `tg_${Date.now()}_${ensuredId}`,
+        behavior_type: selectedBehavior ?? "other",
+        notification_time: selectedTime ?? "20:00",
+        sms_consent: false,
+      }]);
+    }
+  } catch (e) {
+    console.error("텔레그램 사전 저장 실패", e);
   }
 
   window.open(
