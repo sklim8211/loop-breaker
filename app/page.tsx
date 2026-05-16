@@ -2121,7 +2121,7 @@ ${url}`;
     >
       {/* 배경 이미지 — 아주 천천히 숨쉬듯 움직임 */}
       <motion.div
-        className="absolute inset-0"
+        className="pointer-events-none absolute inset-0"
         initial={{ scale: 1.04, opacity: 0.92 }}
         animate={{
           scale: [1.04, 1.08, 1.04],
@@ -2140,11 +2140,11 @@ ${url}`;
       />
 
       {/* 어두운 막 */}
-      <div className="absolute inset-0 bg-black/28" />
+      <div className="pointer-events-none absolute inset-0 bg-black/28" />
 
       {/* 위쪽 빛 — 천천히 움직이는 느낌 */}
       <motion.div
-        className="absolute inset-0"
+        className="pointer-events-none absolute inset-0"
         animate={{
           opacity: [0.28, 0.48, 0.28],
           scale: [1, 1.08, 1],
@@ -2162,7 +2162,7 @@ ${url}`;
 
       {/* 아래쪽 가독성 레이어 */}
       <div
-        className="absolute inset-0"
+        className="pointer-events-none absolute inset-0"
         style={{
           background:
             "linear-gradient(to bottom, rgba(0,0,0,0.03), rgba(0,0,0,0.18), rgba(0,0,0,0.52))",
@@ -2171,7 +2171,7 @@ ${url}`;
 
       {/* 아주 미세한 안개 레이어 */}
       <motion.div
-        className="absolute inset-0"
+        className="pointer-events-none absolute inset-0"
         animate={{
           x: [-12, 12, -12],
           opacity: [0.08, 0.16, 0.08],
@@ -2250,8 +2250,10 @@ ${url}`;
           style={{ display: "flex", gap: "12px" }}
         >
           <button
-            style={{
-              flex: 2,
+              style={{
+                position: "relative",
+                zIndex: 30,
+                flex: 2,
               height: "52px",
               background: "rgba(255,255,255,0.86)",
               border: "none",
@@ -2270,8 +2272,10 @@ ${url}`;
           </button>
 
           <button
-            style={{
-              flex: 1,
+              style={{
+                position: "relative",
+                zIndex: 30,
+                flex: 1,
               height: "52px",
               background: "rgba(255,255,255,0.08)",
               border: "0.5px solid rgba(255,255,255,0.22)",
