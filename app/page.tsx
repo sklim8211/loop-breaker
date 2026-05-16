@@ -1890,9 +1890,29 @@ ${url}`;
       
         <button
   onClick={async () => {
-    const ensuredId = ensureUserId();
-    window.open(`https://t.me/loopbreaker_admin_bot?start=${ensuredId}`, "_blank");
-  }}
+  const ensuredId = ensureUserId();
+
+  const { data: existing } = await supabase
+    .from("users")
+    .select("id")
+    .eq("id", ensuredId)
+    .single();
+
+  if (!existing) {
+    await supabase.from("users").upsert([{
+      id: ensuredId,
+      phone_number: `tg_${ensuredId}`,
+      behavior_type: selectedBehavior ?? "other",
+      notification_time: selectedTime ?? "20:00",
+      sms_consent: false,
+    }], { onConflict: "phone_number" });
+  }
+
+  window.open(
+    `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`,
+    "_blank"
+  );
+}}
   className="flex items-center justify-center gap-2 h-14 w-full rounded-2xl bg-[#229ED9] text-base text-white shadow-sm hover:bg-[#1a8ec4]"
 >
   <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
