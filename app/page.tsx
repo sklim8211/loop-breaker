@@ -1450,17 +1450,21 @@ ${url}`;
             <button
               key={item.key}
               onClick={() => {
-                if (item.key === "other") {
-                  setSelectedBehavior("other");
-                  setShowCustomBehaviorInput(true);
-                  return;
-                }
-
-                setSelectedBehavior(item.key);
-                setCustomBehavior("");
-                setShowCustomBehaviorInput(false);
-                setStep("time");
-              }}
+  if (!userId) {
+    const newId = createUserId();
+    setUserId(newId);
+  }
+  
+  if (item.key === "other") {
+    setSelectedBehavior("other");
+    setShowCustomBehaviorInput(true);
+    return;
+  }
+  setSelectedBehavior(item.key);
+  setCustomBehavior("");
+  setShowCustomBehaviorInput(false);
+  setStep("time");
+}}
               className="w-full rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-slate-900 shadow-sm transition hover:bg-slate-100"
             >
               <div className="flex items-center gap-3">
