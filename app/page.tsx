@@ -1830,7 +1830,7 @@ ${url}`;
     }
     setStep("alerts");
   }}
-  className="h-14 w-full rounded-2xl bg-slate-900..."
+  className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
 >
   그럼 알림 받아볼까요?
 </button>
@@ -1893,43 +1893,25 @@ ${url}`;
       
        <button
   onClick={async () => {
-  const ensuredId = userId ?? createUserId();
-  if (!userId) setUserId(ensuredId);
+    const ensuredId = userId ?? createUserId();
+    if (!userId) setUserId(ensuredId);
 
-  // insert 먼저 완료
-  try {
-    await fetch("/api/telegram-register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: ensuredId,
-        behaviorType: selectedBehavior ?? "other",
-        notificationTime: selectedTime ?? "20:00",
-      }),
-    });
-  } catch (e) {
-    console.error("저장 실패", e);
-  }
+    try {
+      await fetch("/api/telegram-register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: ensuredId,
+          behaviorType: selectedBehavior ?? "other",
+          notificationTime: selectedTime ?? "20:00",
+        }),
+      });
+    } catch (e) {
+      console.error("저장 실패", e);
+    }
 
-  // fetch 완료 후 이동 — location.href 사용
-  location.href = `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`;
-}}
-  try {
-    const res = await fetch("/api/telegram-register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: ensuredId,
-        behaviorType: selectedBehavior ?? "other",
-        notificationTime: selectedTime ?? "20:00",
-      }),
-    });
-    const data = await res.json();
-    alert(`API 결과: ${JSON.stringify(data)}`); // ← 추가
-  } catch (e) {
-    alert(`API 에러: ${e}`); // ← 추가
-  }
-}}
+    location.href = `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`;
+  }}
   style={{ position: "relative", zIndex: 50 }}
   className="flex items-center justify-center gap-2 h-14 w-full rounded-2xl bg-[#229ED9] text-base text-white shadow-sm hover:bg-[#1a8ec4]"
 >
