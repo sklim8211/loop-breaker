@@ -2313,7 +2313,7 @@ backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
                   width: "100%",
                   borderRadius: "14px",
                   border: "0.5px solid rgba(255,255,255,0.25)",
-                  background: "rgba(255,255,255,0.12)",
+                  background: "rgba(255,255,255,0.72)",
                   padding: "16px",
                   textAlign: "center",
                   cursor: "pointer",
@@ -2323,7 +2323,7 @@ backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
                   style={{
                     fontSize: "15px",
                     fontWeight: 500,
-                    color: "rgba(255,255,255,0.85)",
+                    color: "#1f2937",
                     margin: 0,
                   }}
                 >
@@ -2332,7 +2332,7 @@ backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
                 <p
                   style={{
                     fontSize: "13px",
-                    color: "rgba(255,255,255,0.5)",
+                    color: "#6b7280",
                     marginTop: "4px",
                   }}
                 >
@@ -2352,13 +2352,13 @@ backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
                     : "1px solid rgba(0,0,0,0.12)",
                 background:
                   responseMode === "stop"
-                    ? "rgba(255,255,255,0.1)"
+                    ? "rgba(255,255,255,0.72)"
                     : "rgba(0,0,0,0.06)",
                 fontSize: "16px",
                 fontWeight: 500,
                 color:
                   responseMode === "stop"
-                    ? "rgba(255,255,255,0.78)"
+                    ? "#1f2937"
                     : "#5a4a3a",
                 cursor: "pointer",
               }}
