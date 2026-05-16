@@ -2278,7 +2278,7 @@ ${url}`;
         flexDirection: "column",
         justifyContent: "space-between",
         padding: "52px 24px 36px",
-        backgroundImage:
+      
   backgroundImage:
   responseMode === "stop"
     ? "url('/response-light-bg.jpg')"
