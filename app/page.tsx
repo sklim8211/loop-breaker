@@ -2277,8 +2277,19 @@ ${url}`;
     </div>
   </Screen>
 )}
-              {step === "response" && (
-  <Screen key={`response-${responseMode}`}>
+             {step === "response" && (
+  <div
+    key={`response-${responseMode}`}
+    className="w-full"
+    style={{
+      opacity: 1,
+      visibility: "visible",
+      transform: "translateZ(0)",
+      WebkitTransform: "translateZ(0)",
+      backfaceVisibility: "hidden",
+      WebkitBackfaceVisibility: "hidden",
+    }}
+  >
     <div
       style={{
         borderRadius: "1.5rem",
@@ -2413,8 +2424,7 @@ ${url}`;
         </div>
       )}
     </div>
-  </Screen>
-)}
+   )}
                   </div>
                 </Screen>
               )}
