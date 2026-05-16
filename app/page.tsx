@@ -2278,10 +2278,13 @@ ${url}`;
         flexDirection: "column",
         justifyContent: "space-between",
         padding: "52px 24px 36px",
-        background:
-          responseMode === "stop"
-            ? "linear-gradient(180deg, #1f1b18 0%, #3a2f27 55%, #f1dfc2 100%)"
-            : "#f5f0e8",
+        backgroundImage:
+  responseMode === "stop"
+    ? "url('/response-light-bg.jpg')"
+    : undefined,
+backgroundSize: "cover",
+backgroundPosition: "center top",
+backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
         position: "relative",
       }}
     >
@@ -2290,7 +2293,7 @@ ${url}`;
           <div style={{ textAlign: "center" }}>
             <h2
               style={{
-                fontSize: "2.4rem",
+                fontSize: "2rem",
                 fontWeight: 700,
                 lineHeight: 1.3,
                 letterSpacing: "-0.03em",
