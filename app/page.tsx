@@ -2040,7 +2040,7 @@ ${url}`;
     position: "absolute",
     inset: 0,
     background:
-      "linear-gradient(to bottom, rgba(255,255,255,0.26), rgba(255,255,255,0.42), rgba(255,255,255,0.68))",
+      "linear-gradient(to bottom, rgba(255,255,255,0.10), rgba(255,255,255,0.20), rgba(255,255,255,0.35))",
     borderRadius: "1.8rem",
     pointerEvents: "none",
   }}
