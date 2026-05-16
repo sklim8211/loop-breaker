@@ -1890,28 +1890,30 @@ ${url}`;
       
        <button
   onClick={async () => {
-    const ensuredId = userId ?? createUserId();
-    if (!userId) setUserId(ensuredId);
-    
-    // window.open을 await 전에 먼저 실행
-    window.open(
-      `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`,
-      "_blank"
-    );
+  const ensuredId = userId ?? createUserId();
+  if (!userId) setUserId(ensuredId);
 
-    // DB 저장은 그 다음에
-    try {
-      await supabase.from("users").upsert([{
-        id: ensuredId,
-        phone_number: `tg_${Date.now()}`,
-        behavior_type: selectedBehavior ?? "other",
-        notification_time: selectedTime ?? "20:00",
-        sms_consent: false,
-      }], { onConflict: "id" });
-    } catch (e) {
-      console.error("저장 실패", e);
-    }
-  }}
+  // window.open 먼저 — 모바일 팝업 차단 방지
+  window.open(
+    `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`,
+    "_blank"
+  );
+
+  // 서버 API로 저장
+  try {
+    await fetch("/api/telegram-register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: ensuredId,
+        behaviorType: selectedBehavior ?? "other",
+        notificationTime: selectedTime ?? "20:00",
+      }),
+    });
+  } catch (e) {
+    console.error("텔레그램 등록 실패", e);
+  }
+}}
   style={{ position: "relative", zIndex: 50 }}
   className="flex items-center justify-center gap-2 h-14 w-full rounded-2xl bg-[#229ED9] text-base text-white shadow-sm hover:bg-[#1a8ec4]"
 >
