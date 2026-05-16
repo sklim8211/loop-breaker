@@ -1636,7 +1636,27 @@ ${url}`;
 
 {step === "diagnosis" && (
   <Screen key="diagnosis">
-    <div className="space-y-5 py-3">
+    <div
+  className="relative overflow-hidden space-y-5 text-left"
+  style={{
+    backgroundImage: "url('/diagnosis-1-bg.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    margin: "-28px",
+    padding: "38px 24px 34px",
+    borderRadius: "2rem",
+    minHeight: "620px",
+  }}
+>
+  <div
+    className="pointer-events-none absolute inset-0"
+    style={{
+      background:
+        "linear-gradient(to bottom, rgba(255,255,255,0.72), rgba(255,255,255,0.50), rgba(255,255,255,0.78))",
+    }}
+  />
+
+  <div className="relative z-10 space-y-5">
       <div>
 
         <h2 className="text-2xl font-bold text-slate-900">
@@ -1664,13 +1684,34 @@ ${url}`;
           </button>
         ))}
       </div>
-    </div>
-  </Screen>
+      </div>
+  </div>
+</Screen>
 )}
 
 {step === "diagnosis2" && (
   <Screen key="diagnosis2">
-    <div className="space-y-5 py-3">
+    <div
+  className="relative overflow-hidden space-y-5 text-left"
+  style={{
+    backgroundImage: "url('/diagnosis-2-bg.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    margin: "-28px",
+    padding: "38px 24px 34px",
+    borderRadius: "2rem",
+    minHeight: "620px",
+  }}
+>
+  <div
+    className="pointer-events-none absolute inset-0"
+    style={{
+      background:
+        "linear-gradient(to bottom, rgba(255,255,255,0.72), rgba(255,255,255,0.50), rgba(255,255,255,0.78))",
+    }}
+  />
+
+  <div className="relative z-10 space-y-5">
       <div>
         
         <h2 className="text-2xl font-bold text-slate-900">
@@ -1690,7 +1731,7 @@ ${url}`;
               setDiagnosis2(item.value);
               setStep("result");
             }}
-            className="w-full rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-slate-900 shadow-sm transition hover:bg-slate-100"
+            className="w-full rounded-[1.35rem] bg-white/76 px-4 py-4 text-left text-slate-950 shadow-sm backdrop-blur-sm transition hover:bg-white"
           >
             <span className="text-base font-semibold text-slate-900">
               {item.label}
@@ -1698,14 +1739,49 @@ ${url}`;
           </button>
         ))}
       </div>
-    </div>
-  </Screen>
+      </div>
+  </div>
+</Screen>
 )}
 {step === "result" && (
   <Screen key="result">
-    <div className="space-y-6 py-8 text-center">
+    <div
+  className="relative overflow-hidden text-center"
+  style={{
+    backgroundImage: "url('/result-bg.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    margin: "-28px",
+    padding: "42px 26px 38px",
+    borderRadius: "2rem",
+    minHeight: "620px",
+  }}
+>
+  {/* 시인성 확보 */}
+  <div
+    className="pointer-events-none absolute inset-0"
+    style={{
+      background:
+        "linear-gradient(to bottom, rgba(255,255,255,0.74), rgba(255,255,255,0.44), rgba(255,255,255,0.82))",
+    }}
+  />
+
+  <div
+    className="relative z-10 flex min-h-[530px] flex-col justify-between"
+  >
       <div className="space-y-2">
-        <p className="text-sm text-slate-600">당신은</p>
+       <p
+  style={{
+    fontSize: "13px",
+    fontWeight: 800,
+    letterSpacing: "0.18em",
+    color: "#475569",
+    textTransform: "uppercase",
+    textShadow: "0 1px 8px rgba(255,255,255,0.55)",
+  }}
+>
+  당신은
+</p>
         <h2 className="text-3xl font-bold text-slate-900 leading-tight">
           {resultType.title}
         </h2>
@@ -1762,13 +1838,37 @@ ${url}`;
           친구 반응 볼까요 😅
         </button>
       </motion.div>
+      </div>
     </div>
-  </Screen>
+</Screen>
 )}
 
  {step === "alerts" && (
   <Screen key="alerts">
-    <div className="space-y-6 py-9 text-center">
+    <div
+  className="relative overflow-hidden text-center"
+  style={{
+    backgroundImage: "url('/alert-bg.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    margin: "-28px",
+    padding: "40px 24px 36px",
+    borderRadius: "2rem",
+    minHeight: "620px",
+  }}
+>
+  {/* 시인성 확보 */}
+  <div
+    className="pointer-events-none absolute inset-0"
+    style={{
+      background:
+        "linear-gradient(to bottom, rgba(255,255,255,0.78), rgba(255,255,255,0.54), rgba(255,255,255,0.84))",
+    }}
+  />
+
+  <div
+    className="relative z-10 flex min-h-[530px] flex-col justify-between"
+  >
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-200 bg-slate-100 shadow-sm">
         <Bell className="h-8 w-8 text-slate-700" />
       </div>
@@ -1889,9 +1989,10 @@ ${url}`;
         <br />
         광고 문자는 보내지 않아요.
       </p>
-    </div>
-  </Screen>
-)}         
+       </div>
+      </div>
+   </Screen>
+  )}
 
     
 {step === "home" && (
