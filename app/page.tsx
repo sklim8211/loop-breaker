@@ -1787,7 +1787,7 @@ ${url}`;
         </h2>
       </div>
 
-      <div className="rounded-[1.6rem] border border-slate-200 bg-slate-50 px-6 py-7 shadow-sm">
+      <div className="rounded-[1.6rem] bg-white/28 px-6 py-7 backdrop-blur-sm">
         <div className="space-y-3 text-left">
           {resultType.expandedDescription.split("\n").map((line, i) => (
             <motion.p
@@ -1889,8 +1889,25 @@ ${url}`;
       {/* 텔레그램 버튼 */}
       
         <button
-  onClick={() => {
+  onClick={async () => {
     const ensuredId = ensureUserId();
+    
+    const { data: existing } = await supabase
+      .from("users")
+      .select("id")
+      .eq("id", ensuredId)
+      .single();
+
+    if (!existing) {
+      await supabase.from("users").insert([{
+        id: ensuredId,
+        phone_number: "pending",
+        behavior_type: selectedBehavior || "other",
+        notification_time: selectedTime || "20:00",
+        sms_consent: false,
+      }]);
+    }
+
     window.open(`https://t.me/loopbreaker_admin_bot?start=${ensuredId}`, "_blank");
   }}
   className="flex items-center justify-center gap-2 h-14 w-full rounded-2xl bg-[#229ED9] text-base text-white shadow-sm hover:bg-[#1a8ec4]"
