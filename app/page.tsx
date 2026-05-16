@@ -1890,6 +1890,7 @@ ${url}`;
       
        <button
   onClick={async () => {
+  alert(`userId: ${userId}`); 
   const ensuredId = userId ?? createUserId();
   if (!userId) setUserId(ensuredId);
 
