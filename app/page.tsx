@@ -1878,26 +1878,26 @@ ${url}`;
       <div className="flex items-center justify-end gap-3">
         <button
           onClick={() => setStep("settings")}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 shadow-sm transition hover:bg-slate-100"
+          className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-2 text-sm font-semibold text-slate-800 backdrop-blur-sm transition hover:bg-white"
         >
           <Settings className="h-4 w-4" />
           설정
         </button>
       </div>
 
-      <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-8 shadow-sm">
-        <p className="text-2xl font-bold text-slate-900">{effectiveDisplayText}</p>
+      <div className="space-y-3 px-3 py-8">
+        <p className="text-2xl font-extrabold text-slate-950">{effectiveDisplayText}</p>
         <SubText>{getHomeMessage()}</SubText>
         <SubText>{selectedTime} · 문자 알림</SubText>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-4 py-6 text-center shadow-sm">
-          <p className="text-3xl font-bold text-slate-900">{totalStopCount}</p>
-          <p className="mt-2 text-sm text-slate-600">총 생각한 순간</p>
+        <div className="rounded-[1.5rem] bg-white/55 px-4 py-6 text-center backdrop-blur-sm">
+          <p className="text-3xl font-extrabold text-slate-950">{totalStopCount}</p>
+          <p className="mt-2 text-sm font-medium text-slate-700">총 생각한 순간</p>
         </div>
-        <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-4 py-6 text-center shadow-sm">
-          <p className="text-3xl font-bold text-slate-900">
+        <div className="rounded-[1.5rem] bg-white/55 px-4 py-6 text-center backdrop-blur-sm">
+         <p className="text-3xl font-extrabold text-slate-950">
             {joinedAt
               ? Math.floor(
                   (Date.now() - new Date(joinedAt).getTime()) /
@@ -1910,7 +1910,7 @@ ${url}`;
       </div>
 
      {weeklyStopCount > 0 && (
-  <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-6 py-6 text-center shadow-sm">
+    <div className="rounded-[1.5rem] bg-white/55 px-6 py-6 text-center backdrop-blur-sm">
     <BodyText>이번 주, {weeklyStopCount}번 멈춰 생각했어요</BodyText>
 
     <p className="mt-2 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
