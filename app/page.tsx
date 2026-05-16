@@ -1784,7 +1784,7 @@ ${url}`;
         </h2>
       </div>
 
-      <div className="rounded-[1.6rem] bg-white/28 px-6 py-7 backdrop-blur-sm">
+      <div className="px-6 py-7">
         <div className="space-y-3 text-left">
           {resultType.expandedDescription.split("\n").map((line, i) => (
             <motion.p
