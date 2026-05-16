@@ -2101,7 +2101,25 @@ ${url}`;
 )}
              {step === "settings" && (
   <Screen key="settings">
-    <div className="space-y-5 py-2">
+    <div
+      className="relative overflow-hidden space-y-5"
+      style={{
+        backgroundImage: "url('/settings-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        margin: "-28px",
+        padding: "38px 24px 34px",
+        borderRadius: "2rem",
+        minHeight: "620px",
+      }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: "linear-gradient(to bottom, rgba(255,255,255,0.65), rgba(255,255,255,0.45), rgba(255,255,255,0.70))",
+        }}
+      />
+      <div className="relative z-10 space-y-5">
       <div>
         <h2 className="text-2xl font-bold text-slate-900">설정</h2>
       </div>
@@ -2307,6 +2325,7 @@ ${url}`;
         </div>
       )}
     </div>
+    </div> 
   </Screen>
 )}
             {step === "intervention" && (
