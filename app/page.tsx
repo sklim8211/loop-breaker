@@ -1901,7 +1901,7 @@ ${url}`;
     if (!existing) {
       await supabase.from("users").insert([{
         id: ensuredId,
-        phone_number: "pending",
+        phone_number: `tg_${ensuredId}`,
         behavior_type: selectedBehavior || "other",
         notification_time: selectedTime || "20:00",
         sms_consent: false,
