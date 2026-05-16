@@ -2298,7 +2298,11 @@ backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
                 fontWeight: 700,
                 lineHeight: 1.3,
                 letterSpacing: "-0.03em",
-                color: responseMode === "stop" ? "white" : "#1a1612",
+                color: responseMode === "stop" ? "#f8fafc" : "#1a1612",
+                textShadow:
+                responseMode === "stop"
+                ? "0 2px 18px rgba(0,0,0,0.38)"
+                : "none",
                 margin: 0,
               }}
             >
@@ -2372,9 +2376,18 @@ backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
       )}
 
       {sharePreviewOpen && (
-        <div className="space-y-6 text-center py-2">
+        <div
+  className="space-y-6 text-center"
+  style={{
+    minHeight: "460px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    paddingTop: "40px",
+  }}
+>
           <div className="space-y-4">
-            <p className="text-base leading-relaxed text-white max-w-[300px] mx-auto break-keep">
+            <p className="text-base leading-relaxed text-slate-800 max-w-[300px] mx-auto break-keep">
               하고 나서 후회하는 행동들,
               <br />
               멈추고 싶은데 계속 하게 되는 순간들.
@@ -2388,14 +2401,14 @@ backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
 
           <div className="space-y-2">
             <button
-              className="h-12 w-full rounded-2xl bg-white text-slate-900 shadow-sm"
+              className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm"
               onClick={sendShareNow}
             >
               보내기
             </button>
 
             <button
-              className="h-11 w-full rounded-2xl border border-white/20 bg-white/10 text-sm text-white"
+              className="h-11 w-full rounded-2xl border border-slate-300 bg-white/70 text-sm text-slate-700"
               onClick={() => {
                 setSharePreviewOpen(false);
                 setShareMessage("");
