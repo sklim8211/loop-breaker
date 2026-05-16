@@ -1895,19 +1895,16 @@ ${url}`;
       
        <button
   onClick={async () => {
-  alert(`userId: ${userId}`); 
   const ensuredId = userId ?? createUserId();
   if (!userId) setUserId(ensuredId);
 
-  // window.open 먼저 — 모바일 팝업 차단 방지
   window.open(
     `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`,
     "_blank"
   );
 
-  // 서버 API로 저장
   try {
-    await fetch("/api/telegram-register", {
+    const res = await fetch("/api/telegram-register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -1916,8 +1913,10 @@ ${url}`;
         notificationTime: selectedTime ?? "20:00",
       }),
     });
+    const data = await res.json();
+    alert(`API 결과: ${JSON.stringify(data)}`); // ← 추가
   } catch (e) {
-    console.error("텔레그램 등록 실패", e);
+    alert(`API 에러: ${e}`); // ← 추가
   }
 }}
   style={{ position: "relative", zIndex: 50 }}
