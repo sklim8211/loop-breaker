@@ -2387,17 +2387,42 @@ backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
   }}
 >
           <div className="space-y-4">
-            <p className="text-base leading-relaxed text-slate-800 max-w-[300px] mx-auto break-keep">
-              하고 나서 후회하는 행동들,
-              <br />
-              멈추고 싶은데 계속 하게 되는 순간들.
-              <br />
-              <br />
-              하루 한 번 문자로 알려드려요.
-              <br />
-              그 순간 잠깐 생각하는 것, 그게 전부예요.
-            </p>
-          </div>
+           <div
+  style={{
+    maxWidth: "300px",
+    margin: "0 auto",
+    textAlign: "center",
+  }}
+>
+  <p
+    style={{
+      fontSize: "1.55rem",
+      fontWeight: 700,
+      lineHeight: 1.45,
+      letterSpacing: "-0.04em",
+      color: "#111827",
+      margin: 0,
+    }}
+  >
+    하고 나면 후회하는 행동들.
+  </p>
+
+  <p
+    style={{
+      fontSize: "1.2rem",
+      fontWeight: 500,
+      lineHeight: 1.6,
+      letterSpacing: "-0.03em",
+      color: "#374151",
+      marginTop: "22px",
+    }}
+  >
+    그걸 하고 있는 자신을
+    <br />
+    잠깐 생각하게 합니다.
+  </p>
+</div>
+</div>
 
           <div className="space-y-2">
             <button
