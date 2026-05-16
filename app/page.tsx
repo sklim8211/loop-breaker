@@ -256,9 +256,7 @@ type EventItem = {
 
 
 function createUserId() {
-  return `usr_${Math.random().toString(36).slice(2, 10)}${Date.now()
-    .toString(36)
-    .slice(-4)}`;
+  return crypto.randomUUID();
 }
 
 function normalizePhoneNumber(input: string) {
