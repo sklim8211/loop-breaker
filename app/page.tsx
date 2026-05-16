@@ -1890,6 +1890,8 @@ ${url}`;
       
         <button
   onClick={async () => {
+  console.log("텔레그램 버튼 클릭");
+
   // ensureUserId() 대신 직접 생성
   let ensuredId = userId;
   if (!ensuredId) {
