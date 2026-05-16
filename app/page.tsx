@@ -1210,188 +1210,196 @@ ${url}`;
  {step === "intro" && (
   <Screen key="intro">
     <div
-      className="space-y-8 py-10 text-center"
+      className="relative overflow-hidden text-center"
       style={{
-        background: "#e8eeea",
+        backgroundImage: "url('/intro-1-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
         margin: "-28px",
-        padding: "42px 28px 38px",
+        padding: "46px 28px 38px",
         borderRadius: "2rem",
+        minHeight: "560px",
       }}
     >
-      <div className="space-y-7">
-        <p
-          style={{
-            fontSize: "1.85rem",
-            fontWeight: "700",
-            color: "#1a2a1e",
-            lineHeight: "1.62",
-            letterSpacing: "-0.03em",
-          }}
-        >
-          왜 하는지도 모르겠는데
-          <br />
-          또 하고 있네요
-        </p>
-
-        <p
-          style={{
-            fontSize: "15px",
-            color: "#2d4a35",
-            lineHeight: "1.95",
-          }}
-        >
-          행동은 의지가 약해서가 아니라
-          <br />
-          생각하기 전에 자동으로 시작됩니다.
-        </p>
-
-        <p
-          style={{
-            fontSize: "15px",
-            color: "#2d4a35",
-            lineHeight: "1.95",
-          }}
-        >
-          그래서 필요한 건
-          <br />
-          <span style={{ color: "#1a2a1e", fontWeight: "700" }}>
-            잠깐 멈춰 생각하는 순간입니다.
-          </span>
-        </p>
-      </div>
-
-      <button
+      {/* 글자 시인성 확보용 밝은 막 */}
+      <div
+        className="pointer-events-none absolute inset-0"
         style={{
-          width: "100%",
-          height: "52px",
-          background: "#1a2a1e",
-          color: "#e8eeea",
-          border: "none",
-          borderRadius: "1rem",
-          fontSize: "15px",
-          fontWeight: "500",
-          cursor: "pointer",
+          background:
+            "linear-gradient(to bottom, rgba(255,255,255,0.68), rgba(255,255,255,0.50), rgba(255,255,255,0.74))",
         }}
-        onClick={() => setStep("intro2")}
+      />
+
+      {/* 실제 내용 */}
+      <div
+        className="relative z-10 flex min-h-[476px] flex-col justify-between"
       >
-        이 서비스 보기
-      </button>
+        <div className="space-y-7">
+          <p
+            style={{
+              fontSize: "1.9rem",
+              fontWeight: 800,
+              color: "#111827",
+              lineHeight: "1.55",
+              letterSpacing: "-0.045em",
+              textShadow: "0 1px 12px rgba(255,255,255,0.7)",
+              margin: 0,
+            }}
+          >
+            왜 하는지도 모르겠는데
+            <br />
+            또 하고 있네요
+          </p>
+
+          <p
+            style={{
+              fontSize: "15.5px",
+              fontWeight: 600,
+              color: "#374151",
+              lineHeight: "1.9",
+              textShadow: "0 1px 10px rgba(255,255,255,0.75)",
+              margin: 0,
+            }}
+          >
+            행동은 의지가 약해서가 아니라
+            <br />
+            생각하기 전에 자동으로 시작됩니다.
+          </p>
+
+          <p
+            style={{
+              fontSize: "15.5px",
+              fontWeight: 600,
+              color: "#374151",
+              lineHeight: "1.9",
+              textShadow: "0 1px 10px rgba(255,255,255,0.75)",
+              margin: 0,
+            }}
+          >
+            그래서 필요한 건
+            <br />
+            <span style={{ color: "#111827", fontWeight: 800 }}>
+              잠깐 멈춰 생각하는 순간입니다.
+            </span>
+          </p>
+        </div>
+
+        <button
+          style={{
+            width: "100%",
+            height: "52px",
+            background: "rgba(17,24,39,0.88)",
+            color: "white",
+            border: "none",
+            borderRadius: "1rem",
+            fontSize: "15px",
+            fontWeight: 700,
+            cursor: "pointer",
+            boxShadow: "0 14px 30px rgba(17,24,39,0.18)",
+          }}
+          onClick={() => setStep("intro2")}
+        >
+          이 서비스 보기
+        </button>
+      </div>
     </div>
   </Screen>
 )}
-
                 
 {step === "intro2" && (
   <Screen key="intro2">
     <div
-      className="space-y-7 py-10 text-center"
+      className="relative overflow-hidden text-center"
       style={{
-        background: "#e8eeea",
+        backgroundImage: "url('/intro-2-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
         margin: "-28px",
-        padding: "40px 28px 38px",
+        padding: "46px 28px 38px",
         borderRadius: "2rem",
+        minHeight: "560px",
       }}
     >
-      <div className="space-y-6">
-        <div>
-          <p
-            style={{
-              fontSize: "19px",
-              fontWeight: "700",
-              letterSpacing: "0.2em",
-              color: "#1a2a1e",
-              margin: "0 0 14px",
-            }}
-          >
-            LOOP BREAKER
-          </p>
-
-          <p
-            style={{
-              fontSize: "16px",
-              fontWeight: "700",
-              color: "#1a2a1e",
-              lineHeight: "1.8",
-              margin: 0,
-            }}
-          >
-            우리는 잠깐 멈춰
-            <br />
-            생각할 순간을 알려드려요
-          </p>
-        </div>
-
-        <div
-          style={{
-            width: "28px",
-            height: "1px",
-            background: "#a8c8ac",
-            margin: "0 auto",
-          }}
-        />
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-          <p
-            style={{
-              fontSize: "15px",
-              color: "#2d4a35",
-              lineHeight: "1.85",
-              margin: 0,
-            }}
-          >
-            정한 시간에{" "}
-            <span style={{ color: "#1a2a1e", fontWeight: "700" }}>
-              문자 한 통
-            </span>
-            이 와요
-          </p>
-
-          <p
-            style={{
-              fontSize: "15px",
-              color: "#2d4a35",
-              lineHeight: "1.85",
-              margin: 0,
-            }}
-          >
-            그 순간 잠깐 멈춰 생각하는 것
-            <br />
-            그게 전부예요
-          </p>
-
-          <p
-            style={{
-              fontSize: "15px",
-              color: "#2d4a35",
-              lineHeight: "1.85",
-              margin: 0,
-            }}
-          >
-            그 순간들이 쌓이면
-            <br />
-            <span style={{ color: "#1a2a1e", fontWeight: "700" }}>
-              변화가 시작됩니다
-            </span>
-          </p>
-        </div>
-      </div>
-
-      <button
+      {/* 시인성 확보 */}
+      <div
+        className="pointer-events-none absolute inset-0"
         style={{
-          width: "100%",
-          height: "52px",
-          background: "#1a2a1e",
-          color: "#e8eeea",
-          border: "none",
-          borderRadius: "1rem",
-          fontSize: "15px",
-          fontWeight: "500",
-          cursor: "pointer",
+          background:
+            "linear-gradient(to bottom, rgba(255,255,255,0.58), rgba(255,255,255,0.38), rgba(255,255,255,0.62))",
         }}
-        onClick={() => setStep("behavior")}
+      />
+
+      <div
+        className="relative z-10 flex min-h-[476px] flex-col justify-between"
       >
-        시작하기
-      </button>
+        <div className="space-y-7">
+          <p
+            style={{
+              fontSize: "1.85rem",
+              fontWeight: 800,
+              color: "#111827",
+              lineHeight: "1.55",
+              letterSpacing: "-0.045em",
+              textShadow: "0 1px 10px rgba(255,255,255,0.55)",
+              margin: 0,
+            }}
+          >
+            우리는
+            <br />
+            잠깐 멈춰 생각할 순간을
+            <br />
+            알려드려요
+          </p>
+
+          <p
+            style={{
+              fontSize: "15.5px",
+              fontWeight: 600,
+              color: "#374151",
+              lineHeight: "1.9",
+              textShadow: "0 1px 8px rgba(255,255,255,0.55)",
+              margin: 0,
+            }}
+          >
+            정한 시간에 문자 한 통이 와요.
+            <br />
+            그 순간 잠깐 멈춰 생각하는 것.
+          </p>
+
+          <p
+            style={{
+              fontSize: "15.5px",
+              fontWeight: 600,
+              color: "#374151",
+              lineHeight: "1.9",
+              textShadow: "0 1px 8px rgba(255,255,255,0.55)",
+              margin: 0,
+            }}
+          >
+            그게 전부예요.
+            <br />
+            그 순간들이 쌓이면 변화가 시작됩니다.
+          </p>
+        </div>
+
+        <button
+          style={{
+            width: "100%",
+            height: "52px",
+            background: "rgba(17,24,39,0.82)",
+            color: "white",
+            border: "none",
+            borderRadius: "1rem",
+            fontSize: "15px",
+            fontWeight: 700,
+            cursor: "pointer",
+            boxShadow: "0 14px 30px rgba(17,24,39,0.14)",
+          }}
+          onClick={() => setStep("behavior")}
+        >
+          시작하기
+        </button>
+      </div>
     </div>
   </Screen>
 )}
