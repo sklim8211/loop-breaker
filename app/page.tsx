@@ -1896,11 +1896,27 @@ ${url}`;
   const ensuredId = userId ?? createUserId();
   if (!userId) setUserId(ensuredId);
 
+  // insert 먼저
+  try {
+    await fetch("/api/telegram-register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: ensuredId,
+        behaviorType: selectedBehavior ?? "other",
+        notificationTime: selectedTime ?? "20:00",
+      }),
+    });
+  } catch (e) {
+    console.error("저장 실패", e);
+  }
+
+  // insert 완료 후 텔레그램으로 이동
   window.open(
     `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`,
     "_blank"
   );
-
+}}
   try {
     const res = await fetch("/api/telegram-register", {
       method: "POST",
