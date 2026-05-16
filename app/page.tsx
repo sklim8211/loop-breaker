@@ -2110,11 +2110,134 @@ ${url}`;
     </div>
   </Screen>
 )}
-              {step === "intervention" && (
+             {step === "intervention" && (
   <Screen key="intervention">
     <div
+      className="relative overflow-hidden rounded-[1.5rem]"
       style={{
-        backgroundImage: "url('/intervention-bg.jpg')",
+        margin: "-28px",
+        minHeight: "560px",
+      }}
+    >
+      {/* 배경 이미지 */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: "url('/intervention-bg.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center top",
+        }}
+      />
+
+      {/* 어두운 오버레이 */}
+      <div className="absolute inset-0 bg-black/35" />
+
+      {/* 위쪽 빛 번짐 */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 18%, rgba(255,255,255,0.22), transparent 34%)",
+        }}
+      />
+
+      {/* 아래쪽 가독성 레이어 */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0.25), rgba(0,0,0,0.6))",
+        }}
+      />
+
+      {/* 실제 내용 */}
+      <div
+        className="relative z-10 flex min-h-[560px] flex-col justify-between"
+        style={{
+          padding: "52px 24px 36px",
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <p
+            style={{
+              fontSize: "15px",
+              color: "rgba(255,255,255,0.62)",
+              marginBottom: "20px",
+              letterSpacing: "0.04em",
+              textShadow: "0 0 12px rgba(255,255,255,0.25)",
+            }}
+          >
+            {interventionLine}
+          </p>
+
+          <h2
+            style={{
+              fontSize: "2.6rem",
+              fontWeight: 700,
+              color: "white",
+              lineHeight: 1.25,
+              letterSpacing: "-0.03em",
+              textShadow: "0 0 30px rgba(255,255,255,0.35)",
+              margin: 0,
+            }}
+          >
+            오늘 하루
+            <br />
+            한 번쯤
+            <br />
+            생각해봐요
+          </h2>
+        </div>
+
+        <div style={{ display: "flex", gap: "12px" }}>
+          <button
+            style={{
+              flex: 2,
+              height: "52px",
+              background: "rgba(255,255,255,0.86)",
+              border: "none",
+              borderRadius: "14px",
+              fontSize: "17px",
+              fontWeight: 700,
+              color: "#1a1612",
+              cursor: "pointer",
+              letterSpacing: "-0.01em",
+              boxShadow: "0 12px 34px rgba(0,0,0,0.28)",
+            }}
+            onClick={() => handleDecision("stop")}
+          >
+            생각했어요
+          </button>
+
+          <button
+            style={{
+              flex: 1,
+              height: "52px",
+              background: "rgba(255,255,255,0.08)",
+              border: "0.5px solid rgba(255,255,255,0.22)",
+              borderRadius: "14px",
+              fontSize: "15px",
+              color: "rgba(255,255,255,0.58)",
+              cursor: "pointer",
+              backdropFilter: "blur(8px)",
+            }}
+            onClick={() => handleDecision("continue")}
+          >
+            괜찮아요
+          </button>
+        </div>
+      </div>
+    </div>
+  </Screen>
+)}
+                   
+              {step === "response" && (
+  <Screen key="response">
+    <div
+      style={{
+        backgroundImage: responseMode === "stop"
+          ? "url('/response-stop-bg.jpg')"
+          : undefined,
         backgroundSize: "cover",
         backgroundPosition: "center top",
         borderRadius: "1.5rem",
@@ -2124,106 +2247,78 @@ ${url}`;
         flexDirection: "column",
         justifyContent: "space-between",
         padding: "52px 24px 36px",
+        background: responseMode === "stop" ? undefined : "#f5f0e8",
       }}
     >
-      {/* 상단 텍스트 */}
-      <div style={{ textAlign: "center" }}>
-        <p style={{
-          fontSize: "15px",
-          color: "rgba(255,255,255,0.55)",
-          marginBottom: "20px",
-          letterSpacing: "0.04em",
-          textShadow: "0 0 12px rgba(255,255,255,0.3)",
-        }}>
-          {interventionLine}
-        </p>
-        <h2 style={{
-          fontSize: "2.6rem",
-          fontWeight: 700,
-          color: "white",
-          lineHeight: 1.25,
-          letterSpacing: "-0.03em",
-          textShadow: "0 0 30px rgba(255,255,255,0.4)",
-          margin: 0,
-        }}>
-          오늘 하루<br/>한 번쯤<br/>생각해봐요
-        </h2>
-      </div>
+      {!sharePreviewOpen && (
+        <>
+          {/* 상단 응답 텍스트 */}
+          <div style={{ textAlign: "center" }}>
+            <h2 style={{
+              fontSize: "2.4rem",
+              fontWeight: 700,
+              lineHeight: 1.3,
+              letterSpacing: "-0.03em",
+              color: responseMode === "stop" ? "white" : "#1a1612",
+              textShadow: responseMode === "stop"
+                ? "0 0 30px rgba(255,255,255,0.3)"
+                : "none",
+              margin: 0,
+            }}>
+              {responseMode === "stop" ? responseLine : continueLine}
+            </h2>
+          </div>
 
-      {/* 하단 버튼 */}
-      <div style={{ display: "flex", gap: "12px" }}>
-        <button
-          style={{
-            flex: 2,
-            height: "52px",
-            background: "rgba(192,57,43,0.85)",
-            border: "none",
-            borderRadius: "14px",
-            fontSize: "17px",
-            fontWeight: 600,
-            color: "white",
-            cursor: "pointer",
-            letterSpacing: "-0.01em",
-          }}
-          onClick={() => handleDecision("stop")}
-        >
-          생각했어요
-        </button>
-        <button
-          style={{
-            flex: 1,
-            height: "52px",
-            background: "rgba(255,255,255,0.07)",
-            border: "0.5px solid rgba(255,255,255,0.18)",
-            borderRadius: "14px",
-            fontSize: "15px",
-            color: "rgba(255,255,255,0.4)",
-            cursor: "pointer",
-          }}
-          onClick={() => handleDecision("continue")}
-        >
-          괜찮아요
-        </button>
-      </div>
-    </div>
-  </Screen>
-)}
-                   
-              {step === "response" && (
-                <Screen key="response">
-                  <div className="space-y-6 py-10 text-center">
-                    {!sharePreviewOpen && (
-                      <>
-                        <div className="space-y-3 rounded-[1.8rem] border border-slate-200 bg-slate-50 px-6 py-6 shadow-sm">
-                          <h2 className="text-3xl font-bold leading-tight text-slate-900">
-                            {responseMode === "stop" ? responseLine : continueLine}
-                          </h2>
-                        </div>
+          {/* 하단 버튼 */}
+          <div className="space-y-3">
+            {responseMode === "stop" && (
+              <button
+                onClick={openSharePreview}
+                style={{
+                  width: "100%",
+                  borderRadius: "14px",
+                  border: "0.5px solid rgba(255,255,255,0.25)",
+                  background: "rgba(255,255,255,0.12)",
+                  padding: "16px",
+                  textAlign: "center",
+                  cursor: "pointer",
+                }}
+              >
+                <p style={{ fontSize: "15px", fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: 0 }}>
+                  혹시 생각나는 분 있어요?
+                </p>
+                <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", marginTop: "4px" }}>
+                  탭해서 전해주세요
+                </p>
+              </button>
+            )}
+            <button
+              style={{
+                width: "100%",
+                height: "52px",
+                borderRadius: "14px",
+                border: responseMode === "stop"
+                  ? "0.5px solid rgba(255,255,255,0.2)"
+                  : "1px solid rgba(0,0,0,0.12)",
+                background: responseMode === "stop"
+                  ? "rgba(255,255,255,0.1)"
+                  : "rgba(0,0,0,0.06)",
+                fontSize: "16px",
+                fontWeight: 500,
+                color: responseMode === "stop"
+                  ? "rgba(255,255,255,0.7)"
+                  : "#5a4a3a",
+                cursor: "pointer",
+              }}
+              onClick={() => setStep("home")}
+            >
+              확인
+            </button>
+          </div>
+        </>
+      )}
 
- <div className="space-y-3">
-  {responseMode === "stop" && (
-    <button
-      onClick={openSharePreview}
-      className="w-full rounded-[1.35rem] border border-[#c8dcc8] bg-[#e8eeea] px-4 py-4 text-center transition hover:bg-[#d8e8dc]"
-    >
-      <p className="text-base font-medium text-[#1a2a1e]">
-        혹시 생각나는 분 있어요?
-      </p>
-
-      <div className="mt-2 flex items-center justify-center gap-2 text-sm text-[#2d4a35]">
-        <Share2 className="h-4 w-4" />
-        <span>탭해서 전해주세요</span>
-      </div>
-    </button>
-  )}
-
-  <button
-    className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
-    onClick={() => setStep("home")}
-  >
-    확인
-  </button>
-</div>
+ 
                       </>
                     )}
                     {sharePreviewOpen && (
