@@ -1450,11 +1450,6 @@ ${url}`;
             <button
               key={item.key}
               onClick={() => {
-  if (!userId) {
-    const newId = createUserId();
-    setUserId(newId);
-  }
-  
   if (item.key === "other") {
     setSelectedBehavior("other");
     setShowCustomBehaviorInput(true);
@@ -1830,11 +1825,17 @@ ${url}`;
         className="space-y-3"
       >
         <button
-          onClick={() => setStep("alerts")}
-          className="h-14 w-full rounded-2xl bg-slate-900 text-base text-white shadow-sm hover:bg-slate-800"
-        >
-          그럼 알림 받아볼까요?
-        </button>
+  onClick={() => {
+    if (!userId) {
+      const newId = createUserId();
+      setUserId(newId);
+    }
+    setStep("alerts");
+  }}
+  className="h-14 w-full rounded-2xl bg-slate-900..."
+>
+  그럼 알림 받아볼까요?
+</button>
         <button
           onClick={sendShareNow}
           className="h-12 w-full rounded-2xl border border-slate-200 bg-white text-sm text-slate-700 hover:bg-slate-50"
