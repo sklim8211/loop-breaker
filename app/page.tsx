@@ -2120,18 +2120,8 @@ ${url}`;
       }}
     >
       {/* 배경 이미지 — 아주 천천히 숨쉬듯 움직임 */}
-      <motion.div
+      <div
         className="pointer-events-none absolute inset-0"
-        initial={{ scale: 1.04, opacity: 0.92 }}
-        animate={{
-          scale: [1.04, 1.08, 1.04],
-          opacity: [0.9, 1, 0.9],
-        }}
-        transition={{
-          duration: 14,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
         style={{
           backgroundImage: "url('/intervention-bg.jpg')",
           backgroundSize: "cover",
@@ -2142,23 +2132,14 @@ ${url}`;
       {/* 어두운 막 */}
       <div className="pointer-events-none absolute inset-0 bg-black/28" />
 
-      {/* 위쪽 빛 — 천천히 움직이는 느낌 */}
-      <motion.div
-        className="pointer-events-none absolute inset-0"
-        animate={{
-          opacity: [0.28, 0.48, 0.28],
-          scale: [1, 1.08, 1],
-        }}
-        transition={{
-          duration: 9,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        style={{
-          background:
-            "radial-gradient(circle at 50% 18%, rgba(255,255,255,0.32), transparent 34%)",
-        }}
-      />
+      {/* 위쪽 빛 */}
+<div
+  className="pointer-events-none absolute inset-0"
+  style={{
+    background:
+      "radial-gradient(circle at 50% 18%, rgba(255,255,255,0.32), transparent 34%)",
+  }}
+/>
 
       {/* 아래쪽 가독성 레이어 */}
       <div
@@ -2423,11 +2404,10 @@ ${url}`;
           </div>
         </div>
       )}
-    </div>
-   )}
-                  </div>
-                </Screen>
-              )}
+      </div>
+  </div>
+)}
+              
             </AnimatePresence>
           </div>
         </div>
