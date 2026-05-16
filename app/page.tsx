@@ -2297,8 +2297,10 @@ ${url}`;
               {step === "response" && (
   <Screen key="response">
     <div
-      style={{
-        backgroundImage: responseMode === "stop"
+  style={{
+    position: "relative",
+    overflow: "hidden",
+    backgroundImage: responseMode === "stop"
           ? "url('/response-stop-bg.jpg')"
           : undefined,
         backgroundSize: "cover",
@@ -2316,7 +2318,7 @@ ${url}`;
       {!sharePreviewOpen && (
         <>
           {/* 상단 응답 텍스트 */}
-          <div style={{ textAlign: "center" }}>
+          <div style={{ textAlign: "center", position: "relative", zIndex: 10 }}>
             <h2 style={{
               fontSize: "2.4rem",
               fontWeight: 700,
@@ -2333,7 +2335,7 @@ ${url}`;
           </div>
 
           {/* 하단 버튼 */}
-          <div className="space-y-3">
+          <div className="space-y-3" style={{ position: "relative", zIndex: 10 }}>
             {responseMode === "stop" && (
               <button
                 onClick={openSharePreview}
