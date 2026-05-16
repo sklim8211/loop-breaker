@@ -1888,35 +1888,31 @@ ${url}`;
 
       {/* 텔레그램 버튼 */}
       
-        <button
+       <button
   onClick={async () => {
-  console.log("텔레그램 버튼 클릭");
+    const ensuredId = userId ?? createUserId();
+    if (!userId) setUserId(ensuredId);
+    
+    // window.open을 await 전에 먼저 실행
+    window.open(
+      `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`,
+      "_blank"
+    );
 
-  // ensureUserId() 대신 직접 생성
-  let ensuredId = userId;
-  if (!ensuredId) {
-    ensuredId = createUserId();
-    setUserId(ensuredId);
-  }
-
-  try {
-    await supabase.from("users").upsert([{
-      id: ensuredId,
-      phone_number: `tg_${Date.now()}`,
-      behavior_type: selectedBehavior ?? "other",
-      notification_time: selectedTime ?? "20:00",
-      sms_consent: false,
-    }], { onConflict: "id" });
-  } catch (e) {
-    console.error("텔레그램 사전 저장 실패", e);
-  }
-
-  window.open(
-    `https://t.me/loopbreaker_admin_bot?start=${ensuredId}`,
-    "_blank"
-  );
-}}
-  style={{ position: "relative", zIndex: 50 }} 
+    // DB 저장은 그 다음에
+    try {
+      await supabase.from("users").upsert([{
+        id: ensuredId,
+        phone_number: `tg_${Date.now()}`,
+        behavior_type: selectedBehavior ?? "other",
+        notification_time: selectedTime ?? "20:00",
+        sms_consent: false,
+      }], { onConflict: "id" });
+    } catch (e) {
+      console.error("저장 실패", e);
+    }
+  }}
+  style={{ position: "relative", zIndex: 50 }}
   className="flex items-center justify-center gap-2 h-14 w-full rounded-2xl bg-[#229ED9] text-base text-white shadow-sm hover:bg-[#1a8ec4]"
 >
   <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
@@ -1924,7 +1920,6 @@ ${url}`;
   </svg>
   텔레그램으로 알림 받기
 </button>
-
       <div className="flex items-center gap-3 my-2">
         <div className="flex-1 h-px bg-slate-200"/>
         <span className="text-sm text-slate-400">또는</span>
