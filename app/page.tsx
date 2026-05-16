@@ -2111,8 +2111,83 @@ ${url}`;
   </Screen>
 )}
               {step === "intervention" && (
-                <Screen key="intervention">
-                  <div className="space-y-8 py-8 text-center">
+  <Screen key="intervention">
+    <div
+      style={{
+        backgroundImage: "url('/intervention-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center top",
+        borderRadius: "1.5rem",
+        margin: "-28px",
+        minHeight: "560px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        padding: "52px 24px 36px",
+      }}
+    >
+      {/* 상단 텍스트 */}
+      <div style={{ textAlign: "center" }}>
+        <p style={{
+          fontSize: "15px",
+          color: "rgba(255,255,255,0.55)",
+          marginBottom: "20px",
+          letterSpacing: "0.04em",
+          textShadow: "0 0 12px rgba(255,255,255,0.3)",
+        }}>
+          {interventionLine}
+        </p>
+        <h2 style={{
+          fontSize: "2.6rem",
+          fontWeight: 700,
+          color: "white",
+          lineHeight: 1.25,
+          letterSpacing: "-0.03em",
+          textShadow: "0 0 30px rgba(255,255,255,0.4)",
+          margin: 0,
+        }}>
+          오늘 하루<br/>한 번쯤<br/>생각해봐요
+        </h2>
+      </div>
+
+      {/* 하단 버튼 */}
+      <div style={{ display: "flex", gap: "12px" }}>
+        <button
+          style={{
+            flex: 2,
+            height: "52px",
+            background: "rgba(192,57,43,0.85)",
+            border: "none",
+            borderRadius: "14px",
+            fontSize: "17px",
+            fontWeight: 600,
+            color: "white",
+            cursor: "pointer",
+            letterSpacing: "-0.01em",
+          }}
+          onClick={() => handleDecision("stop")}
+        >
+          생각했어요
+        </button>
+        <button
+          style={{
+            flex: 1,
+            height: "52px",
+            background: "rgba(255,255,255,0.07)",
+            border: "0.5px solid rgba(255,255,255,0.18)",
+            borderRadius: "14px",
+            fontSize: "15px",
+            color: "rgba(255,255,255,0.4)",
+            cursor: "pointer",
+          }}
+          onClick={() => handleDecision("continue")}
+        >
+          괜찮아요
+        </button>
+      </div>
+    </div>
+  </Screen>
+)}
                     <div className="space-y-5 px-2 py-4">
                      <p className="text-lg text-slate-700 leading-relaxed font-medium">{interventionLine}</p>
                       <h2 className="text-3xl font-bold leading-tight text-slate-900">
