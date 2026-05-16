@@ -1846,7 +1846,35 @@ ${url}`;
     
 {step === "home" && (
   <Screen key="home">
-    <div className="space-y-6 py-8 text-center">
+    <div
+  className="space-y-6 py-8 text-center"
+  style={{
+    backgroundImage: "url('/home-bg.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    margin: "-28px",
+    padding: "38px 24px 34px",
+    borderRadius: "1.8rem",
+    minHeight: "620px",
+  }}
+>
+
+<div
+  style={{
+    position: "relative",
+    zIndex: 10,
+  }}
+>
+<div
+  style={{
+    position: "absolute",
+    inset: 0,
+    background:
+      "linear-gradient(to bottom, rgba(255,255,255,0.26), rgba(255,255,255,0.42), rgba(255,255,255,0.68))",
+    borderRadius: "1.8rem",
+    pointerEvents: "none",
+  }}
+/>
       <div className="flex items-center justify-end gap-3">
         <button
           onClick={() => setStep("settings")}
@@ -1897,6 +1925,7 @@ ${url}`;
     </button>
   </div>
 )}
+      </div>
     </div>
   </Screen>
 )}
