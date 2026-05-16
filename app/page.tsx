@@ -1406,7 +1406,27 @@ ${url}`;
    
               {step === "behavior" && (
   <Screen key="behavior">
-    <div className="space-y-5 py-3">
+    <div
+  className="relative overflow-hidden space-y-5 text-center"
+  style={{
+    backgroundImage: "url('/behavior-selection-bg.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    margin: "-28px",
+    padding: "38px 24px 34px",
+    borderRadius: "2rem",
+    minHeight: "620px",
+  }}
+>
+  <div
+    className="pointer-events-none absolute inset-0"
+    style={{
+      background:
+        "linear-gradient(to bottom, rgba(255,255,255,0.70), rgba(255,255,255,0.50), rgba(255,255,255,0.76))",
+    }}
+  />
+
+  <div className="relative z-10 space-y-5">
       <div>
         <h2 className="text-2xl font-bold leading-snug text-slate-900">
           요즘 하고 나면 후회되는
@@ -1505,13 +1525,34 @@ ${url}`;
           </div>
         )}
       </div>
-    </div>
-  </Screen>
+     </div>
+</div>
+</Screen>
 )}
 
   {step === "time" && (
   <Screen key="time">
-    <div className="space-y-5 py-3">
+    <div
+      className="relative overflow-hidden space-y-5 text-left"
+      style={{
+        backgroundImage: "url('/time-selection-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        margin: "-28px",
+        padding: "38px 24px 34px",
+        borderRadius: "2rem",
+        minHeight: "620px",
+      }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(255,255,255,0.70), rgba(255,255,255,0.50), rgba(255,255,255,0.76))",
+        }}
+      />
+
+      <div className="relative z-10 space-y-5">
       <div>
         <h2 className="text-2xl font-bold text-slate-900">
           언제 가장 흔들리나요?
@@ -1537,7 +1578,7 @@ ${url}`;
       }
       setStep("diagnosis");
     }}
-            className="w-full rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-slate-900 shadow-sm transition hover:bg-slate-100"
+            className="w-full rounded-[1.35rem] bg-white/72 px-4 py-4 text-left text-slate-950 shadow-sm backdrop-blur-sm transition hover:bg-white"
           >
             <div className="flex items-center gap-3">
               <div className="rounded-xl border border-slate-200 bg-white p-2">
@@ -1580,13 +1621,14 @@ ${url}`;
   // 신규 사용자면 기존처럼 진단으로
   setStep("diagnosis");
 }}
-                className="h-12 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
+                className="h-12 rounded-2xl bg-white/72 text-sm font-bold text-slate-900 shadow-sm backdrop-blur-sm transition hover:bg-white"
               >
                 {item.label}
               </button>
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   </Screen>
@@ -1614,7 +1656,7 @@ ${url}`;
               setDiagnosis1(item.value);
               setStep("diagnosis2");
             }}
-            className="w-full rounded-[1.35rem] border border-slate-200 bg-slate-50 px-4 py-4 text-left text-slate-900 shadow-sm transition hover:bg-slate-100"
+            className="w-full rounded-[1.35rem] bg-white/72 px-4 py-4 text-left text-slate-950 shadow-sm backdrop-blur-sm transition hover:bg-white"
           >
             <span className="text-base font-semibold text-slate-900">
               {item.label}
