@@ -352,14 +352,18 @@ async function sendWeeklyReports(supabase: any) {
   let skippedCount = 0;
 
   for (const user of users ?? []) {
-    const { data: alreadySent } = await supabase
-      .from("report_send_logs")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("report_type", "weekly")
-      .gte("sent_at", weekAgo.toISOString())
-      .limit(1);
+    // 이번 주 일요일 00:00 KST 기준으로 체크
+const koreaNow = getKoreaNow();
+const thisSundayStart = new Date(koreaNow);
+thisSundayStart.setUTCHours(0 - 9, 0, 0, 0); // KST 00:00 = UTC 15:00 전날
 
+const { data: alreadySent } = await supabase
+  .from("report_send_logs")
+  .select("id")
+  .eq("user_id", user.id)
+  .eq("report_type", "weekly")
+  .gte("sent_at", thisSundayStart.toISOString())
+  .limit(1);
     if (alreadySent && alreadySent.length > 0) { skippedCount++; continue; }
 
     const { data: logs } = await supabase
