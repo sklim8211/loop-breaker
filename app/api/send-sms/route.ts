@@ -346,7 +346,7 @@ async function sendWeeklyReports(supabase: any) {
 
   const now = new Date();
   const weekAgo = new Date(now);
-  weekAgo.setDate(now.getDate() - 7);
+  weekAgo.setDate(now.getDate() - 6);
 
   let sentCount = 0;
   let skippedCount = 0;
