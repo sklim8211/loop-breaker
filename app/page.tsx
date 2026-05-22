@@ -1655,7 +1655,12 @@ ${url}`;
 
   <div className="relative z-10 space-y-5">
       <div>
-
+        <button
+          onClick={() => setStep("time")}
+          className="mb-3 text-sm text-slate-500 hover:text-slate-800 transition-colors"
+        >
+          ← 뒤로
+        </button>
         <h2 className="text-2xl font-bold text-slate-900">
           {currentDiagnosisCopy.question1}
         </h2>
@@ -1710,7 +1715,12 @@ ${url}`;
 
   <div className="relative z-10 space-y-5">
       <div>
-        
+        <button
+          onClick={() => setStep("diagnosis")}
+          className="mb-3 text-sm text-slate-500 hover:text-slate-800 transition-colors"
+        >
+          ← 뒤로
+        </button>
         <h2 className="text-2xl font-bold text-slate-900">
           {currentDiagnosisCopy.question2}
         </h2>
@@ -2095,6 +2105,13 @@ ${url}`;
     </button>
   </div>
 )}
+
+      <button
+        onClick={openIntervention}
+        className="h-12 w-full rounded-2xl bg-white/70 backdrop-blur-sm border border-white/60 text-base font-semibold text-slate-800 shadow-sm hover:bg-white transition"
+      >
+        지금 생각해보기
+      </button>
       </div>
     </div>
   </Screen>
@@ -2132,23 +2149,26 @@ ${url}`;
       </div>
 
       <div className="space-y-3">
-       <button
-  className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
-            onClick={() => setChangeBehaviorConfirmOpen(true)}
-            >
-             행동 바꾸기
-           </button>
         <button
-          className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
-          onClick={() => setStep("time")}
+          className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800 flex items-center gap-3 px-4"
+          onClick={() => setChangeBehaviorConfirmOpen(true)}
         >
-          시간 바꾸기
+          <Smartphone className="h-4 w-4 shrink-0 opacity-70" />
+          <span className="flex-1 text-left text-sm font-semibold">행동 바꾸기</span>
         </button>
         <button
-          className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800"
+          className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800 flex items-center gap-3 px-4"
+          onClick={() => setStep("time")}
+        >
+          <Clock3 className="h-4 w-4 shrink-0 opacity-70" />
+          <span className="flex-1 text-left text-sm font-semibold">시간 바꾸기</span>
+        </button>
+        <button
+          className="h-12 w-full rounded-2xl bg-slate-900 text-white shadow-sm hover:bg-slate-800 flex items-center gap-3 px-4"
           onClick={() => setStep("alerts")}
         >
-          전화번호 / 알림 정보 바꾸기
+          <Bell className="h-4 w-4 shrink-0 opacity-70" />
+          <span className="flex-1 text-left text-sm font-semibold">전화번호 / 알림 정보 바꾸기</span>
         </button>
       </div>
 
@@ -2660,6 +2680,9 @@ backgroundColor: responseMode === "stop" ? "#1f1b18" : "#f5f0e8",
             >
               닫기
             </button>
+            {shareMessage && (
+              <p className="text-center text-sm text-slate-500 mt-1">{shareMessage}</p>
+            )}
           </div>
         </div>
       )}
