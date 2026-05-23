@@ -330,24 +330,40 @@ export async function POST(req: Request) {
     if (!text.startsWith("/start")) {
       return NextResponse.json({ ok: true });
     }
+const parts = text.split(" ");
+const userId = parts[1] ?? null;
 
-    const parts = text.split(" ");
-    const userId = parts[1] ?? null;
+if (!userId) {
+  await sendTelegramMessage(
+    chatId,
+    "안녕하세요 🙂\n루프브레이커 서비스에서 연결해주세요."
+  );
+  return NextResponse.json({ ok: true });
+}
 
-    if (!userId) {
-      await sendTelegramMessage(
-        chatId,
-        "안녕하세요 🙂\n루프브레이커 서비스에서 연결해주세요."
-      );
-      return NextResponse.json({ ok: true });
-    }
+// 이미 이 텔레그램으로 연결된 사용자가 있는지 확인
+const { data: existingUser } = await supabase
+  .from("users")
+  .select("id")
+  .eq("telegram_chat_id", chatId)
+  .neq("id", userId)
+  .single();
 
-   const { data, error } = await supabase
+if (existingUser) {
+  // 기존 연결된 사용자로 안내
+  await sendTelegramMessage(
+    chatId,
+    `이미 연결돼 있어요 🙂\nhttps://loop-breaker-e1gt.vercel.app/?auto=1&uid=${existingUser.id}`
+  );
+  return NextResponse.json({ ok: true });
+}
+
+const { data, error } = await supabase
   .from("users")
   .update({ telegram_chat_id: chatId })
   .eq("id", userId)
   .select();
-
+    
 if (error || !data || data.length === 0) {
   console.error("chat_id 저장 실패 — userId 없음", userId);
   await sendTelegramMessage(
