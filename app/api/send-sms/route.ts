@@ -459,7 +459,7 @@ export async function GET(req: Request) {
   if (!supabaseUrl || !serviceRoleKey) return NextResponse.json({ error: "Missing Supabase environment variables" }, { status: 500 });
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
-  await sendTrialEndingNotifications(supabase);
+// await sendTrialEndingNotifications(supabase);
 
   if (isReport || isSundayNightReportTime(slot)) return await sendWeeklyReports(supabase);
 
