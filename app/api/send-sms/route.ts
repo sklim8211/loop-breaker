@@ -566,14 +566,9 @@ export async function GET(req: Request) {
     if (user.telegram_chat_id) {
       await sendTelegramMessage(user.telegram_chat_id, text, user.id);
     } else {
-      const smsRes = await fetch("https://api.solapi.com/messages/v4/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `HMAC-SHA256 apiKey=${process.env.SOLAPI_API_KEY}, date=${date}, salt=${salt}, signature=${signature}` },
-        body: JSON.stringify({ message: { to: user.phone_number, from: process.env.SOLAPI_SENDER, text } }),
-      });
-      const smsData = await smsRes.json();
-      if (!smsRes.ok) { console.error("문자 발송 실패", user.phone_number, smsData); continue; }
-    }
+  // 문자 발송 중지
+  continue;
+  }
 
     await supabase.from("sms_send_logs").insert([{
       user_id: user.id,

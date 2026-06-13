@@ -904,19 +904,22 @@ setUserId(data.id);
     setStep("intervention");
   };
 const stopAlerts = async () => {
-    if (!userId) return;
-    try {
-      await supabase
-        .from("users")
-        .update({ sms_consent: false })
-        .eq("id", userId);
-      setSmsConsent(false);
-      alert("알림이 중지되었습니다.");
-    } catch (error) {
-      console.error("알림 중지 실패", error);
-      alert("처리 중 문제가 생겼습니다. 다시 시도해주세요.");
-    }
-  };
+  if (!userId) return;
+  try {
+    await supabase
+      .from("users")
+      .update({ 
+        sms_consent: false,
+        telegram_chat_id: null
+      })
+      .eq("id", userId);
+    setSmsConsent(false);
+    alert("알림이 중지되었습니다.");
+  } catch (error) {
+    console.error("알림 중지 실패", error);
+    alert("처리 중 문제가 생겼습니다. 다시 시도해주세요.");
+  }
+};
 
   const handleDecision = async (action: ActionType) => {
     const ensuredUserId = ensureUserId();
