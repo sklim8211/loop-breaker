@@ -683,7 +683,7 @@ useEffect(() => {
     );
 
     if (!data.is_paid && daysSinceTrial >= 60) {
-      window.location.href = `/payment?uid=${data.id}`;
+      // window.location.href = `/payment?uid=${data.id}`;
       return;
     }
 
