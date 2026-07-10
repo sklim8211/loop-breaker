@@ -682,10 +682,6 @@ useEffect(() => {
       (Date.now() - trialStart.getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    if (!data.is_paid && daysSinceTrial >= 60) {
-      // window.location.href = `/payment?uid=${data.id}`;
-      return;
-    }
 
     const behaviorData = behaviors.find((b) => b.key === data.behavior_type);
     if (data.behavior_type === "other" && data.custom_behavior?.trim()) {
