@@ -274,7 +274,7 @@ function Screen({ children }: { children: React.ReactNode }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12 }}
       transition={{ duration: 0.22 }}
-      className="w-full"
+      className="lb-screen w-full"
     >
       {children}
     </motion.div>
@@ -1189,16 +1189,16 @@ ${url}`;
   }
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-slate-100 to-white text-slate-900 flex items-center justify-center p-4 md:p-6">
-        <div className="w-full max-w-md">
-        <div className={`rounded-[2rem] border shadow-xl ${
+    <div data-screen={step} className="lb-app min-h-screen w-full text-slate-900 flex items-center justify-center">
+        <div className="lb-shell w-full max-w-md">
+        <div className={`lb-panel rounded-[2rem] border shadow-xl ${
           step === "intro" || step === "intro2"
            ? "bg-[#e8eeea] border-[#d8e8dc]"
            : "bg-white border-slate-200"
          }`}>
-          <div className="p-7 md:p-8">
-            <div className="mb-6 flex items-center justify-between text-sm text-slate-600">
-              <span className="font-medium tracking-[0.18em]">LOOP BREAKER</span>
+          <div className="lb-body p-7 md:p-8">
+            <div className="lb-header mb-6 flex items-center justify-between text-sm text-slate-600">
+              <span className="font-medium tracking-normal">LOOP BREAKER</span>
               <span>{step === "settings" ? "설정" : ""}</span>
             </div>
 
@@ -2026,7 +2026,7 @@ ${url}`;
 {step === "home" && (
   <Screen key="home">
     <div
-  className="space-y-6 py-8 text-center"
+  className="lb-home space-y-6 text-center"
   style={{
     backgroundImage: "url('/home-bg.jpg')",
     backgroundSize: "cover",
@@ -2054,7 +2054,7 @@ ${url}`;
     pointerEvents: "none",
   }}
 />
-      <div className="flex items-center justify-end gap-3">
+      <div className="lb-home-tools flex items-center justify-end gap-3">
         <button
           onClick={() => setStep("settings")}
           className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-2 text-sm font-semibold text-slate-800 backdrop-blur-sm transition hover:bg-white"
@@ -2064,13 +2064,13 @@ ${url}`;
         </button>
       </div>
 
-      <div className="space-y-3 px-3 py-8">
+      <div className="lb-home-intro space-y-3">
         <p className="text-2xl font-extrabold text-slate-950">{effectiveDisplayText}</p>
         <SubText>{getHomeMessage()}</SubText>
         <SubText>{selectedTime} · 문자 알림</SubText>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="lb-stats grid grid-cols-2 gap-3">
         <div className="rounded-[1.5rem] bg-white/55 px-4 py-6 text-center backdrop-blur-sm">
           <p className="text-3xl font-extrabold text-slate-950">{totalStopCount}</p>
           <p className="mt-2 text-sm font-medium text-slate-700">총 생각한 순간</p>
@@ -2089,7 +2089,7 @@ ${url}`;
       </div>
 
      {weeklyStopCount > 0 && (
-    <div className="rounded-[1.5rem] bg-white/55 px-6 py-6 text-center backdrop-blur-sm">
+    <div className="lb-week rounded-[1.5rem] bg-white/55 px-6 py-6 text-center backdrop-blur-sm">
     <BodyText>이번 주, {weeklyStopCount}번 멈춰 생각했어요</BodyText>
 
     <p className="mt-2 text-base text-slate-700 leading-relaxed max-w-[280px] mx-auto text-center break-keep">
@@ -2107,7 +2107,7 @@ ${url}`;
 
       <button
         onClick={openIntervention}
-        className="h-12 w-full rounded-2xl bg-white/70 backdrop-blur-sm border border-white/60 text-base font-semibold text-slate-800 shadow-sm hover:bg-white transition"
+        className="lb-primary h-12 w-full rounded-2xl text-base font-semibold"
       >
         지금 생각해보기
       </button>
@@ -2415,18 +2415,6 @@ ${url}`;
           </p>
 
           <motion.h2
-            animate={{
-              textShadow: [
-                "0 0 22px rgba(255,255,255,0.22)",
-                "0 0 36px rgba(255,255,255,0.42)",
-                "0 0 22px rgba(255,255,255,0.22)",
-              ],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
             style={{
               fontSize: "2rem",
               fontWeight: 700,
