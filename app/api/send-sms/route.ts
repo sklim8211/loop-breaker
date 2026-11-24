@@ -1,3 +1,4 @@
+import { getReminderContent, formatReminder } from "../../../lib/reminder-content";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
@@ -540,6 +541,8 @@ export async function GET(req: Request) {
     let messageType = "basic";
     const autoLink = `https://loop-breaker-e1gt.vercel.app/?auto=1&uid=${user.id}`;
 
+    const reminder = getReminderContent(user.behavior_type, user.custom_behavior, `${user.id}:${todayStr}`);
+
     // ★ 우선순위: 기억형 > 질문형 > 기본 알림
     if (isMemoryDay) {
       const pauseCount = await getMonthlyPauseCount(supabase, user.id);
@@ -549,13 +552,15 @@ export async function GET(req: Request) {
 
     if (!text && today === questionDay) {
       const question = getRandomQuestion(user.result_type ?? null);
-      text = user.telegram_chat_id ? question : `${question}\n${autoLink}`;
+      text = formatReminder(reminder, question);
+      if (!user.telegram_chat_id) text += `\n${autoLink}`;
       messageType = "question";
       questionCount++;
     }
 
     if (!text) {
-      text = getBasicAlertText(user.result_type);
+      text = formatReminder(reminder);
+      if (!user.telegram_chat_id) text += `\n${autoLink}`;
       messageType = "basic";
     }
 

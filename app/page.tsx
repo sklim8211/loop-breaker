@@ -1,5 +1,6 @@
 "use client";
 
+import { getReminderContent } from "../lib/reminder-content";
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell, Clock3, Settings, Share2, Smartphone, Timer, Utensils, PenLine } from "lucide-react";
@@ -312,7 +313,6 @@ export default function Page() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const [events, setEvents] = useState<EventItem[]>([]);
-  const [interventionLine, setInterventionLine] = useState("");
   const [responseLine, setResponseLine] = useState("");
   const [continueLine, setContinueLine] = useState("");
   const [responseMode, setResponseMode] = useState<ActionType | null>(null);
@@ -342,6 +342,12 @@ export default function Page() {
   selectedBehavior === "other" && customBehavior.trim()
     ? customBehavior.trim()
     : behavior.label;
+
+const reminder = getReminderContent(
+  selectedBehavior,
+  customBehavior,
+  `${userId ?? ""}:${new Date().toISOString().slice(0, 10)}`,
+);
 
 const effectiveDisplayText =
   selectedBehavior === "other" && customBehavior.trim()
@@ -683,13 +689,6 @@ useEffect(() => {
     );
 
 
-    const behaviorData = behaviors.find((b) => b.key === data.behavior_type);
-    if (data.behavior_type === "other" && data.custom_behavior?.trim()) {
-      setInterventionLine(`지금 ${data.custom_behavior.trim()} 생각이 나나요?`);
-    } else if (behaviorData) {
-      setInterventionLine(pickRandom(behaviorData.interventionPool));
-    }
-
     setStep("intervention");
   };
 
@@ -894,7 +893,6 @@ setUserId(data.id);
 
   const openIntervention = () => {
     
-    setInterventionLine(pickRandom(behavior.interventionPool));
     setSharePreviewOpen(false);
     setShareMessage("");
     setStep("intervention");
@@ -2350,7 +2348,7 @@ ${url}`;
             {step === "intervention" && (
   <Screen key="intervention">
     <div
-      className="relative overflow-hidden rounded-[1.5rem]"
+      className="lb-reminder relative overflow-hidden rounded-[1.5rem]"
       style={{
         margin: "-28px",
         minHeight: "560px",
@@ -2360,23 +2358,14 @@ ${url}`;
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage: "url('/intervention-bg.jpg')",
+          backgroundImage: "url('/home-bg.jpg')",
           backgroundSize: "cover",
-          backgroundPosition: "28% center",
+          backgroundPosition: "center",
         }}
       />
 
       {/* 어두운 막 */}
       <div className="pointer-events-none absolute inset-0 bg-black/28" />
-
-      {/* 위쪽 빛 */}
-<div
-  className="pointer-events-none absolute inset-0"
-  style={{
-    background:
-      "radial-gradient(circle at 50% 18%, rgba(255,255,255,0.32), transparent 34%)",
-  }}
-/>
 
       {/* 아래쪽 가독성 레이어 */}
       <div
@@ -2402,32 +2391,12 @@ ${url}`;
           transition={{ duration: 0.8 }}
           style={{ textAlign: "center" }}
         >
-          <p
-            style={{
-              fontSize: "15px",
-              color: "rgba(255,255,255,0.62)",
-              marginBottom: "20px",
-              letterSpacing: "0.04em",
-              textShadow: "0 0 12px rgba(255,255,255,0.25)",
-            }}
-          >
-            {interventionLine}
-          </p>
-
-          <motion.h2
-            style={{
-              fontSize: "2rem",
-              fontWeight: 700,
-              color: "white",
-              lineHeight: 1.4,
-              letterSpacing: "-0.03em",
-              margin: 0,
-            }}
-          >
-            오늘 하루,
-            <br />
-            한 번쯤 생각해봐요
-          </motion.h2>
+          <div className="lb-reminder-goal">
+            <p>내가 정한 행동</p>
+            <h2>{reminder.goal}</h2>
+          </div>
+          <p className="lb-reminder-wit">{reminder.wit}</p>
+          <p className="lb-reminder-trigger">{reminder.trigger}</p>
         </motion.div>
 
         <motion.div
